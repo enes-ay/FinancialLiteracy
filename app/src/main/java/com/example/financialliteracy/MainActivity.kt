@@ -16,7 +16,9 @@ import com.example.financialliteracy.ui.presentation.BottomBar
 import com.example.financialliteracy.ui.presentation.Home
 import com.example.financialliteracy.ui.presentation.Navigation
 import com.example.financialliteracy.ui.theme.FinancialLiteracyTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
