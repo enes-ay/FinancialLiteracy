@@ -21,11 +21,14 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -43,6 +46,7 @@ import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -51,31 +55,45 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.financialliteracy.R
 import com.example.financialliteracy.model.Category
+import com.example.financialliteracy.ui.theme.category_item1_color
+import com.example.financialliteracy.ui.theme.category_item2_color
+import com.example.financialliteracy.ui.theme.category_item3_color
+import com.example.financialliteracy.ui.theme.category_item4_color
+import com.example.financialliteracy.ui.theme.category_item5_color
+import com.example.financialliteracy.ui.theme.category_item6_color
+import com.example.financialliteracy.ui.theme.primary_color
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home(navController: NavController, paddingValues: PaddingValues) {
     val categoryList = remember { mutableStateListOf<Category>() }
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = true) {
-        val category1 = Category(1,"Budget Planning")
-        val category2= Category(2,"Investing")
-        val category3 = Category(3,"Savings")
-        val category4 = Category(3,"Retirement Planning")
-        val category5 = Category(3,"Debt Management")
-        val category6 = Category(3,"Credit Scores")
+        val category1 = Category(1, "Budget Planning")
+        val category2 = Category(2, "Investing")
+        val category3 = Category(3, "Savings")
+        val category4 = Category(3, "Retirement Planning")
+        val category5 = Category(3, "Debt Management")
+        val category6 = Category(3, "Credit Scores")
         categoryList.add(category1)
         categoryList.add(category2)
         categoryList.add(category3)
         categoryList.add(category4)
         categoryList.add(category5)
         categoryList.add(category6)
+
     }
     Scaffold(
+        topBar ={ CenterAlignedTopAppBar(title = { Text(text = "Financial Literacy", fontWeight = FontWeight.Bold) },
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = primary_color, titleContentColor = Color.White)
+            )}
 
     ) { paddingValues ->
+        val colors = listOf(category_item1_color, category_item2_color, category_item3_color, category_item4_color, category_item5_color,
+            category_item6_color)
 
         LazyVerticalGrid(
             modifier = Modifier
@@ -86,26 +104,31 @@ fun Home(navController: NavController, paddingValues: PaddingValues) {
             items(categoryList.count(),
                 itemContent = {
                     val category = categoryList[it]
-                    Card(modifier = Modifier.padding(all = 5.dp)
-                        .size(250.dp,150.dp)
-                        .padding(5.dp)
-                        .background(Color.Blue),
-                        shape = RoundedCornerShape(4.dp)) {
-                        Column(modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.Blue)
-                            .clickable {
-                            },
+                    val color = colors[it % colors.size]
+                    Card(
+                        modifier = Modifier
+                            .padding(all = 5.dp)
+                            .size(250.dp, 150.dp)
+                            .padding(5.dp),
+                        shape = RoundedCornerShape(7.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(color)
+                                .clickable {
+                                },
                             verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally) {
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
 
-                                Text(
-                                    category.name,
-                                    fontSize = 25.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White,
-                                    textAlign = TextAlign.Center
-                                )
+                            Text(
+                                text =category.name,
+                                fontSize = 25.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White,
+                                textAlign = TextAlign.Center,
+                            )
 
 
                         }
@@ -126,15 +149,15 @@ fun BottomBar(navController: NavController) {
         Screen.Home,
         Screen.List,
         Screen.Profile,
-        )
-    NavigationBar (
+    )
+    NavigationBar(
         containerColor = Color.White,
         contentColor = Color.Black,
-    ){
+    ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
 
-        items.forEach { item->
+        items.forEach { item ->
             NavigationBarItem(
                 selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
                 onClick = {
@@ -152,14 +175,16 @@ fun BottomBar(navController: NavController) {
                         restoreState = true
                     }
                 },
-                icon = { Image(
-                    modifier = Modifier.size(27.dp),
-                    painter = painterResource(id = item.iconId),
-                    contentDescription = item.label
-                ) },
-                label = { Text(text = item.label)}
+                icon = {
+                    Image(
+                        modifier = Modifier.size(27.dp),
+                        painter = painterResource(id = item.iconId),
+                        contentDescription = item.label
+                    )
+                },
+                label = { Text(text = item.label) }
             )
         }
 
-}
+    }
 }
