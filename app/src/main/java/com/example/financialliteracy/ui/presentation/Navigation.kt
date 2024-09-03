@@ -34,13 +34,14 @@ fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
         composable("categoryDetail/{id}",
             arguments = listOf(navArgument("id"){
                 type = NavType.StringType
-            }
-            )
-        )
+            }))
         {
             val categoryId = it.arguments?.getString("id")
             CategoryDetail(navController = navController, categoryId)
 
+        }
+        composable("stockList"){
+            List(navController = navController)
         }
 
     }

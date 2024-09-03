@@ -76,9 +76,9 @@ fun Home(navController: NavController, paddingValues: PaddingValues) {
         val category1 = Category(1, "Budget Planning", "budget")
         val category2 = Category(2, "Investing", "invest")
         val category3 = Category(3, "Savings", "saving")
-        val category4 = Category(4, "Retirement Planning","retirement")
-        val category5 = Category(5, "Debt Management","debt")
-        val category6 = Category(6, "Credit Scores","credit")
+        val category4 = Category(4, "Retirement Planning", "retirement")
+        val category5 = Category(5, "Debt Management", "debt")
+        val category6 = Category(6, "Credit Scores", "credit")
         categoryList.add(category1)
         categoryList.add(category2)
         categoryList.add(category3)
@@ -87,14 +87,24 @@ fun Home(navController: NavController, paddingValues: PaddingValues) {
         categoryList.add(category6)
 
     }
-    Scaffold(
-        topBar ={ CenterAlignedTopAppBar(title = { Text(text = "Financial Literacy", fontWeight = FontWeight.Bold) },
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = primary_color, titleContentColor = Color.White)
-            )}
+    Scaffold(topBar = {
+        CenterAlignedTopAppBar(
+            title = { Text(text = "Financial Literacy", fontWeight = FontWeight.Bold) },
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                containerColor = primary_color, titleContentColor = Color.White
+            )
+        )
+    }
 
     ) { paddingValues ->
-        val colors = listOf(category_item1_color, category_item2_color, category_item3_color, category_item4_color, category_item5_color,
-            category_item6_color)
+        val colors = listOf(
+            category_item1_color,
+            category_item2_color,
+            category_item3_color,
+            category_item4_color,
+            category_item5_color,
+            category_item6_color
+        )
 
         LazyVerticalGrid(
             modifier = Modifier
@@ -102,42 +112,41 @@ fun Home(navController: NavController, paddingValues: PaddingValues) {
                 .padding(paddingValues),
             columns = GridCells.Fixed(2),
         ) {
-            items(categoryList.count(),
-                itemContent = {
-                    val category = categoryList[it]
-                    val color = colors[it % colors.size]
-                    Card(
+            items(categoryList.count(), itemContent = {
+                val category = categoryList[it]
+                val color = colors[it % colors.size]
+                Card(
+                    modifier = Modifier
+                        .padding(all = 5.dp)
+                        .size(250.dp, 150.dp)
+                        .padding(5.dp),
+                    shape = RoundedCornerShape(7.dp)
+                ) {
+                    Column(
                         modifier = Modifier
-                            .padding(all = 5.dp)
-                            .size(250.dp, 150.dp)
-                            .padding(5.dp),
-                        shape = RoundedCornerShape(7.dp)
+                            .fillMaxSize()
+                            .background(color)
+                            .clickable {
+                                navController.navigate("categoryDetail/${category.id}")
+                            },
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(color)
-                                .clickable {
-                                    navController.navigate("categoryDetail/${category.id}")
-                                },
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
 
-                            Text(
-                                text =category.name,
-                                fontSize = 25.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White,
-                                textAlign = TextAlign.Center,
-                            )
+                        Text(
+                            text = category.name,
+                            fontSize = 25.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            textAlign = TextAlign.Center,
+                        )
 
 
-                        }
                     }
+                }
 
 
-                })
+            })
 
         }
 
@@ -160,8 +169,7 @@ fun BottomBar(navController: NavController) {
         val currentDestination = navBackStackEntry?.destination
 
         items.forEach { item ->
-            NavigationBarItem(
-                selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
+            NavigationBarItem(selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
                 onClick = {
                     navController.navigate(item.route) {
                         // Pop up to the start destination of the graph to
@@ -184,8 +192,7 @@ fun BottomBar(navController: NavController) {
                         contentDescription = item.label
                     )
                 },
-                label = { Text(text = item.label) }
-            )
+                label = { Text(text = item.label) })
         }
 
     }
