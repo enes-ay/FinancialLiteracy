@@ -1,6 +1,7 @@
 package com.example.financialliteracy.ui.presentation
 
 import android.app.Activity
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -72,12 +73,12 @@ fun Home(navController: NavController, paddingValues: PaddingValues) {
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = true) {
-        val category1 = Category(1, "Budget Planning")
-        val category2 = Category(2, "Investing")
-        val category3 = Category(3, "Savings")
-        val category4 = Category(3, "Retirement Planning")
-        val category5 = Category(3, "Debt Management")
-        val category6 = Category(3, "Credit Scores")
+        val category1 = Category(1, "Budget Planning", "budget")
+        val category2 = Category(2, "Investing", "invest")
+        val category3 = Category(3, "Savings", "saving")
+        val category4 = Category(4, "Retirement Planning","retirement")
+        val category5 = Category(5, "Debt Management","debt")
+        val category6 = Category(6, "Credit Scores","credit")
         categoryList.add(category1)
         categoryList.add(category2)
         categoryList.add(category3)
@@ -117,6 +118,7 @@ fun Home(navController: NavController, paddingValues: PaddingValues) {
                                 .fillMaxSize()
                                 .background(color)
                                 .clickable {
+                                    navController.navigate("categoryDetail/${category.id}")
                                 },
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
