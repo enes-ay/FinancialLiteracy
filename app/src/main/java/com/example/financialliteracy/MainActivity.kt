@@ -9,12 +9,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.financialliteracy.ui.presentation.BottomBar
 import com.example.financialliteracy.ui.presentation.Home
 import com.example.financialliteracy.ui.presentation.Navigation
+import com.example.financialliteracy.ui.presentation.Screen
 import com.example.financialliteracy.ui.theme.FinancialLiteracyTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,7 +32,13 @@ class MainActivity : ComponentActivity() {
             FinancialLiteracyTheme {
 
                 Scaffold( modifier = Modifier.fillMaxSize(),
-                    bottomBar = { BottomBar(navController = navController) }) { paddingValues ->
+                    bottomBar = {
+                        val showBottomBar = shouldShowBottomBar(navController = navController)
+                        if (showBottomBar) {
+                            BottomBar(navController = navController)
+                        }
+
+                    }) { paddingValues ->
 
                     Navigation(navController = navController,paddingValues = paddingValues)
 
@@ -39,6 +49,16 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@Composable
+private fun shouldShowBottomBar(navController: NavController): Boolean {
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+    return when (currentDestination?.route) {
+        Screen.Home.route, Screen.List.route, Screen.Profile.route -> true // Replace with your routes
+        else -> false
+    }
+}
 
 
 @Preview(showBackground = true)
