@@ -108,6 +108,7 @@ fun Home(navController: NavController, paddingValues: PaddingValues) {
                         modifier = Modifier
                             .fillMaxSize()
                             .background(color)
+                            .padding(horizontal = 10.dp)
                             .clickable {
                                 navController.navigate("categoryDetail/${category.id}")
                             },
@@ -117,7 +118,7 @@ fun Home(navController: NavController, paddingValues: PaddingValues) {
 
                         Text(
                             text = category.name,
-                            fontSize = 25.sp,
+                            fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
                             textAlign = TextAlign.Center,
