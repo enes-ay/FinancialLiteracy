@@ -1,4 +1,4 @@
-package com.example.financialliteracy.ui.presentation
+package com.example.financialliteracy.ui.presentation.StockList
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

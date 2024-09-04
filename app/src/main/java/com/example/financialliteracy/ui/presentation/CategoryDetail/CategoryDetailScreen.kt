@@ -1,4 +1,4 @@
-package com.example.financialliteracy.ui.presentation
+package com.example.financialliteracy.ui.presentation.CategoryDetail
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement

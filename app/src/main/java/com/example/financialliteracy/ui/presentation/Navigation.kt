@@ -2,14 +2,17 @@ package com.example.financialliteracy.ui.presentation
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import androidx.navigation.Navigation
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.financialliteracy.ui.presentation.CategoryDetail.CategoryDetail
+import com.example.financialliteracy.ui.presentation.Home.Home
+import com.example.financialliteracy.ui.presentation.Login.Login
+import com.example.financialliteracy.ui.presentation.Login.LoginViewmodel
+import com.example.financialliteracy.ui.presentation.Register.Register
 
 @Composable
 fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
@@ -29,7 +32,10 @@ fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
             Register(navController = navController)
         }
         composable("login"){
-            Login(navController = navController)
+            val loginViewmodel : LoginViewmodel = hiltViewModel<LoginViewmodel>()
+            Login(navController = navController, loginViewmodel)
+
+
         }
         composable("categoryDetail/{id}",
             arguments = listOf(navArgument("id"){
@@ -41,7 +47,7 @@ fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
 
         }
         composable("stockList"){
-            List(navController = navController)
+            com.example.financialliteracy.ui.presentation.StockList.List(navController = navController)
         }
 
     }

@@ -1,4 +1,4 @@
-package com.example.financialliteracy.ui.presentation
+package com.example.financialliteracy.ui.presentation.Register
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

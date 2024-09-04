@@ -1,4 +1,4 @@
-package com.example.financialliteracy.ui.presentation
+package com.example.financialliteracy.ui.presentation.Login
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,7 +20,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @Composable
-fun Login(navController: NavController) {
+fun Login(navController: NavController,
+           loginViewmodel: LoginViewmodel
+) {
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
     val name = remember { mutableStateOf("") }
@@ -40,6 +42,7 @@ fun Login(navController: NavController) {
                 TextField(value = email.value, onValueChange = { email.value = it }, label = { Text("email") })
                 TextField(value = password.value, onValueChange = { password.value = it }, label = { Text("password") })
                 TextButton(onClick = {
+                    loginViewmodel.mockFun()
                     navController.navigate("home")
                 },
                     colors = ButtonDefaults.textButtonColors(containerColor = Color.Black, contentColor = Color.White)) {
