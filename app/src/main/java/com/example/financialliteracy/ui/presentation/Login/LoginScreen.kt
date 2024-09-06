@@ -43,7 +43,9 @@ fun Login(navController: NavController,
                 TextField(value = password.value, onValueChange = { password.value = it }, label = { Text("password") })
                 TextButton(onClick = {
                     loginViewmodel.mockFun()
-                    navController.navigate("home")
+                    navController.navigate("home"){
+                        popUpTo("home")
+                    }
                 },
                     colors = ButtonDefaults.textButtonColors(containerColor = Color.Black, contentColor = Color.White)) {
                     Text(text = "Sign In")

@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 
 
@@ -25,6 +26,8 @@ fun Register(modifier: Modifier = Modifier, navController: NavController) {
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
     val name = remember { mutableStateOf("") }
+
+    val registerViewmodel:RegisterViewmodel = hiltViewModel()
 
    Scaffold (modifier = Modifier.fillMaxSize()) {paddingValues ->
 
