@@ -8,30 +8,34 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.financialliteracy.common.Resource
 import com.example.financialliteracy.data.repository.AuthRepository
+import com.google.firebase.auth.AuthResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewmodel @Inject constructor(private val authRepository: AuthRepository)
     : ViewModel() {
-        private val liveDataMessage = MutableLiveData("")
 
     private val _authState = mutableStateOf<AuthState>(AuthState.Idle)
     val authState: State<AuthState> = _authState
 
-        fun signUp(email:String, password:String) = viewModelScope.launch{
-            if(email.isEmpty() || password.isEmpty()){
-                liveDataMessage.value = "email and password cannot be null"
-            }
-            else{
-                val result = authRepository.signUp(email, password)
-                _authState.value = when (result) {
-                    is Resource.Success -> AuthState.Authenticated
-                    is Resource.Error -> AuthState.Error(result.exception.message ?: "Unknown error")
-                }
+    fun signUp(email:String, password:String) = viewModelScope.launch{
+        if(email.isEmpty() || password.isEmpty()){
+            _authState.value = AuthState.Error("Email or Password cannot be null")
+        }
+        else{
+            val result = authRepository.signUp(email, password)
+            _authState.value = when (result) {
+                is Resource.Success -> AuthState.Authenticated
+                is Resource.Error -> AuthState.Error(result.exception.message ?: "Unknown error")
             }
         }
+    }
+
 
 }
 sealed class AuthState {

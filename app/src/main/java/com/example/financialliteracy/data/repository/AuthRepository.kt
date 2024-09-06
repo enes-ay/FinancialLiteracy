@@ -2,8 +2,11 @@ package com.example.financialliteracy.data.repository
 
 import android.util.Log
 import com.example.financialliteracy.common.Resource
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.rpc.context.AttributeContext.Auth
 import kotlinx.coroutines.tasks.await
+import java.util.concurrent.Flow
 import javax.inject.Inject
 
 class AuthRepository @Inject constructor(private val firebaseAuth: FirebaseAuth){
@@ -14,6 +17,7 @@ class AuthRepository @Inject constructor(private val firebaseAuth: FirebaseAuth)
             return Resource.Success(result.user?.uid.orEmpty())
         }catch (e:Exception){
             Resource.Error(e)
+
         }
     }
 
