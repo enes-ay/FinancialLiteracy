@@ -16,6 +16,12 @@ class LoginViewmodel @Inject constructor(private val authRepository: AuthReposit
 
     private val _authState = mutableStateOf<AuthState>(AuthState.Idle)
     val authState: State<AuthState> = _authState
+    val userLoggedIn = mutableStateOf(false)
+
+    init {
+        userLoggedIn.value= authRepository.isUserLoggedIn()
+
+    }
 
     fun signIn(email:String, password:String) = viewModelScope.launch{
         if(email.isEmpty() || password.isEmpty()){

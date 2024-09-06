@@ -17,7 +17,7 @@ import com.example.financialliteracy.ui.presentation.Register.Register
 @Composable
 fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
 
-    NavHost(navController = navController, startDestination = "register"){
+    NavHost(navController = navController, startDestination = "login"){
 
         composable("home"){
             Home(navController= navController, paddingValues=paddingValues)
