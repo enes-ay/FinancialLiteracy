@@ -5,12 +5,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -28,31 +32,64 @@ fun Register(modifier: Modifier = Modifier, navController: NavController) {
     val name = remember { mutableStateOf("") }
 
     val registerViewmodel:RegisterViewmodel = hiltViewModel()
+    val authState by registerViewmodel.authState
 
-   Scaffold (modifier = Modifier.fillMaxSize()) {paddingValues ->
+    Scaffold (modifier = Modifier.fillMaxSize()) { paddingValues ->
 
-       Column (
-           Modifier
-               .fillMaxSize()
-               .padding(paddingValues),
-           verticalArrangement = Arrangement.Center,
-           horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
-           Column (modifier=Modifier.size(300.dp),
-               verticalArrangement = Arrangement.SpaceEvenly,
-               horizontalAlignment = Alignment.CenterHorizontally) {
-               TextField(value = name.value, onValueChange = { name.value = it }, label = {Text("name")})
-               TextField(value = email.value, onValueChange = { email.value = it }, label = {Text("email")})
-               TextField(value = password.value, onValueChange = { password.value = it }, label = {Text("password")})
-               TextButton(onClick = {
-                   navController.navigate("home")
-               },
-                   colors = ButtonDefaults.textButtonColors(containerColor = Color.Black, contentColor = Color.White)) {
-                   Text(text = "Sign Up")
-               }
-           }
+            Column(
+                modifier = Modifier.size(300.dp),
+                verticalArrangement = Arrangement.SpaceEvenly,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                TextField(
+                    value = name.value,
+                    onValueChange = { name.value = it },
+                    label = { Text("name") })
+                TextField(
+                    value = email.value,
+                    onValueChange = { email.value = it },
+                    label = { Text("email") })
+                TextField(
+                    value = password.value,
+                    onValueChange = { password.value = it },
+                    label = { Text("password") })
+                when (authState) {
+                    is AuthState.Idle -> Button(onClick = {
+                        registerViewmodel.signUp(
+                            email.value,
+                            password.value
+                        )
+                    }) {
+                        Text("Login")
+                    }
 
-       }
+                    is AuthState.Loading -> CircularProgressIndicator()
+                    is AuthState.Authenticated -> {Text(text = "Registiration is Successful!")
+                    navController.navigate("home")}
+                    is AuthState.Error -> {
+                        Text(text = (authState as AuthState.Error).message, color = Color.Red)
+                        Button(onClick = {
+                            registerViewmodel.signUp(
+                                email.value,
+                                password.value
+                            )
+                        }) {
+                            Text("Retry")
+                        }
+                    }
 
-   }
+                }
+
+            }
+
+        }
+    }
 }
