@@ -40,11 +40,7 @@ fun Login(navController: NavController,
     val loginViewmodel: LoginViewmodel = hiltViewModel()
     val authState by loginViewmodel.authState
 
-    LaunchedEffect(key1 = true) {
-        if (loginViewmodel.userLoggedIn.value){
-            navController.navigate("home")
-        }
-    }
+
 
     Scaffold (modifier = Modifier.fillMaxSize()) { paddingValues ->
 
@@ -108,7 +104,9 @@ fun Login(navController: NavController,
                     is AuthState.Loading -> CircularProgressIndicator()
                     is AuthState.Authenticated -> {
                         Text(text = "Login is Successful!")
-                        navController.navigate("home")
+                        navController.navigate("home"){
+                            popUpTo("login") { inclusive = true }
+                        }
                     }
 
                     is AuthState.Error -> {

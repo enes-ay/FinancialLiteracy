@@ -13,12 +13,16 @@ import com.example.financialliteracy.ui.presentation.Home.Home
 import com.example.financialliteracy.ui.presentation.Login.Login
 import com.example.financialliteracy.ui.presentation.Login.LoginViewmodel
 import com.example.financialliteracy.ui.presentation.Register.Register
+import com.example.financialliteracy.ui.presentation.Splash.Splash
 
 @Composable
 fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
 
-    NavHost(navController = navController, startDestination = "login"){
+    NavHost(navController = navController, startDestination = "splash"){
 
+        composable("splash"){
+            Splash(navController= navController)
+        }
         composable("home"){
             Home(navController= navController, paddingValues=paddingValues)
         }
@@ -34,8 +38,6 @@ fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
         composable("login"){
             val loginViewmodel : LoginViewmodel = hiltViewModel<LoginViewmodel>()
             Login(navController = navController, loginViewmodel)
-
-
         }
         composable("categoryDetail/{id}",
             arguments = listOf(navArgument("id"){
