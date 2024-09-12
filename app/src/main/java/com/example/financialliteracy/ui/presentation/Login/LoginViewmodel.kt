@@ -35,5 +35,15 @@ class LoginViewmodel @Inject constructor(private val authRepository: AuthReposit
             }
         }
     }
+    fun signOut() = viewModelScope.launch {
+        val result = authRepository.signOut()
+        _authState.value = when (result) {
+            is Resource.Success -> {
+                userLoggedIn.value = false
+                AuthState.Idle
+            }
+            is Resource.Error -> AuthState.Error(result.exception.message ?: "Unknown error")
+        }
+    }
 
 }

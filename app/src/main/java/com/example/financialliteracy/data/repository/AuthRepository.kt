@@ -29,6 +29,14 @@ class AuthRepository @Inject constructor(private val firebaseAuth: FirebaseAuth)
             Resource.Error(e)
         }
     }
+    suspend fun signOut() : Resource<String> {
+        return try {
+            firebaseAuth.signOut()
+            Resource.Success("User signed out successfully")
+        } catch (e: Exception) {
+            Resource.Error(e)
+        }
+    }
 
     fun isUserLoggedIn(): Boolean = firebaseAuth.currentUser!=null
 }
