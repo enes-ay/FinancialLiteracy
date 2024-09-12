@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 
@@ -36,6 +37,13 @@ fun Register(modifier: Modifier = Modifier, navController: NavController) {
 
     Scaffold (modifier = Modifier.fillMaxSize()) { paddingValues ->
 
+        val name = remember { mutableStateOf("") }
+        val email = remember { mutableStateOf("") }
+        val password = remember { mutableStateOf("") }
+        val nameError = remember { mutableStateOf<String?>(null) }
+        val emailError = remember { mutableStateOf<String?>(null) }
+        val passwordError = remember { mutableStateOf<String?>(null) }
+
         Column(
             Modifier
                 .fillMaxSize()
@@ -43,53 +51,93 @@ fun Register(modifier: Modifier = Modifier, navController: NavController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Column(
                 modifier = Modifier.size(300.dp),
                 verticalArrangement = Arrangement.SpaceEvenly,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                // Name Field
                 TextField(
                     value = name.value,
-                    onValueChange = { name.value = it },
-                    label = { Text("name") })
+                    onValueChange = {
+                        name.value = it
+                        nameError.value = null // Değer değiştirildiğinde hatayı sıfırla
+                    },
+                    label = { Text("Name") },
+                    isError = nameError.value != null // Hata durumu
+                )
+                if (nameError.value != null) {
+                    Text(text = nameError.value!!, color = Color.Red, fontSize = 12.sp)
+                }
+
+                // Email Field
                 TextField(
                     value = email.value,
-                    onValueChange = { email.value = it },
-                    label = { Text("email") })
+                    onValueChange = {
+                        email.value = it
+                        emailError.value = null // Değer değiştirildiğinde hatayı sıfırla
+                    },
+                    label = { Text("Email") },
+                    isError = emailError.value != null // Hata durumu
+                )
+                if (emailError.value != null) {
+                    Text(text = emailError.value!!, color = Color.Red, fontSize = 12.sp)
+                }
+
+                // Password Field
                 TextField(
                     value = password.value,
-                    onValueChange = { password.value = it },
-                    label = { Text("password") })
+                    onValueChange = {
+                        password.value = it
+                        passwordError.value = null // Değer değiştirildiğinde hatayı sıfırla
+                    },
+                    label = { Text("Password") },
+                    isError = passwordError.value != null // Hata durumu
+                )
+                if (passwordError.value != null) {
+                    Text(text = passwordError.value!!, color = Color.Red, fontSize = 12.sp)
+                }
+
+                // Auth State Handling
                 when (authState) {
                     is AuthState.Idle -> Button(onClick = {
-                        registerViewmodel.signUp(
-                            email.value,
-                            password.value
-                        )
+                        // Boş alan kontrolü yap
+                        if (name.value.isBlank()) {
+                            nameError.value = "Name cannot be empty"
+                        }
+                        if (email.value.isBlank()) {
+                            emailError.value = "Email cannot be empty"
+                        }
+                        if (password.value.isBlank()) {
+                            passwordError.value = "Password cannot be empty"
+                        }
+
+                        // Eğer hata yoksa kaydı başlat
+                        if (nameError.value == null && emailError.value == null && passwordError.value == null) {
+                            registerViewmodel.signUp(email.value, password.value)
+                        }
                     }) {
-                        Text("Login")
+                        Text("Register")
                     }
 
                     is AuthState.Loading -> CircularProgressIndicator()
-                    is AuthState.Authenticated -> {Text(text = "Registiration is Successful!")
-                    navController.navigate("home")}
+
+                    is AuthState.Authenticated -> {
+                        Text(text = "Registration is Successful!")
+                        navController.navigate("home")
+                    }
+
                     is AuthState.Error -> {
                         Text(text = (authState as AuthState.Error).message, color = Color.Red)
                         Button(onClick = {
-                            registerViewmodel.signUp(
-                                email.value,
-                                password.value
-                            )
+                            registerViewmodel.signUp(email.value, password.value)
                         }) {
-                            Text("Retry")
+                            Text("Register")
                         }
                     }
-
                 }
-
             }
-
         }
+
     }
 }

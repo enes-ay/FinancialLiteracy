@@ -54,44 +54,85 @@ fun Login(navController: NavController,
                 .padding(paddingValues),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
+            val email = remember { mutableStateOf("") }
+            val password = remember { mutableStateOf("") }
+            val emailError = remember { mutableStateOf<String?>(null) }
+            val passwordError = remember { mutableStateOf<String?>(null) }
 
-            Column (modifier= Modifier.size(300.dp),
+            Column(
+                modifier = Modifier.size(300.dp),
                 verticalArrangement = Arrangement.SpaceEvenly,
-                horizontalAlignment = Alignment.CenterHorizontally) {
-                TextField(value = email.value, onValueChange = { email.value = it }, label = { Text("email") })
-                TextField(value = password.value, onValueChange = { password.value = it }, label = { Text("password") })
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                TextField(
+                    value = email.value,
+                    onValueChange = {
+                        email.value = it
+                        emailError.value = null // Kullanıcı değer değiştirdiğinde hatayı sıfırla
+                    },
+                    label = { Text("Email") },
+                    isError = emailError.value != null // Hata durumu varsa kırmızı kenarlık
+                )
+                if (emailError.value != null) {
+                    Text(text = emailError.value!!, color = Color.Red, fontSize = 12.sp)
+                }
+
+                TextField(
+                    value = password.value,
+                    onValueChange = {
+                        password.value = it
+                        passwordError.value = null // Kullanıcı değer değiştirdiğinde hatayı sıfırla
+                    },
+                    label = { Text("Password") },
+                    isError = passwordError.value != null // Hata durumu varsa kırmızı kenarlık
+                )
+                if (passwordError.value != null) {
+                    Text(text = passwordError.value!!, color = Color.Red, fontSize = 12.sp)
+                }
+
                 when (authState) {
                     is AuthState.Idle -> Button(onClick = {
-                        loginViewmodel.signIn(
-                            email.value,
-                            password.value
-                        )
+                        if (email.value.isBlank()) {
+                            emailError.value = "Email cannot be empty"
+                        }
+                        if (password.value.isBlank()) {
+                            passwordError.value = "Password cannot be empty"
+                        }
+                        if (emailError.value == null && passwordError.value == null) {
+                            loginViewmodel.signIn(email.value, password.value)
+                        }
                     }) {
                         Text("Login")
                     }
 
                     is AuthState.Loading -> CircularProgressIndicator()
-                    is AuthState.Authenticated -> {Text(text = "Login is Successful!")
+                    is AuthState.Authenticated -> {
+                        Text(text = "Login is Successful!")
                         navController.navigate("home")
                     }
+
                     is AuthState.Error -> {
                         Text(text = (authState as AuthState.Error).message, color = Color.Red)
                         Button(onClick = {
-                            loginViewmodel.signIn(
-                                email.value,
-                                password.value
-                            )
+                            loginViewmodel.signIn(email.value, password.value)
                         }) {
                             Text("Retry")
                         }
                     }
-
                 }
-                Text(text = "Dont have an account create here!", modifier = Modifier.
-                    padding(10.dp).clickable {
-                        navController.navigate("register")
-                }, fontSize = 22.sp, color = Color.Blue)
+
+                Text(
+                    text = "Don't have an account? Create here!",
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .clickable {
+                            navController.navigate("register")
+                        },
+                    fontSize = 22.sp,
+                    color = Color.Blue
+                )
             }
+
 
         }
 
