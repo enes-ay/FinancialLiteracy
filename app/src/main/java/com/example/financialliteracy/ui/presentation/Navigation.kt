@@ -12,6 +12,7 @@ import com.example.financialliteracy.ui.presentation.CategoryDetail.CategoryDeta
 import com.example.financialliteracy.ui.presentation.Home.Home
 import com.example.financialliteracy.ui.presentation.Login.Login
 import com.example.financialliteracy.ui.presentation.Login.LoginViewmodel
+import com.example.financialliteracy.ui.presentation.Profile.Profile
 import com.example.financialliteracy.ui.presentation.Register.Register
 import com.example.financialliteracy.ui.presentation.Splash.Splash
 

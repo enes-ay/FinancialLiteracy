@@ -20,7 +20,6 @@ class LoginViewmodel @Inject constructor(private val authRepository: AuthReposit
 
     init {
         userLoggedIn.value= authRepository.isUserLoggedIn()
-
     }
 
     fun signIn(email:String, password:String) = viewModelScope.launch{

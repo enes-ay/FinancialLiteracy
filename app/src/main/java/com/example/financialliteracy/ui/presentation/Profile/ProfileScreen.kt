@@ -1,4 +1,4 @@
-package com.example.financialliteracy.ui.presentation
+package com.example.financialliteracy.ui.presentation.Profile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,24 +11,23 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material3.Button
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,6 +46,8 @@ import com.example.financialliteracy.ui.theme.secondary_color
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Profile(navController: NavController) {
+    var showDialog by remember { mutableStateOf(false) }
+
     val mockList = remember {
         mutableStateListOf(
             "Edit Profile",
@@ -89,6 +90,7 @@ fun Profile(navController: NavController) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
+                        .weight(1f)
                         .padding(vertical = 5.dp), verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -98,24 +100,33 @@ fun Profile(navController: NavController) {
                             .padding(10.dp)
                             .weight(2f)
                             .clickable {
-                                loginViewmodel.signOut()
-
-                                when (authState) {
-                                    is AuthState.Idle -> {
-                                        navController.navigate("login")
-                                    }
-
-                                    is AuthState.Error -> {
-
-                                    }
-
-                                    else -> {
-
-                                    }
-                                }
-
+                                showDialog=true
                             })
+
+                    SignOutDialog(
+                        showDialog = showDialog,
+                        onDismiss = { showDialog = false },
+                        onConfirm = {
+                            loginViewmodel.signOut()
+                            if (authState is AuthState.Idle) {
+                                navController.navigate("login")
+                            }
+                            showDialog = false
+                        },
+                    )
+
+
+
                     Text(text = "Enes Ay", fontSize = 25.sp, fontWeight = FontWeight.Bold)
+                }
+                
+                Column(modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(text = "dsgsdg")
+                    
                 }
             }
             LazyColumn(
@@ -148,4 +159,28 @@ fun Profile(navController: NavController) {
         }
     }
 
+}
+
+@Composable
+fun SignOutDialog(
+    showDialog: Boolean,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = {  },
+            title = { Text("Are you sure you want to log out?") },
+            confirmButton = {
+                TextButton(onClick = { onConfirm() }) {
+                    Text("Yes")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { onDismiss() }) {
+                    Text("No")
+                }
+            }
+        )
+    }
 }
