@@ -10,6 +10,6 @@ interface StockDao {
     @GET("https://api.stockdata.org/v1/data/quote HTTP/1.1")
     fun getStocks(
         @Query("api_token") apiToken: String = Constants.API_KEY,
-        @Query("symbols") symbols: String = "TSLA"
+        @Query("symbols") symbols: List<String> = listOf("TSLA")
     ) : StockResponse
 }
