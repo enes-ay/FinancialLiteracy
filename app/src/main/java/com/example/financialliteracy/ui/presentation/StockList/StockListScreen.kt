@@ -32,7 +32,7 @@ fun List(navController: NavController, modifier: Modifier = Modifier) {
     val stockList by stockListViewmodel.stockList.observeAsState()
 
     LaunchedEffect(key1 = true) {
-       stockListViewmodel.getStocks(listOf("AAPL"))
+       stockListViewmodel.getStocks("TSLA")
     }
 
     Scaffold { paddingValues ->
@@ -49,9 +49,8 @@ fun List(navController: NavController, modifier: Modifier = Modifier) {
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start
             ) {
-                stockList?.count()?.let {
-                    items(count = it) {
-                        val stock = stockList?.get(it)
+                    item() {
+                        val stock = stockList
                         Row(modifier = Modifier
                             .fillMaxWidth()
                             .clickable { }) {
@@ -71,7 +70,7 @@ fun List(navController: NavController, modifier: Modifier = Modifier) {
                                     verticalArrangement = Arrangement.Center
                                 ) {
                                     if (stock != null) {
-                                        Text(text = "stock name is here ${stock.name}", textAlign = TextAlign.Start)
+                                        Text(text = "stock price is here ${stock.c}", textAlign = TextAlign.Start)
                                     }
 
                                 }
@@ -82,9 +81,6 @@ fun List(navController: NavController, modifier: Modifier = Modifier) {
                                     horizontalAlignment = Alignment.End,
                                     verticalArrangement = Arrangement.Center
                                 ) {
-                                    if (stock != null) {
-                                        Text(text = "${stock.price}", textAlign = TextAlign.Start)
-                                    }
 
                                 }
                             }
@@ -96,5 +92,5 @@ fun List(navController: NavController, modifier: Modifier = Modifier) {
         }
 
 
-    }
+
 }

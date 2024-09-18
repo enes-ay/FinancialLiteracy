@@ -4,5 +4,5 @@ import com.example.financialliteracy.data.datasource.StockDataSource
 
 class StockRepository (var stockDataSource: StockDataSource){
 
-    suspend fun getStocks(symbols: List<String>) = stockDataSource.getStocks(symbols)
+    suspend fun getStocks(symbols: String) = stockDataSource.getStocks(symbols)
 }

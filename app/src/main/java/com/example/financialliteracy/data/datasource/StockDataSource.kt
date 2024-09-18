@@ -6,7 +6,7 @@ import kotlinx.coroutines.withContext
 
 class StockDataSource (var stockDao: StockDao) {
 
-    suspend fun getStocks(symbols:List<String>) = withContext(Dispatchers.IO){
+    suspend fun getStocks(symbols:String) = withContext(Dispatchers.IO){
         return@withContext stockDao.getStocks(symbols= symbols)
     }
 }
