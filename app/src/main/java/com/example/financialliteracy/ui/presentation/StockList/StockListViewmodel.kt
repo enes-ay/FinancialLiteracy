@@ -15,18 +15,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class StockListViewmodel @Inject constructor(val stockRepo: StockRepository): ViewModel() {
-
-    val stockList = MutableLiveData<ApiResponse>()
+class StockListViewmodel @Inject constructor(val stockRepo: StockRepository) : ViewModel() {
     val searchList = MutableLiveData<List<Result>>()
 
-    fun getStocks(symbols:String){
-        CoroutineScope(Dispatchers.Main).launch {
-            stockList.value = stockRepo.getStocks(symbols)
-        }
-    }
-
-    fun searchStock(query:String){
+    fun searchStock(query: String) {
         CoroutineScope(Dispatchers.Main).launch {
             searchList.value = stockRepo.searchStock(query).result
         }

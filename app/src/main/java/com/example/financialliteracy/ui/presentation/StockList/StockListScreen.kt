@@ -42,16 +42,8 @@ import androidx.navigation.NavController
 @Composable
 fun StockListScreen(navController: NavController) {
     val stockListViewmodel: StockListViewmodel = hiltViewModel()
-
-    // Arama alanı için bir state ekleyelim
     var query by remember { mutableStateOf("") }
-
-    val stockList by stockListViewmodel.stockList.observeAsState()
     val searchList by stockListViewmodel.searchList.observeAsState()
-
-    LaunchedEffect(key1 = true) {
-        stockListViewmodel.getStocks("TSLA")
-    }
 
     Scaffold { paddingValues ->
 
@@ -69,7 +61,7 @@ fun StockListScreen(navController: NavController) {
                         stockListViewmodel.searchStock(newQuery) // Arama yapılıyor
                     }
                 },
-                label = { Text("Seaamrch Stock Symbol") },
+                label = { Text("Search Stock Symbol") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
@@ -86,7 +78,8 @@ fun StockListScreen(navController: NavController) {
                         Row(modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-
+                                Log.e("stock", stock.symbol)
+                                navController.navigate("stockDetail/${stock.symbol}")
                             }) {
                             Row(
                                 modifier = Modifier
