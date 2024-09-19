@@ -15,6 +15,7 @@ import com.example.financialliteracy.ui.presentation.Login.LoginViewmodel
 import com.example.financialliteracy.ui.presentation.Profile.Profile
 import com.example.financialliteracy.ui.presentation.Register.Register
 import com.example.financialliteracy.ui.presentation.Splash.Splash
+import com.example.financialliteracy.ui.presentation.StockList.StockListScreen
 
 @Composable
 fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
@@ -50,7 +51,7 @@ fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
 
         }
         composable("stockList"){
-            com.example.financialliteracy.ui.presentation.StockList.List(navController = navController)
+            StockListScreen(navController = navController)
         }
 
     }

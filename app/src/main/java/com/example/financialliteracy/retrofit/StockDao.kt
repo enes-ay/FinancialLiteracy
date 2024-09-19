@@ -1,6 +1,7 @@
 package com.example.financialliteracy.retrofit
 
 import com.example.financialliteracy.model.ApiResponse
+import com.example.financialliteracy.model.SearchResponse
 import com.example.financialliteracy.model.StockResponse
 import com.example.financialliteracy.utils.Constants
 import retrofit2.Call
@@ -15,4 +16,10 @@ interface StockDao {
         @Query("symbol") symbols: String,
         @Query("token") apiKey: String = Constants.API_KEY
     ): ApiResponse
+
+    @GET("search")
+    suspend fun searchStock(
+        @Query("q") query: String,
+        @Query("token") apiKey: String = Constants.API_KEY
+    ): SearchResponse
 }
