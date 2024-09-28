@@ -39,8 +39,7 @@ fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
             Register(navController = navController)
         }
         composable("login"){
-            val loginViewmodel : LoginViewmodel = hiltViewModel<LoginViewmodel>()
-            Login(navController = navController, loginViewmodel)
+            Login(navController = navController)
         }
         composable("categoryDetail/{id}",
             arguments = listOf(navArgument("id"){
