@@ -157,7 +157,7 @@ fun Login(navController: NavController) {
                                 containerColor = primary_color,
                             )
                         ) {
-                            Text("Login", fontSize = 17.sp, fontWeight = FontWeight.Medium)
+                            Text("Sign in", fontSize = 17.sp, fontWeight = FontWeight.Medium)
                         }
 
                         is AuthState.Loading -> CircularProgressIndicator()
