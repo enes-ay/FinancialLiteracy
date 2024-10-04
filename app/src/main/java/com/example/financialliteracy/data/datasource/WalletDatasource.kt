@@ -1,5 +1,6 @@
 package com.example.financialliteracy.data.datasource
 
+import com.example.financialliteracy.model.Trade.Transaction
 import com.example.financialliteracy.ui.presentation.Portfolio.Asset
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore

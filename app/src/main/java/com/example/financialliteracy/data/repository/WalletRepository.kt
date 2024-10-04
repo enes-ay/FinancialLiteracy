@@ -1,6 +1,7 @@
 package com.example.financialliteracy.data.repository
 
 import com.example.financialliteracy.data.datasource.WalletDatasource
+import com.example.financialliteracy.model.Trade.Transaction
 import com.example.financialliteracy.ui.presentation.Portfolio.Asset
 import javax.inject.Inject
 
