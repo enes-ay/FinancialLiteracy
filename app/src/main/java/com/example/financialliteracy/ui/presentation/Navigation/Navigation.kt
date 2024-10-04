@@ -1,8 +1,7 @@
-package com.example.financialliteracy.ui.presentation
+package com.example.financialliteracy.ui.presentation.Navigation
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -11,7 +10,6 @@ import androidx.navigation.navArgument
 import com.example.financialliteracy.ui.presentation.CategoryDetail.CategoryDetail
 import com.example.financialliteracy.ui.presentation.Home.Home
 import com.example.financialliteracy.ui.presentation.Login.Login
-import com.example.financialliteracy.ui.presentation.Login.LoginViewmodel
 import com.example.financialliteracy.ui.presentation.Profile.Profile
 import com.example.financialliteracy.ui.presentation.Register.Register
 import com.example.financialliteracy.ui.presentation.Splash.Splash
@@ -21,7 +19,7 @@ import com.example.financialliteracy.ui.presentation.StockList.StockListScreen
 @Composable
 fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
 
-    NavHost(navController = navController, startDestination = "splash"){
+    NavHost(navController = navController, startDestination = "home"){
 
         composable("splash"){
             Splash(navController= navController)
@@ -42,7 +40,8 @@ fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
             Login(navController = navController)
         }
         composable("categoryDetail/{id}",
-            arguments = listOf(navArgument("id"){
+            arguments = listOf(navArgument(
+                "id"){
                 type = NavType.StringType
             }))
         {

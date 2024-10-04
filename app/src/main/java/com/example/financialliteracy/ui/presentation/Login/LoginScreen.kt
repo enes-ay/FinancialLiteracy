@@ -167,7 +167,7 @@ fun Login(navController: NavController) {
                                 text = "Login Successful!",
                                 color = MaterialTheme.colorScheme.primary
                             )
-                            navController.navigate("foodList") {
+                            navController.navigate("home") {
                                 popUpTo("login") { inclusive = true }
                             }
                         }

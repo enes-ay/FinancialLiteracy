@@ -16,7 +16,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.financialliteracy.ui.presentation.Home.BottomBar
 import com.example.financialliteracy.ui.presentation.Login.LoginViewmodel
-import com.example.financialliteracy.ui.presentation.Navigation
+import com.example.financialliteracy.ui.presentation.Navigation.Navigation
 import com.example.financialliteracy.ui.presentation.Screen
 import com.example.financialliteracy.ui.theme.FinancialLiteracyTheme
 import dagger.hilt.android.AndroidEntryPoint
