@@ -10,6 +10,7 @@ import androidx.navigation.navArgument
 import com.example.financialliteracy.ui.presentation.CategoryDetail.CategoryDetail
 import com.example.financialliteracy.ui.presentation.Home.Home
 import com.example.financialliteracy.ui.presentation.Login.Login
+import com.example.financialliteracy.ui.presentation.Portfolio.PortfolioScreen
 import com.example.financialliteracy.ui.presentation.Profile.Profile
 import com.example.financialliteracy.ui.presentation.Register.Register
 import com.example.financialliteracy.ui.presentation.Splash.Splash
@@ -32,6 +33,9 @@ fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
         }
         composable("list"){
             Profile(navController = navController)
+        }
+        composable("portfolio"){
+            PortfolioScreen(navController= navController)
         }
         composable("register"){
             Register(navController = navController)
