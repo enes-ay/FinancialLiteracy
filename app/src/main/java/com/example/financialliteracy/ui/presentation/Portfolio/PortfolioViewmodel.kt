@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-data class Asset(val id: Int, val name: String, val value: Double)
+data class Asset(val id: Int, val name: String, val value: Double, val price : Int = 23, val symbol: String = "TSLA")
 
 class PortfolioViewmodel : ViewModel() {
     private val _assets = MutableStateFlow<List<Asset>>(emptyList())
