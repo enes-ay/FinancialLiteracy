@@ -143,6 +143,7 @@ fun BottomBar(navController: NavController) {
         Screen.Home,
         Screen.List,
         Screen.Profile,
+        Screen.Portolio
     )
     NavigationBar(
         containerColor = Color.White,

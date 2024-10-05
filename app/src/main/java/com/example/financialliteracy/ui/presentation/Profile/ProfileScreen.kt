@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -94,7 +96,7 @@ fun Profile(navController: NavController) {
                         .padding(vertical = 5.dp), verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Image(painter = painterResource(id = R.drawable.user), contentDescription = "",
+                    Image( Icons.Default.Person, contentDescription = "",
                         modifier = Modifier
                             .size(60.dp)
                             .padding(10.dp)
