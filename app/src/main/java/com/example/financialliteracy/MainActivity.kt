@@ -56,7 +56,7 @@ private fun shouldShowBottomBar(navController: NavController): Boolean {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     return when (currentDestination?.route) {
-        Screen.Home.route, Screen.List.route, Screen.Profile.route -> true // Replace with your routes
+        Screen.Home.route, Screen.List.route, Screen.Profile.route, Screen.Portolio.route -> true // Replace with your routes
         else -> false
     }
 }

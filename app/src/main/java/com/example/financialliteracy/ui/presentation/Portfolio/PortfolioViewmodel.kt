@@ -21,9 +21,9 @@ class PortfolioViewmodel : ViewModel() {
         // Simulate data loading
         viewModelScope.launch {
             val assetList = listOf(
-                Asset(1, "House", 150000.0),
-                Asset(2, "Car", 20000.0),
-                Asset(3, "Laptop", 1000.0)
+                Asset(1, "TSLA", 150000.0),
+                Asset(2, "BTC", 20000.0),
+                Asset(3, "XAU", 1000.0)
             )
             _assets.value = assetList
         }
