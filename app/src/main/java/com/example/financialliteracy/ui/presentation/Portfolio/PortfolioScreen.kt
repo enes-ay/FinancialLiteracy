@@ -154,8 +154,8 @@ fun AssetRow(asset: Asset) {
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
-            Text(text = asset.name, fontSize = 21.sp, fontWeight = FontWeight.Bold, color = primary_color)
-            Text(text = "Value: $${asset.value}",  fontWeight = FontWeight.Medium,style = MaterialTheme.typography.bodyLarge)
+            Text(text = asset.symbol, fontSize = 21.sp, fontWeight = FontWeight.Bold, color = primary_color)
+            Text(text = "Value: $${asset.price}",  fontWeight = FontWeight.Medium,style = MaterialTheme.typography.bodyLarge)
         }
     }
 }
@@ -179,5 +179,5 @@ fun AssetListPreview() {
         Asset(2, "Bitcoin", 20000.0),
         Asset(3, "TSLA", 1000.0)
     )
-    AssetList(assets = mockAssets, paddingValues = PaddingValues(12.dp))
+    AssetList(mockAssets, paddingValues = PaddingValues(2.dp))
 }

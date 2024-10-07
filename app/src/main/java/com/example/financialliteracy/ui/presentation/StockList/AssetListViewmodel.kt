@@ -3,12 +3,8 @@ package com.example.financialliteracy.ui.presentation.StockList
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.financialliteracy.data.repository.StockRepository
-import com.example.financialliteracy.model.ApiResponse
-import com.example.financialliteracy.model.Data
 import com.example.financialliteracy.model.Result
-import com.example.financialliteracy.model.SearchResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.scopes.ViewScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
