@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -173,6 +174,9 @@ fun CryptosList(cryptoList: List<DataCrypto>) {
 
 @Composable
 fun CryptoRow(crypto: DataCrypto) {
+    val formattedPrice = String.format("%.2f", crypto.quote.USD.price)
+    val formattedMarketCap = String.format("%.2f", crypto.quote.USD.market_cap)
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -181,12 +185,11 @@ fun CryptoRow(crypto: DataCrypto) {
         elevation = CardDefaults.elevatedCardElevation(4.dp)
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(16.dp)
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
-            Text(text = crypto.name, style = MaterialTheme.typography.labelMedium)
-            Text(text = "Symbol: ${crypto.symbol}", style = MaterialTheme.typography.bodyMedium)
-            Text(text = "Price: $${crypto.quote.USD.price}", style = MaterialTheme.typography.bodyMedium)
-            Text(text = "Market Cap: $${crypto.quote.USD.market_cap}", style = MaterialTheme.typography.bodySmall)
+            Text(text = "${crypto.symbol}", fontSize = 23.sp, color = primary_color, fontWeight = FontWeight.Medium)
+            Text(text = "$${formattedPrice}", fontSize = 18.sp, fontWeight = FontWeight.Medium)
         }
     }
 }
