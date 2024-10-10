@@ -185,8 +185,8 @@ fun CryptoRow(crypto: DataCrypto) {
         ) {
             Text(text = crypto.name, style = MaterialTheme.typography.labelMedium)
             Text(text = "Symbol: ${crypto.symbol}", style = MaterialTheme.typography.bodyMedium)
-            Text(text = "Price: $${crypto.quote.price}", style = MaterialTheme.typography.bodyMedium)
-            Text(text = "Market Cap: $${crypto.quote.market_cap}", style = MaterialTheme.typography.bodySmall)
+            Text(text = "Price: $${crypto.quote.USD.price}", style = MaterialTheme.typography.bodyMedium)
+            Text(text = "Market Cap: $${crypto.quote.USD.market_cap}", style = MaterialTheme.typography.bodySmall)
         }
     }
 }
