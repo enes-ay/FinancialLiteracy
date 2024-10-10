@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.financialliteracy.ui.presentation.StockDetailViewmodel
-import com.example.financialliteracy.ui.presentation.StockList.StockListViewmodel
 
 @Composable
 fun StockDetailScreen(navController: NavController, stockSymbol: String?) {
