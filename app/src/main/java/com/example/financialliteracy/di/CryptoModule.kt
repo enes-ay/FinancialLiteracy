@@ -1,5 +1,6 @@
 package com.example.financialliteracy.di
 
+import com.example.financialliteracy.retrofit.AuthInterceptor
 import com.example.financialliteracy.retrofit.CryptoDao
 import com.example.financialliteracy.utils.Constants.API_KEY_CRYPTO
 import com.example.financialliteracy.utils.Constants.BASE_URL_CRYPTO
@@ -19,7 +20,7 @@ object CryptoModule {
     @Provides
     @Singleton
     fun provideCryptoRepository(remoteDataSource: CryptoRemoteDataSource): CryptoRepository {
-        return CryptoRepositoryImpl(remoteDataSource)
+        return CryptoRepository(remoteDataSource)
     }
 
     @Provides
