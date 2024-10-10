@@ -5,7 +5,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 
-interface CryptoDao {
+interface CryptoService {
     @GET("/v1/cryptocurrency/listings/latest")
     suspend fun getLatestCryptos(
         @Query("start") start: Int = 1,
