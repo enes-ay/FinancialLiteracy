@@ -20,6 +20,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -89,7 +90,8 @@ fun Login(navController: NavController) {
                         color = primary_color
                     )
 
-                    TextField(
+                    // E-mail field
+                    OutlinedTextField(
                         value = email.value,
                         onValueChange = {
                             email.value = it
@@ -97,43 +99,37 @@ fun Login(navController: NavController) {
                         },
                         label = { Text("Email") },
                         isError = emailError.value != null,
-                        colors = TextFieldDefaults.textFieldColors(
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
                             containerColor = Color.White,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
+                            focusedBorderColor = Color.Gray,
+                            unfocusedBorderColor = Color.Gray,
+                            errorBorderColor = Color.Red,
+                            errorLabelColor = Color.Red,
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(
-                                BorderStroke(2.dp, Color.Gray),
-                                shape = MaterialTheme.shapes.small
-                            )
                     )
                     if (emailError.value != null) {
                         Text(text = emailError.value!!, color = Color.Red, fontSize = 12.sp)
                     }
-
-                    TextField(
+                    // Password Field
+                    OutlinedTextField(
                         value = password.value,
-                        singleLine = true,
                         onValueChange = {
                             password.value = it
                             passwordError.value = null
                         },
                         label = { Text("Password") },
                         isError = passwordError.value != null,
-                        colors = TextFieldDefaults.textFieldColors(
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
                             containerColor = Color.White,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
+                            focusedBorderColor = Color.Gray,
+                            unfocusedBorderColor = Color.Gray,
+                            errorBorderColor = Color.Red,
+                            errorLabelColor = Color.Red,
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(
-                                BorderStroke(2.dp, Color.Gray),
-                                shape = MaterialTheme.shapes.small
-                            )
-
                     )
                     if (passwordError.value != null) {
                         Text(text = passwordError.value!!, color = Color.Red, fontSize = 12.sp)
