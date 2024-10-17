@@ -53,6 +53,7 @@ import androidx.navigation.NavHostController
 import com.example.financialliteracy.model.DataCrypto
 import com.example.financialliteracy.ui.presentation.Portfolio.AssetRow
 import com.example.financialliteracy.ui.theme.primary_color
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -174,8 +175,8 @@ fun CryptosList(cryptoList: List<DataCrypto>) {
 
 @Composable
 fun CryptoRow(crypto: DataCrypto) {
-    val formattedPrice = String.format("%.2f", crypto.quote.USD.price)
-    val formattedMarketCap = String.format("%.2f", crypto.quote.USD.market_cap)
+    val formattedPrice = String.format(Locale.US,"%,.2f", crypto.quote.USD.price)
+    val formattedMarketCap = String.format(Locale.US,"%,.2f", crypto.quote.USD.market_cap)
 
     Card(
         modifier = Modifier
