@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
@@ -34,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -51,22 +53,12 @@ import com.example.financialliteracy.ui.theme.primary_color
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home(navController: NavController, paddingValues: PaddingValues) {
-    val categoryList = remember { mutableStateListOf<Category>() }
+    val homeViewmodel : HomeViewmodel = hiltViewModel()
+    val educationalContentList by homeViewmodel.educationalContent.collectAsState(initial = emptyList())
+
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = true) {
-        val category1 = Category(1, "Budget Planning", "budget")
-        val category2 = Category(2, "Investing", "invest")
-        val category3 = Category(3, "Savings", "saving")
-        val category4 = Category(4, "Retirement Planning", "retirement")
-        val category5 = Category(5, "Debt Management", "debt")
-        val category6 = Category(6, "Credit Scores", "credit")
-        categoryList.add(category1)
-        categoryList.add(category2)
-        categoryList.add(category3)
-        categoryList.add(category4)
-        categoryList.add(category5)
-        categoryList.add(category6)
 
     }
     Scaffold(topBar = {
@@ -94,8 +86,8 @@ fun Home(navController: NavController, paddingValues: PaddingValues) {
                 .padding(paddingValues),
             columns = GridCells.Fixed(2),
         ) {
-            items(categoryList.count(), itemContent = {
-                val category = categoryList[it]
+            items(educationalContentList.count(), itemContent = {
+                val content = educationalContentList[it]
                 val color = colors[it % colors.size]
                 Card(
                     modifier = Modifier
@@ -110,14 +102,14 @@ fun Home(navController: NavController, paddingValues: PaddingValues) {
                             .background(color)
                             .padding(horizontal = 10.dp)
                             .clickable {
-                                navController.navigate("categoryDetail/${category.id}")
+                                navController.navigate("categoryDetail/${content.id}")
                             },
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
 
                         Text(
-                            text = category.name,
+                            text = content.title,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
