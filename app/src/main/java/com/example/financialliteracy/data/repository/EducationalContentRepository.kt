@@ -9,4 +9,5 @@ class EducationalContentRepository @Inject constructor(
     private val dataSource: EducationalContentDataSource
 ) {
     fun getEducationalContents(): Flow<List<EducationalContent>> = dataSource.getEducationalContents()
+    fun getEducationalContentDetail(categoryId: String): Flow<EducationalContent?> = dataSource.getContentDetail(categoryId)
 }

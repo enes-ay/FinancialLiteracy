@@ -30,4 +30,19 @@ class EducationalContentDataSource @Inject constructor(
 
         awaitClose { subscription.remove() }
     }.flowOn(Dispatchers.IO)
+
+    fun getContentDetail(categoryId: String): Flow<EducationalContent?> = callbackFlow {
+        val document = firestore.collection("educational_contents").document(categoryId)
+        val subscription = document.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                close(error)
+                return@addSnapshotListener
+            }
+
+            val categoryDetail = snapshot?.toObject(EducationalContent::class.java)
+            trySend(categoryDetail).isSuccess
+        }
+
+        awaitClose { subscription.remove() }
+    }.flowOn(Dispatchers.IO)
 }
