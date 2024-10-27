@@ -31,15 +31,15 @@ import androidx.navigation.compose.rememberNavController
 import com.example.financialliteracy.ui.presentation.Portfolio.Asset
 
 @Composable
-fun TradeScreen(  navController: NavHostController,asset: Asset) {
+fun TradeScreen(  navController: NavHostController, assetSymbol: String?, assetPrice: Int?) {
     Scaffold (Modifier.fillMaxSize()){ paddingValues->
 
         Column(modifier = Modifier.fillMaxSize().padding(paddingValues),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
             // Varlık ismi ve fiyatı
-            Text(text = "${asset.name} (${asset.symbol})", style = MaterialTheme.typography.displayMedium)
-            Text(text = "${asset.price} USD", style = MaterialTheme.typography.displaySmall)
+            Text(text = "${assetSymbol} (${assetSymbol})", style = MaterialTheme.typography.displayMedium)
+            Text(text = "${assetPrice} USD", style = MaterialTheme.typography.displaySmall)
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -55,7 +55,7 @@ fun TradeScreen(  navController: NavHostController,asset: Asset) {
             Spacer(modifier = Modifier.height(8.dp))
 
             // Toplam işlem tutarı
-            val totalPrice = amount.toDoubleOrNull()?.times(asset.value) ?: 0.0
+            val totalPrice = assetPrice?.let { amount.toDoubleOrNull()?.times(it) } ?: 0.0
             Text(text = "Total: $totalPrice USD", style = MaterialTheme.typography.labelLarge)
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -81,5 +81,5 @@ fun TradeScreenPreview() {
         Asset(2, "Bitcoin", 20000.0),
         Asset(3, "TSLA", 1000.0)
     )
-    TradeScreen(navController = rememberNavController(),asset = mockAssets.get(0))
+    //TradeScreen(navController = rememberNavController(),asset = mockAssets.get(0))
 }

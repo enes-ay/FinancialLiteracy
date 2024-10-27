@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.financialliteracy.model.DataCrypto
 import com.example.financialliteracy.ui.presentation.Portfolio.AssetRow
 import com.example.financialliteracy.ui.theme.primary_color
@@ -90,7 +91,7 @@ fun AssetListScreen(navController: NavHostController) {
             // Display content based on the selected tab
             when (selectedTabIndex) {
                 0 -> FavoriteAssetsList()
-                1 -> CryptosList(cryptoList)
+                1 -> CryptosList(cryptoList, navController)
                 2 -> StocksList()
             }
         }
@@ -158,7 +159,7 @@ fun FavoriteAssetsList() {
 }
 
 @Composable
-fun CryptosList(cryptoList: List<DataCrypto>) {
+fun CryptosList(cryptoList: List<DataCrypto>, navController: NavHostController) {
 
     LazyColumn(
         modifier = Modifier
@@ -168,20 +169,23 @@ fun CryptosList(cryptoList: List<DataCrypto>) {
         items(cryptoList) { crypto ->
             // API'den gelen DataCrypto modelini kullanarak her bir satırı gösteriyoruz
             Log.d("gelendata", "${crypto.name}")
-            CryptoRow(crypto)
+            CryptoRow(crypto, onClick = {
+                navController.navigate("assetTrade/${crypto.symbol}/${crypto.quote.USD.price.toInt()}")
+            })
         }
     }
 }
 
 @Composable
-fun CryptoRow(crypto: DataCrypto) {
+fun CryptoRow(crypto: DataCrypto, onClick: () -> Unit = {}) {
     val formattedPrice = String.format(Locale.US,"%,.2f", crypto.quote.USD.price)
     val formattedMarketCap = String.format(Locale.US,"%,.2f", crypto.quote.USD.market_cap)
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp),
+            .padding(vertical = 4.dp)
+            .clickable { onClick() },
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.elevatedCardElevation(4.dp)
     ) {

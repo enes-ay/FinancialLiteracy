@@ -16,53 +16,71 @@ import com.example.financialliteracy.ui.presentation.Register.Register
 import com.example.financialliteracy.ui.presentation.Splash.Splash
 import com.example.financialliteracy.ui.presentation.StockDetail.StockDetailScreen
 import com.example.financialliteracy.ui.presentation.AssetList.AssetListScreen
+import com.example.financialliteracy.ui.presentation.Trade.TradeScreen
 
 @Composable
 fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
 
-    NavHost(navController = navController, startDestination = "home"){
+    NavHost(navController = navController, startDestination = "home") {
 
-        composable("splash"){
-            Splash(navController= navController)
+        composable("splash") {
+            Splash(navController = navController)
         }
-        composable("home"){
-            Home(navController= navController, paddingValues=paddingValues)
+        composable("home") {
+            Home(navController = navController, paddingValues = paddingValues)
         }
-        composable("profile"){
+        composable("profile") {
             Profile(navController = navController)
         }
-        composable("list"){
+        composable("list") {
             Profile(navController = navController)
         }
-        composable("portfolio"){
-            PortfolioScreen(navController= navController)
+        composable("portfolio") {
+            PortfolioScreen(navController = navController)
         }
-        composable("register"){
+        composable("register") {
             Register(navController = navController)
         }
-        composable("login"){
+        composable("login") {
             Login(navController = navController)
         }
-        composable("categoryDetail/{id}",
+        composable(
+            "categoryDetail/{id}",
             arguments = listOf(navArgument(
-                "id"){
+                "id"
+            ) {
                 type = NavType.StringType
-            }))
+            })
+        )
         {
             val categoryId = it.arguments?.getString("id")
             CategoryDetail(navController = navController, categoryId)
 
         }
-        composable("stockList"){
+        composable("stockList") {
             AssetListScreen(navController = navController)
         }
         composable("stockDetail/{symbol}",
-            arguments = listOf(navArgument("symbol"){
+            arguments = listOf(navArgument("symbol") {
                 type = NavType.StringType
-            }))
+            })
+        )
         {
             val stockSymbol = it.arguments?.getString("symbol")
             StockDetailScreen(navController = navController, stockSymbol)
+
+        }
+        composable("assetTrade/{symbol}/{price}",
+            arguments = listOf(navArgument("symbol") {
+                type = NavType.StringType
+            }, navArgument("price") {
+                type = NavType.IntType
+            })
+        )
+        {
+            val assetSymbol = it.arguments?.getString("symbol")
+            val assetPrice = it.arguments?.getInt("price")
+            TradeScreen(navController = navController, assetSymbol, assetPrice)
 
         }
 
