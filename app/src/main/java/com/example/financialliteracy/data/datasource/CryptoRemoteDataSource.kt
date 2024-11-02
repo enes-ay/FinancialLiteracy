@@ -1,8 +1,8 @@
 package com.example.financialliteracy.data.datasource
 
+import android.util.Log
 import com.example.financialliteracy.model.DataCrypto
-import com.example.financialliteracy.model.LatestResponse
-import com.example.financialliteracy.retrofit.CryptoService
+import com.example.financialliteracy.service.CryptoService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -26,4 +26,15 @@ class CryptoRemoteDataSource @Inject constructor(val cryptoService: CryptoServic
         // Hata durumunda yapılacak işlemler
         println("Error: $e")
     }
+
+//    fun getLatestCrypto(symbol: String): Flow<DataCrypto> = flow {
+//        val response = cryptoService.getLatestCrypto(symbol)
+//        println("RESPONSE"+response)
+//
+//        response.data.let {
+//
+//            emit(it)
+//
+//        }
+//    }
 }

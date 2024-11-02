@@ -1,13 +1,9 @@
-package com.example.financialliteracy.retrofit
+package com.example.financialliteracy.service
 
 import com.example.financialliteracy.model.ApiResponse
 import com.example.financialliteracy.model.SearchResponse
-import com.example.financialliteracy.model.StockResponse
 import com.example.financialliteracy.utils.Constants
-import retrofit2.Call
 import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Headers
 import retrofit2.http.Query
 
 interface StockDao {

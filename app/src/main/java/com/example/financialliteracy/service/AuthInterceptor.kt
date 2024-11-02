@@ -1,4 +1,4 @@
-package com.example.financialliteracy.retrofit
+package com.example.financialliteracy.service
 
 import okhttp3.Interceptor
 import okhttp3.Response

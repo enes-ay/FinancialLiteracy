@@ -1,6 +1,5 @@
-package com.example.financialliteracy.retrofit
+package com.example.financialliteracy.service
 
-import com.google.gson.GsonBuilder
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

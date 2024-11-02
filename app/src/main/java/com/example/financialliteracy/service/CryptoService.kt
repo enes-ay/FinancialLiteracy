@@ -1,4 +1,4 @@
-package com.example.financialliteracy.retrofit
+package com.example.financialliteracy.service
 
 import com.example.financialliteracy.model.LatestResponse
 import retrofit2.http.GET
@@ -12,4 +12,10 @@ interface CryptoService {
         @Query("limit") limit: Int = 10,
         @Query("convert") convert: String = "USD"
     ): LatestResponse
+
+//    @GET("/v2/cryptocurrency/quotes/latest")
+//    suspend fun getLatestCrypto(
+//        @Query("id") symbol: String = "1",
+//        @Query("convert") convert: String = "USD"
+//    ): DetailResponse
 }
