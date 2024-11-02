@@ -53,7 +53,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.financialliteracy.model.DataCrypto
 import com.example.financialliteracy.ui.presentation.Portfolio.AssetRow
+import com.example.financialliteracy.ui.presentation.Trade.TradeViewmodel
 import com.example.financialliteracy.ui.theme.primary_color
+import com.google.gson.Gson
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,6 +64,7 @@ fun AssetListScreen(navController: NavHostController) {
     val tabs = listOf("Favorites", "Crypto", "Stock","Bonds")
     var selectedTabIndex by remember { mutableStateOf(0) }
     val assetListViewModel : AssetListViewmodel = hiltViewModel()
+    val tradeViewmodel : TradeViewmodel = hiltViewModel()
     val cryptoList by assetListViewModel.cryptoData.collectAsState()
 
     LaunchedEffect(true) {
@@ -91,7 +94,7 @@ fun AssetListScreen(navController: NavHostController) {
             // Display content based on the selected tab
             when (selectedTabIndex) {
                 0 -> FavoriteAssetsList()
-                1 -> CryptosList(cryptoList, navController)
+                1 -> CryptosList(cryptoList, navController, tradeViewmodel)
                 2 -> StocksList()
             }
         }
@@ -159,7 +162,7 @@ fun FavoriteAssetsList() {
 }
 
 @Composable
-fun CryptosList(cryptoList: List<DataCrypto>, navController: NavHostController) {
+fun CryptosList(cryptoList: List<DataCrypto>, navController: NavHostController, tradeViewmodel: TradeViewmodel) {
 
     LazyColumn(
         modifier = Modifier
@@ -170,7 +173,8 @@ fun CryptosList(cryptoList: List<DataCrypto>, navController: NavHostController) 
             // API'den gelen DataCrypto modelini kullanarak her bir satırı gösteriyoruz
             Log.d("gelendata", "${crypto.name}")
             CryptoRow(crypto, onClick = {
-                navController.navigate("assetTrade/${crypto.symbol}/${crypto.quote.USD.price.toInt()}")
+                val crypto_json = Gson().toJson(crypto)
+                navController.navigate("assetTrade/$crypto_json")
             })
         }
     }
@@ -195,6 +199,7 @@ fun CryptoRow(crypto: DataCrypto, onClick: () -> Unit = {}) {
         ) {
             Text(text = "${crypto.symbol}", fontSize = 23.sp, color = primary_color, fontWeight = FontWeight.Medium)
             Text(text = "$${formattedPrice}", fontSize = 18.sp, fontWeight = FontWeight.Medium)
+            Text(text = "$${crypto.id}", fontSize = 18.sp, fontWeight = FontWeight.Medium)
         }
     }
 }

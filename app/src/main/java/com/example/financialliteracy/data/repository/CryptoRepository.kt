@@ -2,12 +2,9 @@ package com.example.financialliteracy.data.repository
 
 import com.example.financialliteracy.data.datasource.CryptoRemoteDataSource
 import com.example.financialliteracy.model.DataCrypto
-import com.example.financialliteracy.model.LatestResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
-import javax.inject.Singleton
 
 //@Singleton
 class CryptoRepository @Inject constructor(val cryptoRemoteDataSource: CryptoRemoteDataSource) {
@@ -20,4 +17,10 @@ class CryptoRepository @Inject constructor(val cryptoRemoteDataSource: CryptoRem
                 emit(emptyList()) // Hata durumunda boş bir liste dönebiliriz
             }
     }
+//    fun getLatestCrypto(symbol: String): Flow<X1> {
+//        return cryptoRemoteDataSource.getLatestCrypto(symbol)
+//            .catch {
+//                Log.e("detailerror", it.message.toString())
+//            }
+//    }
 }

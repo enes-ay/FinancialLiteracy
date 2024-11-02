@@ -7,6 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.financialliteracy.model.DataCrypto
 import com.example.financialliteracy.ui.presentation.CategoryDetail.CategoryDetail
 import com.example.financialliteracy.ui.presentation.Home.Home
 import com.example.financialliteracy.ui.presentation.Login.Login
@@ -17,6 +18,7 @@ import com.example.financialliteracy.ui.presentation.Splash.Splash
 import com.example.financialliteracy.ui.presentation.StockDetail.StockDetailScreen
 import com.example.financialliteracy.ui.presentation.AssetList.AssetListScreen
 import com.example.financialliteracy.ui.presentation.Trade.TradeScreen
+import com.google.gson.Gson
 
 @Composable
 fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
@@ -70,17 +72,15 @@ fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
             StockDetailScreen(navController = navController, stockSymbol)
 
         }
-        composable("assetTrade/{symbol}/{price}",
-            arguments = listOf(navArgument("symbol") {
+        composable("assetTrade/{crypto}",
+            arguments = listOf(navArgument("crypto") {
                 type = NavType.StringType
-            }, navArgument("price") {
-                type = NavType.IntType
             })
         )
         {
-            val assetSymbol = it.arguments?.getString("symbol")
-            val assetPrice = it.arguments?.getInt("price")
-            TradeScreen(navController = navController, assetSymbol, assetPrice)
+            val crypto_json = it.arguments?.getString("crypto")
+            val crypto = Gson().fromJson(crypto_json, DataCrypto::class.java)
+            TradeScreen(navController = navController, asset = crypto)
 
         }
 

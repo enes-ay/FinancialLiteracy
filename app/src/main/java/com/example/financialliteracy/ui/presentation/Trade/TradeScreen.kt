@@ -1,5 +1,6 @@
 package com.example.financialliteracy.ui.presentation.Trade
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +16,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,20 +29,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.financialliteracy.model.DataCrypto
 import com.example.financialliteracy.ui.presentation.Portfolio.Asset
+import java.util.Locale
 
 @Composable
-fun TradeScreen(  navController: NavHostController, assetSymbol: String?, assetPrice: Int?) {
+fun TradeScreen(navController: NavHostController, asset: DataCrypto) {
+    val tradeViewmodel : TradeViewmodel = hiltViewModel()
+    val formattedPrice = String.format(Locale.US,"%,.2f", asset.quote.USD.price)
+
     Scaffold (Modifier.fillMaxSize()){ paddingValues->
 
         Column(modifier = Modifier.fillMaxSize().padding(paddingValues),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
             // Varlık ismi ve fiyatı
-            Text(text = "${assetSymbol} (${assetSymbol})", style = MaterialTheme.typography.displayMedium)
-            Text(text = "${assetPrice} USD", style = MaterialTheme.typography.displaySmall)
+            Text(asset.name, fontSize = 26.sp)
+            Text(formattedPrice, fontSize = 22.sp)
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -55,8 +65,8 @@ fun TradeScreen(  navController: NavHostController, assetSymbol: String?, assetP
             Spacer(modifier = Modifier.height(8.dp))
 
             // Toplam işlem tutarı
-            val totalPrice = assetPrice?.let { amount.toDoubleOrNull()?.times(it) } ?: 0.0
-            Text(text = "Total: $totalPrice USD", style = MaterialTheme.typography.labelLarge)
+//            val totalPrice = asset?.quote?.USD?.let { amount.toDoubleOrNull()?.times(it) } ?: 0.0
+//            Text(text = "Total: $totalPrice USD", style = MaterialTheme.typography.labelLarge)
 
             Spacer(modifier = Modifier.height(16.dp))
 

@@ -1,6 +1,6 @@
 package com.example.financialliteracy.data.datasource
 
-import com.example.financialliteracy.retrofit.StockDao
+import com.example.financialliteracy.service.StockDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

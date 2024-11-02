@@ -2,7 +2,7 @@ package com.example.financialliteracy.di
 
 import com.example.financialliteracy.data.datasource.StockDataSource
 import com.example.financialliteracy.data.repository.StockRepository
-import com.example.financialliteracy.retrofit.StockDao
+import com.example.financialliteracy.service.StockDao
 import com.example.financialliteracy.utils.Constants
 import dagger.Module
 import dagger.Provides
