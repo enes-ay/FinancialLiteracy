@@ -1,6 +1,7 @@
 package com.example.financialliteracy.di
 
 import com.example.financialliteracy.data.datasource.WalletDatasource
+import com.example.financialliteracy.data.repository.AuthRepository
 import com.example.financialliteracy.data.repository.TradeRepository
 import com.example.financialliteracy.data.repository.WalletRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -32,13 +33,19 @@ object FirebaseModule {
     }
     @Provides
     @Singleton
-    fun provideTradeRepository(firestore: FirebaseFirestore): TradeRepository {
-        return TradeRepository(firestore)
+    fun provideTradeRepository(firestore: FirebaseFirestore, walletRepository: WalletRepository, authRepository: AuthRepository): TradeRepository {
+        return TradeRepository(firestore, authRepository, walletRepository)
     }
 
     @Provides
     @Singleton
-    fun provideUserRepository(firebaseDataSource: WalletDatasource): WalletRepository {
-        return WalletRepository(firebaseDataSource)
+    fun provideWalletRepository(firestore: FirebaseFirestore): WalletRepository {
+        return WalletRepository(firestore)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(firebaseAuth: FirebaseAuth, walletRepository: WalletRepository, firestore: FirebaseFirestore): AuthRepository {
+        return AuthRepository(firebaseAuth, walletRepository, firestore)
     }
 }

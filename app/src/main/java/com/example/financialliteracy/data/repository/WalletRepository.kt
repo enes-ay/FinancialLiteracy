@@ -1,33 +1,67 @@
 package com.example.financialliteracy.data.repository
 
+import android.util.Log
 import com.example.financialliteracy.data.datasource.WalletDatasource
 import com.example.financialliteracy.model.Trade.Transaction
 import com.example.financialliteracy.ui.presentation.Portfolio.Asset
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-class WalletRepository @Inject constructor(val walletDatasource: WalletDatasource) {
+class WalletRepository @Inject constructor(val firestore: FirebaseFirestore) {
+
+    fun initializeUserData(userId: String, initialBalance: Double) {
+        val userRef = firestore.collection("Users").document(userId)
+        val userData = mapOf(
+            "Balance" to initialBalance,
+            "Assets" to emptyList<Map<String, Any>>() // Başlangıçta boş varlık listesi
+        )
+
+        userRef.set(userData)
+            .addOnSuccessListener { Log.d("UserRepository", "User data initialized") }
+            .addOnFailureListener { e ->
+                Log.e(
+                    "UserRepository",
+                    "Error initializing user data",
+                    e
+                )
+            }
+    }
 
     suspend fun getUserBalance(userId: String): Double {
-        return walletDatasource.getUserBalance(userId)
+        val userRef = firestore.collection("Users").document(userId)
+        val snapshot = userRef.get().await()
+        return snapshot.getDouble("Balance") ?: 0.0
     }
 
     suspend fun updateUserBalance(userId: String, newBalance: Double) {
-        walletDatasource.updateUserBalance(userId, newBalance)
+        firestore.collection("Users").document(userId).update("Balance", newBalance).await()
+    }
+    suspend fun getUserAssets(userId: String): Map<String, Double> {
+        val userRef = firestore.collection("Users").document(userId)
+        val snapshot = userRef.get().await()
+        return snapshot.get("Assets") as? Map<String, Double> ?: emptyMap()
     }
 
-    suspend fun addAssetToWallet(userId: String, assetId: String, symbol: String, amount: Double, price: Double) {
-        walletDatasource.addAssetToWallet(userId, assetId, symbol, amount, price)
+    suspend fun addUserAsset(userId: String, symbol: String, amount: Double) {
+        val userRef = firestore.collection("Users").document(userId)
+        val snapshot = userRef.get().await()
+
+        // Mevcut varlıkları çek
+        val currentAssets = snapshot.get("Assets") as? MutableMap<String, Double> ?: mutableMapOf()
+
+        // Yeni varlık miktarını hesapla (varsa üstüne ekle)
+        val updatedAmount = (currentAssets[symbol] ?: 0.0) + amount
+        currentAssets[symbol] = updatedAmount
+
+        // Firestore'da güncelle
+        userRef.update("Assets", currentAssets).await()
     }
 
-    suspend fun getUserWallet(userId: String): List<Asset> {
-        return walletDatasource.getUserWallet(userId)
-    }
+    suspend fun updateUserAsset(userId: String, symbol: String, newQuantity: Double) {
+        val userRef = firestore.collection("Users").document(userId)
+        val userAssets = getUserAssets(userId).toMutableMap()
 
-    suspend fun addTransaction(userId: String, transactionType: String, symbol: String, amount: Double, price: Double) {
-        walletDatasource.addTransaction(userId, transactionType, symbol, amount, price)
-    }
-
-    suspend fun getUserTransactions(userId: String): List<Transaction> {
-        return walletDatasource.getUserTransactions(userId)
-    }
+        userAssets[symbol] = (userAssets[symbol] ?: 0.0) + newQuantity
+        userRef.update("Assets", userAssets).await()    }
 }
