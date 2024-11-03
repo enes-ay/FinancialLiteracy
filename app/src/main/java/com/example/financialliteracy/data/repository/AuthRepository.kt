@@ -9,15 +9,21 @@ import kotlinx.coroutines.tasks.await
 import java.util.concurrent.Flow
 import javax.inject.Inject
 
-class AuthRepository @Inject constructor(private val firebaseAuth: FirebaseAuth){
+class AuthRepository @Inject constructor(private val firebaseAuth: FirebaseAuth, private val walletRepository: WalletRepository){
 
-    suspend fun signUp(email:String, password:String) : Resource<String>{
-        return  try {
+    suspend fun signUp(email: String, password: String): Resource<String> {
+        return try {
             val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
-            return Resource.Success(result.user?.uid.orEmpty())
-        }catch (e:Exception){
-            Resource.Error(e)
+            val userId = result.user?.uid.orEmpty()
 
+            if (userId.isNotEmpty()) {
+                // Yeni kullanıcıya başlangıç bakiyesi atanır
+                walletRepository.initializeUserData(userId, 10000.0)
+            }
+
+            Resource.Success(userId)
+        } catch (e: Exception) {
+            Resource.Error(e)
         }
     }
 
@@ -39,4 +45,5 @@ class AuthRepository @Inject constructor(private val firebaseAuth: FirebaseAuth)
     }
 
     fun isUserLoggedIn(): Boolean = firebaseAuth.currentUser!=null
+    fun getCurrentUserId() : String? = firebaseAuth.currentUser?.uid
 }
