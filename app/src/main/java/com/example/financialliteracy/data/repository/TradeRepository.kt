@@ -1,5 +1,6 @@
 package com.example.financialliteracy.data.repository
 
+import com.example.financialliteracy.common.Resource
 import com.example.financialliteracy.model.Trade.Asset
 import com.example.financialliteracy.model.Trade.Transaction
 import com.google.firebase.Timestamp
@@ -7,36 +8,43 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-class TradeRepository @Inject constructor(val firestore: FirebaseFirestore)  {
+class TradeRepository @Inject constructor(val firestore: FirebaseFirestore, val authRepository: AuthRepository, val walletRepository: WalletRepository)  {
     private val userAssetsCollection = firestore.collection("Users").document("userId").collection("Assets")
     private val transactionsCollection = firestore.collection("Users").document("userId").collection("Transactions")
+    private val userId = authRepository.getCurrentUserId() ?: ""
 
     suspend fun getAssets(): List<Asset> {
         return userAssetsCollection.get().await().toObjects(Asset::class.java)
     }
 
-    fun buyAsset(asset: Asset, amount: Double) {
-        val transaction = Transaction(type = "BUY", amount = amount, price = asset.price, symbol = asset.symbol, date = Timestamp.now())
-        transactionsCollection.add(transaction)
+    suspend fun buyAsset(asset: Asset, amount: Double): Resource<String> {
 
-        userAssetsCollection.document(asset.id).get().addOnSuccessListener { document ->
-            if (document.exists()) {
-                val updatedQuantity = document.getDouble("quantity")!! + amount
-                userAssetsCollection.document(asset.id).update("quantity", updatedQuantity)
-            } else {
-                userAssetsCollection.document(asset.id).set(asset.copy(quantity = amount))
-            }
+        val totalCost = asset.price * amount
+        // Kullanıcının mevcut bakiyesini kontrol et
+        val currentBalance = walletRepository.getUserBalance(userId)
+        return if (currentBalance >= totalCost) {
+            // Yeterli bakiye varsa, bakiye ve varlık listesini güncelle
+            walletRepository.updateUserBalance(userId, currentBalance - totalCost)
+            walletRepository.updateUserAsset(userId, asset.symbol, amount)
+            Resource.Success("Asset purchased successfully")
+        } else {
+            Resource.Error(Exception("Insufficient balance"))
         }
     }
-    fun sellAsset(asset: Asset, amount: Double) {
-        val transaction = Transaction(type = "SELL", amount = amount)
-        transactionsCollection.add(transaction)
+    suspend fun sellAsset(asset: Asset, amount: Double): Resource<String> {
+        val userId = authRepository.getCurrentUserId() ?: return Resource.Error(Exception("User not logged in"))
+        val userAssets = walletRepository.getUserAssets(userId)
+        val assetQuantity = userAssets[asset.symbol] ?: 0.0
 
-        userAssetsCollection.document(asset.id).get().addOnSuccessListener { document ->
-            if (document.exists()) {
-                val updatedQuantity = document.getDouble("quantity")!! - amount
-                userAssetsCollection.document(asset.id).update("quantity", updatedQuantity)
-            }
+        return if (assetQuantity >= amount) {
+            val totalRevenue = asset.price * amount
+            val currentBalance = walletRepository.getUserBalance(userId)
+
+            walletRepository.updateUserBalance(userId, currentBalance + totalRevenue)
+            walletRepository.updateUserAsset(userId, asset.symbol, -amount)
+            Resource.Success("Asset sold successfully")
+        } else {
+            Resource.Error(Exception("Insufficient asset quantity"))
         }
     }
 }

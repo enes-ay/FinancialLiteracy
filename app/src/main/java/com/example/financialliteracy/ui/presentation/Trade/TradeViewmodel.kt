@@ -5,39 +5,57 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.financialliteracy.common.Resource
+import com.example.financialliteracy.data.repository.AuthRepository
 import com.example.financialliteracy.data.repository.CryptoRepository
 import com.example.financialliteracy.data.repository.TradeRepository
+import com.example.financialliteracy.data.repository.WalletRepository
 import com.example.financialliteracy.model.DataCrypto
 import com.example.financialliteracy.model.Trade.Asset
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class TradeViewmodel @Inject constructor(val tradeRepository: TradeRepository) : ViewModel()  {
-    private val _assets = MutableLiveData<List<Asset>>()
-    val assets: LiveData<List<Asset>> = _assets
+class TradeViewmodel @Inject constructor(
+    val authRepository: AuthRepository,
+    val tradeRepository: TradeRepository, val walletRepository: WalletRepository) : ViewModel()  {
+    private val _errorMessage = MutableLiveData<String?>()
+    val errorMessage: LiveData<String?> get() = _errorMessage
 
-    fun loadAssets() {
+    private val _balance = MutableLiveData<Double>()
+    val balance: LiveData<Double> get() = _balance
+
+    private val _assets = MutableLiveData<Map<String, Double>>()
+    val assets: LiveData<Map<String, Double>> get() = _assets
+
+    fun loadUserData() {
+        val userId = authRepository.getCurrentUserId() ?: return
         viewModelScope.launch {
-            _assets.value = tradeRepository.getAssets()
+            _balance.value = walletRepository.getUserBalance(userId)
+            _assets.value = walletRepository.getUserAssets(userId)
         }
     }
 
-    fun buyAsset(asset: Asset, quantity: Double) {
+    fun buyAsset(asset: Asset, amount: Double) {
         viewModelScope.launch {
-            tradeRepository.buyAsset(asset, quantity)
-            loadAssets()
+            val result = tradeRepository.buyAsset(asset, amount)
+            if (result is Resource.Error) {
+                _errorMessage.value = result.exception.toString()
+            } else {
+                loadUserData()
+            }
         }
     }
 
-    fun sellAsset(asset: Asset, quantity: Double) {
+    fun sellAsset(asset: Asset, amount: Double) {
         viewModelScope.launch {
-            tradeRepository.sellAsset(asset, quantity)
-            loadAssets()
+            val result = tradeRepository.sellAsset(asset, amount)
+            if (result is Resource.Error) {
+                _errorMessage.value = result.exception.message
+            } else {
+                loadUserData()
+            }
         }
     }
 }
