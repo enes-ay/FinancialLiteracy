@@ -149,7 +149,7 @@ fun Register(modifier: Modifier = Modifier, navController: NavController) {
 
                     is AuthState.Authenticated -> {
                         Text(text = "Registration is Successful!")
-                        navController.navigate("foodList")
+                        navController.navigate("home")
                     }
 
                     is AuthState.Error -> {
