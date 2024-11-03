@@ -1,6 +1,7 @@
 package com.example.financialliteracy.di
 
 import com.example.financialliteracy.data.datasource.WalletDatasource
+import com.example.financialliteracy.data.repository.TradeRepository
 import com.example.financialliteracy.data.repository.WalletRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -28,6 +29,11 @@ object FirebaseModule {
     @Singleton
     fun provideFirebaseDataSource(firestore: FirebaseFirestore): WalletDatasource {
         return WalletDatasource(firestore)
+    }
+    @Provides
+    @Singleton
+    fun provideTradeRepository(firestore: FirebaseFirestore): TradeRepository {
+        return TradeRepository(firestore)
     }
 
     @Provides
