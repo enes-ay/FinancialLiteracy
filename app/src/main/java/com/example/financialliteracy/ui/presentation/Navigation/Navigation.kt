@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.financialliteracy.model.DataCrypto
+import com.example.financialliteracy.model.Trade.toAsset
 import com.example.financialliteracy.ui.presentation.CategoryDetail.CategoryDetail
 import com.example.financialliteracy.ui.presentation.Home.Home
 import com.example.financialliteracy.ui.presentation.Login.Login
@@ -80,7 +81,7 @@ fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
         {
             val crypto_json = it.arguments?.getString("crypto")
             val crypto = Gson().fromJson(crypto_json, DataCrypto::class.java)
-            TradeScreen(navController = navController, asset = crypto)
+            TradeScreen(navController = navController, asset = crypto.toAsset())
 
         }
 
