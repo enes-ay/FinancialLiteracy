@@ -29,12 +29,4 @@ class RegisterViewmodel @Inject constructor(private val authRepository: AuthRepo
             }
         }
     }
-
-
-}
-sealed class AuthState {
-    object Idle : AuthState()
-    object Loading : AuthState()
-    object Authenticated : AuthState()
-    data class Error(val message: String) : AuthState()
 }

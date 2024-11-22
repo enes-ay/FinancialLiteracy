@@ -1,7 +1,7 @@
 package com.enesay.financialliteracy.data.datasource
 
+import com.enesay.financialliteracy.model.Trade.Asset
 import com.enesay.financialliteracy.model.Trade.Transaction
-import com.enesay.financialliteracy.ui.presentation.Portfolio.Asset
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
