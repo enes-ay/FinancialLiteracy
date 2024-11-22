@@ -1,7 +1,9 @@
 package com.enesay.financialliteracy.ui.presentation.Home
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,12 +13,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -50,7 +54,7 @@ import com.enesay.financialliteracy.ui.theme.primary_color
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home(navController: NavController) {
-    val homeViewmodel : HomeViewmodel = hiltViewModel()
+    val homeViewmodel: HomeViewmodel = hiltViewModel()
     val educationalContentList by homeViewmodel.educationalContent.collectAsState(initial = emptyList())
 
     val scope = rememberCoroutineScope()
@@ -135,6 +139,15 @@ fun BottomBar(navController: NavController) {
         Screen.Portolio
     )
     NavigationBar(
+        modifier = Modifier.border(
+            BorderStroke(1.dp, Color.Gray.copy(alpha = 0.2f)), // Şeffaf bir gri sınır
+            shape = CutCornerShape(
+                topStart = 0.dp,
+                topEnd = 0.dp,
+                bottomEnd = 0.dp,
+                bottomStart = 0.dp
+            )
+        ),
         containerColor = Color.White,
         contentColor = Color.Black,
     ) {
@@ -145,27 +158,27 @@ fun BottomBar(navController: NavController) {
             NavigationBarItem(selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
                 onClick = {
                     navController.navigate(item.route) {
-                        // Pop up to the start destination of the graph to
-                        // avoid building up a large stack of destinations
-                        // on the back stack as users select items
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
-                        // Avoid multiple copies of the same destination when
-                        // reselecting the same item
                         launchSingleTop = true
-                        // Restore state when reselecting a previously selected item
                         restoreState = true
                     }
                 },
                 icon = {
                     Image(
-                        modifier = Modifier.size(27.dp),
+                        modifier = Modifier.size(24.dp),
                         painter = painterResource(id = item.iconId),
                         contentDescription = item.label
                     )
                 },
-                label = { Text(text = item.label) })
+                label = { Text(text = item.label, fontSize = 13.sp) },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = primary_color,
+                    selectedTextColor = primary_color,
+                    indicatorColor = Color.Transparent
+                )
+            )
         }
 
     }
