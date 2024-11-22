@@ -24,7 +24,7 @@ import com.google.gson.Gson
 @Composable
 fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
 
-    NavHost(navController = navController, startDestination = "register") {
+    NavHost(navController = navController, startDestination = "splash") {
 
         composable("splash") {
             Splash(navController = navController)

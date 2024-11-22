@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -33,18 +34,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.enesay.financialliteracy.model.Trade.Asset
+import com.enesay.financialliteracy.ui.presentation.Login.LoginViewmodel
 import com.enesay.financialliteracy.ui.theme.primary_color
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PortfolioScreen(navController: NavHostController) {
     var viewModel: PortfolioViewmodel = hiltViewModel()
-    val assets by viewModel.assets.collectAsState()
+    var loginViewmodel: LoginViewmodel = hiltViewModel()
+    var portfolioViewmodel: PortfolioViewmodel = hiltViewModel()
+    val assets by viewModel.userAssets.collectAsState()
+    val balance by viewModel.balance.collectAsState()
+    val currentUserId by loginViewmodel.currentUser
+
+    LaunchedEffect(balance){
+        currentUserId?.let {
+        viewModel.getBalance(it)
+        portfolioViewmodel.getUserAssets(it)}
+    }
 
     Scaffold(
         topBar = {
@@ -63,12 +75,12 @@ fun PortfolioScreen(navController: NavHostController) {
                 .padding(paddingValues),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            BalanceCard(2345.23)
+            BalanceCard(balance)
 
             if (assets.isEmpty()) {
                 EmptyState(paddingValues)
             } else {
-                AssetList(assets = assets, paddingValues)
+                AssetList(assets = assets)
             }
         }
     }
@@ -123,7 +135,7 @@ fun BalanceCard(balance: Double) {
 
 
 @Composable
-fun AssetList(assets: List<Asset>, paddingValues: PaddingValues) {
+fun AssetList(assets: List<Asset>) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -147,10 +159,12 @@ fun AssetRow(asset: Asset) {
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(5.dp)
+            verticalArrangement = Arrangement.spacedBy(5.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = asset.symbol, fontSize = 21.sp, fontWeight = FontWeight.Bold, color = primary_color)
-            Text(text = "Value: $${asset.price}",  fontWeight = FontWeight.Medium,style = MaterialTheme.typography.bodyLarge)
+            Text(text = asset.name, fontSize = 21.sp, fontWeight = FontWeight.Bold, color = primary_color)
+            Text(text = asset.symbol,  fontWeight = FontWeight.Medium,style = MaterialTheme.typography.bodyLarge)
+            Text(text = "${asset.quantity}",  fontWeight = FontWeight.Medium,style = MaterialTheme.typography.bodyLarge)
         }
     }
 }
@@ -164,15 +178,4 @@ fun EmptyState(paddingValues: PaddingValues) {
     ) {
         Text("No assets found.")
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AssetListPreview() {
-    val mockAssets = listOf(
-        Asset(1, "Gold", 1500.0),
-        Asset(2, "Bitcoin", 20000.0),
-        Asset(3, "TSLA", 1000.0)
-    )
-    AssetList(mockAssets, paddingValues = PaddingValues(2.dp))
 }
