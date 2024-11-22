@@ -41,6 +41,7 @@ import androidx.navigation.NavHostController
 import com.enesay.financialliteracy.model.Trade.Asset
 import com.enesay.financialliteracy.ui.presentation.Login.LoginViewmodel
 import com.enesay.financialliteracy.ui.theme.primary_color
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,7 +76,8 @@ fun PortfolioScreen(navController: NavHostController) {
                 .padding(paddingValues),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            BalanceCard(balance)
+            val formattedBalance = String.format(Locale.US,"%,.2f", balance)
+            BalanceCard(formattedBalance)
 
             if (assets.isEmpty()) {
                 EmptyState(paddingValues)
@@ -87,7 +89,7 @@ fun PortfolioScreen(navController: NavHostController) {
 }
 
 @Composable
-fun BalanceCard(balance: Double) {
+fun BalanceCard(balance: String) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -106,7 +108,7 @@ fun BalanceCard(balance: Double) {
         ) {
             Text(
                 text = "Total Balance",
-                fontSize = 24.sp,
+                fontSize = 20.sp,
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
             )
@@ -119,13 +121,13 @@ fun BalanceCard(balance: Double) {
                     modifier = Modifier.padding(top = 16.dp),
                     text = "$${balance}",
                     color = Color.White,
-                    fontSize = 25.sp
+                    fontSize = 22.sp
                 )
                 // Optional: Add an icon button for settings or actions
-                    Icon(modifier = Modifier.size(46.dp),
-                        imageVector =Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    Icon(modifier = Modifier.size(42.dp),
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                         tint = Color.White,
-                        contentDescription = "Settings"
+                        contentDescription = "Balance details"
                     )
 
             }
@@ -162,7 +164,6 @@ fun AssetRow(asset: Asset) {
             verticalArrangement = Arrangement.spacedBy(5.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = asset.name, fontSize = 21.sp, fontWeight = FontWeight.Bold, color = primary_color)
             Text(text = asset.symbol,  fontWeight = FontWeight.Medium,style = MaterialTheme.typography.bodyLarge)
             Text(text = "${asset.quantity}",  fontWeight = FontWeight.Medium,style = MaterialTheme.typography.bodyLarge)
         }

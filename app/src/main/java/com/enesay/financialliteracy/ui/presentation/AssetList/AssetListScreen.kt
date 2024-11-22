@@ -59,7 +59,7 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AssetListScreen(navController: NavHostController) {
-    val tabs = listOf("Favorites", "Crypto", "Stock","Bonds")
+    val tabs = listOf("Crypto", "Favorites", "Stock","Bonds")
     var selectedTabIndex by remember { mutableStateOf(0) }
     val assetListViewModel : AssetListViewmodel = hiltViewModel()
     val tradeViewmodel : TradeViewmodel = hiltViewModel()
@@ -91,8 +91,8 @@ fun AssetListScreen(navController: NavHostController) {
 
             // Display content based on the selected tab
             when (selectedTabIndex) {
-                0 -> FavoriteAssetsList()
-                1 -> CryptosList(cryptoList, navController, tradeViewmodel)
+                0 -> CryptosList(cryptoList, navController, tradeViewmodel)
+                1 -> FavoriteAssetsList()
                 2 -> StocksList()
             }
         }
@@ -147,14 +147,14 @@ fun FavoriteAssetsList() {
         modifier = Modifier.padding(horizontal = 10.dp)
     ) {
         items(5) { index ->
-            val asset = com.enesay.financialliteracy.ui.presentation.Portfolio.Asset(
-                1,
-                "Bitcoin",
-                23532.235,
-                1242,
-                "BTC"
-            )
-            AssetRow(asset = asset)
+//            val asset = Asset(
+//                1,
+//                "Bitcoin",
+//                23532.235,
+//                1242,
+//                "BTC"
+//            )
+//            AssetRow(asset = asset)
         }
     }
 }
@@ -193,11 +193,10 @@ fun CryptoRow(crypto: DataCrypto, onClick: () -> Unit = {}) {
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(5.dp)
+            verticalArrangement = Arrangement.spacedBy(5.dp),
         ) {
             Text(text = "${crypto.symbol}", fontSize = 23.sp, color = primary_color, fontWeight = FontWeight.Medium)
             Text(text = "$${formattedPrice}", fontSize = 18.sp, fontWeight = FontWeight.Medium)
-            Text(text = "$${crypto.id}", fontSize = 18.sp, fontWeight = FontWeight.Medium)
         }
     }
 }
@@ -210,16 +209,8 @@ fun StocksList() {
             .fillMaxSize()
             .padding(horizontal = 10.dp)
     ) {
-        items(10) { index ->
-            val asset = com.enesay.financialliteracy.ui.presentation.Portfolio.Asset(
-                1,
-                "Tesla",
-                23532.235,
-                1242,
-                "TSLA"
-            )
-            AssetRow(asset)
-        }
+
+
     }
 }
 
