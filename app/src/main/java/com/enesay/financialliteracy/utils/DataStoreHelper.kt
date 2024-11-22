@@ -17,6 +17,7 @@ class DataStoreHelper(private val context: Context) {
         val REMEMBER_ME_KEY = booleanPreferencesKey("remember_me")
         val EMAIL_KEY = stringPreferencesKey("email")
         val PASSWORD_KEY = stringPreferencesKey("password")
+        val USER_ID = stringPreferencesKey("user_id")
     }
 
     // Save user preferences
@@ -28,6 +29,16 @@ class DataStoreHelper(private val context: Context) {
         }
     }
 
+    suspend fun saveUserId(userId: String) {
+        context.dataStore.edit { preferences ->
+            preferences[USER_ID] = userId
+        }
+    }
+    suspend fun clearUserId() {
+        context.dataStore.edit { preferences ->
+            preferences.remove(USER_ID) // USER_ID anahtarını kaldır
+        }
+    }
     // Get rememberMe state as a Flow
     val rememberMeFlow: Flow<Boolean> = context.dataStore.data
         .map { preferences ->
@@ -44,5 +55,10 @@ class DataStoreHelper(private val context: Context) {
     val passwordFlow: Flow<String?> = context.dataStore.data
         .map { preferences ->
             preferences[PASSWORD_KEY]
+        }
+
+    val userIdFlow: Flow<String?> = context.dataStore.data
+        .map { preferences ->
+            preferences[USER_ID]
         }
 }

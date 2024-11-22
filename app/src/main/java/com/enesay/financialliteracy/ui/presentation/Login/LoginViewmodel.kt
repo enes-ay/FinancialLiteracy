@@ -16,7 +16,8 @@ class LoginViewmodel @Inject constructor(private val authRepository: AuthReposit
 
     private val _authState = mutableStateOf<AuthState>(AuthState.Idle)
     val authState: State<AuthState> = _authState
-    val userLoggedIn = mutableStateOf(false)
+    val userLoggedIn = mutableStateOf(authRepository.isUserLoggedIn())
+    val currentUser = mutableStateOf(authRepository.getCurrentUserId())
 
     init {
         userLoggedIn.value= authRepository.isUserLoggedIn()
@@ -34,6 +35,7 @@ class LoginViewmodel @Inject constructor(private val authRepository: AuthReposit
             }
         }
     }
+
     fun signOut() = viewModelScope.launch {
         val result = authRepository.signOut()
         _authState.value = when (result) {

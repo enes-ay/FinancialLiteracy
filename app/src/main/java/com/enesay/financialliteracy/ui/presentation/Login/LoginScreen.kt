@@ -192,18 +192,24 @@ fun Login(navController: NavController) {
                                 text = "Login Successful!",
                                 color = MaterialTheme.colorScheme.primary
                             )
-                            if (rememberMeState.value) {
-                                LaunchedEffect(AuthState.Authenticated){
+                                LaunchedEffect(AuthState.Authenticated) {
                                     Log.e("launch", "auth state")
                                     scope.launch {
-                                        userPreferencesDataStore.saveUserPreferences(
-                                            rememberMeState.value,
-                                            emailState.value,
-                                            passwordState.value
-                                        )
+                                        if (rememberMeState.value) {
+                                            userPreferencesDataStore.saveUserPreferences(
+                                                rememberMeState.value,
+                                                emailState.value,
+                                                passwordState.value
+                                            )
+                                        }
+                                        loginViewmodel.currentUser.value?.let {
+                                            userPreferencesDataStore.saveUserId(
+                                                it
+                                            )
+                                        }
                                     }
                                 }
-                            }
+
                             navController.navigate("home") {
                                 popUpTo("login") { inclusive = true }
                             }

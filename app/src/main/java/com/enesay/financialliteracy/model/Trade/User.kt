@@ -1,6 +1,5 @@
 package com.enesay.financialliteracy.model.Trade
 
-import com.enesay.financialliteracy.ui.presentation.Portfolio.Asset
 
 data class User(
     val id: String = "",
