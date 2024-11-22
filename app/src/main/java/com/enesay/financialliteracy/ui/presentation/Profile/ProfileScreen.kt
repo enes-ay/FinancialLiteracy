@@ -28,10 +28,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,11 +43,14 @@ import com.enesay.financialliteracy.ui.presentation.Login.LoginViewmodel
 import com.enesay.financialliteracy.ui.presentation.Register.AuthState
 import com.enesay.financialliteracy.ui.theme.primary_color
 import com.enesay.financialliteracy.ui.theme.secondary_color
+import com.enesay.financialliteracy.utils.DataStoreHelper
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Profile(navController: NavController) {
     var showDialog by remember { mutableStateOf(false) }
+    val userPreferencesDataStore = DataStoreHelper(context = LocalContext.current)
 
     val mockList = remember {
         mutableStateListOf(
@@ -62,6 +67,7 @@ fun Profile(navController: NavController) {
     }
     val loginViewmodel: LoginViewmodel = hiltViewModel()
     val authState by loginViewmodel.authState
+    val scope = rememberCoroutineScope()
 
     Scaffold(topBar = {
         CenterAlignedTopAppBar(
@@ -93,14 +99,12 @@ fun Profile(navController: NavController) {
                         .padding(vertical = 5.dp), verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Image( Icons.Default.Person, contentDescription = "",
+                    Image(Icons.Default.Person, contentDescription = "",
                         modifier = Modifier
                             .size(60.dp)
                             .padding(10.dp)
                             .weight(2f)
-                            .clickable {
-                                showDialog=true
-                            })
+                            )
 
                     SignOutDialog(
                         showDialog = showDialog,
@@ -108,24 +112,29 @@ fun Profile(navController: NavController) {
                         onConfirm = {
                             loginViewmodel.signOut()
                             if (authState is AuthState.Idle) {
-                                navController.navigate("login")
+                                navController.navigate("login") {
+                                    popUpTo("login")
+                                }
+                                scope.launch {
+                                    userPreferencesDataStore.clearUserId()
+                                }
                             }
                             showDialog = false
                         },
                     )
 
-
-
                     Text(text = "Enes Ay", fontSize = 25.sp, fontWeight = FontWeight.Bold)
                 }
-                
-                Column(modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f),
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f),
                     verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally) {
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Text(text = "dsgsdg")
-                    
+
                 }
             }
             LazyColumn(
@@ -133,31 +142,47 @@ fun Profile(navController: NavController) {
                     .fillMaxSize()
                     .weight(4f), horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                items(mockList.count()) {
-                    val item = mockList[it]
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { }) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 30.dp, vertical = 20.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(text = "$item", fontSize = 20.sp)
-                            Icon(
-                                imageVector = Icons.Default.ArrowForward,
-                                contentDescription = "setting icon"
-                            )
-
-                        }
-                    }
+                item {
+                    ProfileItemsRow("Edit Profile", onclik = {})
+                }
+                item {
+                    ProfileItemsRow("Favorite List", onclik = {})
+                }
+                item {
+                    ProfileItemsRow("Language", onclik = {})
+                }
+                item {
+                    ProfileItemsRow("FAQ", onclik = {})
+                }
+                item {
+                    ProfileItemsRow("Log out", onclik = {
+                        showDialog = true
+                    })
                 }
             }
-
         }
     }
 
+}
+
+@Composable
+private fun ProfileItemsRow(title: String, onclik: () -> Unit) {
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .clickable { onclik() }) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 30.dp, vertical = 20.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(text = title, fontSize = 20.sp)
+            Icon(
+                imageVector = Icons.Default.ArrowForward,
+                contentDescription = "setting icon"
+            )
+        }
+    }
 }
 
 @Composable
@@ -168,7 +193,7 @@ fun SignOutDialog(
 ) {
     if (showDialog) {
         AlertDialog(
-            onDismissRequest = {  },
+            onDismissRequest = { },
             title = { Text("Are you sure you want to log out?") },
             confirmButton = {
                 TextButton(onClick = { onConfirm() }) {
