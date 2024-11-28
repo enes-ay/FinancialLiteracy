@@ -23,6 +23,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -63,7 +64,7 @@ fun Home(navController: NavController) {
 
     }
     Scaffold(topBar = {
-        CenterAlignedTopAppBar(
+        TopAppBar(
             title = { Text(text = "Financial Literacy", fontWeight = FontWeight.Bold) },
             colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                 containerColor = primary_color, titleContentColor = Color.White

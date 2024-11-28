@@ -24,6 +24,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -61,7 +62,7 @@ fun PortfolioScreen(navController: NavHostController) {
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
+            TopAppBar(
                 title = { Text(text = "Portfolio", fontWeight = FontWeight.Bold) },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = primary_color, titleContentColor = Color.White
@@ -78,6 +79,9 @@ fun PortfolioScreen(navController: NavHostController) {
         ) {
             val formattedBalance = String.format(Locale.US,"%,.2f", balance)
             BalanceCard(formattedBalance)
+            Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp)) {
+                Text("Your Assets", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            }
 
             if (assets.isEmpty()) {
                 EmptyState(paddingValues)
@@ -160,11 +164,11 @@ fun AssetRow(asset: Asset) {
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp) // Hafif gri gölge efekti
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.Start
         ) {
-            Text(text = asset.symbol,  fontWeight = FontWeight.Medium,style = MaterialTheme.typography.bodyLarge)
+            Text(text = asset.symbol,  fontWeight = FontWeight.Medium, fontSize = 22.sp, color = primary_color)
             Text(text = "${asset.quantity}",  fontWeight = FontWeight.Medium,style = MaterialTheme.typography.bodyLarge)
         }
     }
