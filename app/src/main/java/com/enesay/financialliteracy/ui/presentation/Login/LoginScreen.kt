@@ -29,8 +29,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -72,12 +72,12 @@ fun Login(navController: NavController) {
             val password = userPreferencesDataStore.passwordFlow.collectAsState(initial = "")
 
             // States for input fields
-            val emailState = remember { mutableStateOf(email.value ?: "") }
-            val passwordState = remember { mutableStateOf(password.value ?: "") }
-            val rememberMeState = remember { mutableStateOf(rememberMe.value) }
+            val emailState = rememberSaveable { mutableStateOf(email.value ?: "") }
+            val passwordState = rememberSaveable { mutableStateOf(password.value ?: "") }
+            val rememberMeState = rememberSaveable { mutableStateOf(rememberMe.value) }
 
-            val emailError = remember { mutableStateOf<String?>(null) }
-            val passwordError = remember { mutableStateOf<String?>(null) }
+            val emailError = rememberSaveable { mutableStateOf<String?>(null) }
+            val passwordError = rememberSaveable { mutableStateOf<String?>(null) }
             val scope = rememberCoroutineScope()
 
             LaunchedEffect(key1 = rememberMe.value, key2 = email.value, key3 = password.value) {

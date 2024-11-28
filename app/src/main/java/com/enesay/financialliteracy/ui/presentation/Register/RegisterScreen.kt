@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,10 +43,10 @@ fun Register(modifier: Modifier = Modifier, navController: NavController) {
     val authState by registerViewmodel.authState
 
     Scaffold(modifier = Modifier.fillMaxSize()) { paddingValues ->
-        val email = remember { mutableStateOf("") }
-        val password = remember { mutableStateOf("") }
-        val emailError = remember { mutableStateOf<String?>(null) }
-        val passwordError = remember { mutableStateOf<String?>(null) }
+        val email = rememberSaveable { mutableStateOf("") }
+        val password = rememberSaveable { mutableStateOf("") }
+        val emailError = rememberSaveable { mutableStateOf<String?>(null) }
+        val passwordError = rememberSaveable { mutableStateOf<String?>(null) }
 
         Box(
             modifier = Modifier
