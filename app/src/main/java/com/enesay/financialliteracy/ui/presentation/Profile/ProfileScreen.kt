@@ -113,7 +113,9 @@ fun Profile(navController: NavController) {
                             loginViewmodel.signOut()
                             if (authState is AuthState.Idle) {
                                 navController.navigate("login") {
-                                    popUpTo("login")
+                                    popUpTo(0){
+                                        inclusive = true
+                                    }
                                 }
                                 scope.launch {
                                     userPreferencesDataStore.clearUserId()
