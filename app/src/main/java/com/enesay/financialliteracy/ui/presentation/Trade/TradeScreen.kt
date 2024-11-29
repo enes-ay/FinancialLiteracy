@@ -17,7 +17,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -35,9 +38,30 @@ import com.enesay.financialliteracy.ui.theme.primary_color
 import java.util.Locale
 
 @Composable
-fun TradeScreen(navController: NavHostController, asset: Asset) {
+fun TradeScreen(navController: NavHostController, asset: Asset,
+                ) {
+    // State for toggling between Buy and Sell
     val tradeViewmodel: TradeViewmodel = hiltViewModel()
+    var isBuySelected by remember { mutableStateOf(true) }
+    var amount by remember { mutableStateOf("") }
+    var selectedPercentage by remember { mutableStateOf<Int?>(null) }
+
+    // Observe balance and user assets from the ViewModel
+    val balance by tradeViewmodel.balance.observeAsState(0.0)
+    val userAssets by tradeViewmodel.userAssets.collectAsState()
+
+    // Fetch the asset balance from userAssets
+    val userAssetBalance = userAssets.find { it.id.contains(asset.id) }?.quantity ?: 0.0
+
+    // Format price and balance values
     val formattedPrice = String.format(Locale.US, "%,.2f", asset.price)
+    val formattedBalance = String.format(Locale.US, "%,.2f", balance)
+    val formattedAssetBalance = String.format(Locale.US, "%,.2f", userAssetBalance)
+
+    // Load user data when the composable is first displayed
+    LaunchedEffect(Unit) {
+        tradeViewmodel.loadUserData()
+    }
 
     Scaffold(modifier = Modifier.fillMaxSize()) { paddingValues ->
         Column(
@@ -47,7 +71,35 @@ fun TradeScreen(navController: NavHostController, asset: Asset) {
                 .padding(16.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // Asset Details
+            // Toggle Menu for Buy/Sell
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Button(
+                    onClick = { isBuySelected = true },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isBuySelected) primary_color else Color(0xFFE3F2FD),
+                        contentColor = if (isBuySelected) Color.White else Color.Black
+                    )
+                ) {
+                    Text("Buy")
+                }
+
+                Button(
+                    onClick = { isBuySelected = false },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (!isBuySelected) primary_color else Color(0xFFE3F2FD),
+                        contentColor = if (!isBuySelected) Color.White else Color.Black
+                    )
+                ) {
+                    Text("Sell")
+                }
+            }
+
+            // Display Asset Details and Balance Information
             Column(horizontalAlignment = Alignment.Start, modifier = Modifier.padding(top = 10.dp)) {
                 Text(
                     text = asset.name,
@@ -62,10 +114,20 @@ fun TradeScreen(navController: NavHostController, asset: Asset) {
                     fontWeight = FontWeight.Medium,
                     color = Color.Gray
                 )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = if (isBuySelected) {
+                        "Available Balance: $formattedBalance USDT"
+                    } else {
+                        "Available ${asset.name}: $formattedAssetBalance"
+                    },
+                    fontSize = 18.sp,
+                    color = Color.Gray
+                )
             }
 
             // Amount Input and Percentage Buttons
-            var amount by remember { mutableStateOf("") }
             Column {
                 Text(
                     text = "Enter Amount",
@@ -82,8 +144,6 @@ fun TradeScreen(navController: NavHostController, asset: Asset) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Percentage Selection Buttons
-                var selectedPercentage by remember { mutableStateOf<Int?>(null) }
-
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -91,9 +151,8 @@ fun TradeScreen(navController: NavHostController, asset: Asset) {
                     listOf(25, 50, 75, 100).forEach { percentage ->
                         Button(
                             onClick = {
-                                selectedPercentage = percentage // Mark selected percentage
-                                val maxAmount =
-                                    1000.0 // Replace with user's actual balance or asset quantity
+                                selectedPercentage = percentage
+                                val maxAmount = if (isBuySelected) balance else userAssetBalance
                                 amount =
                                     String.format(Locale.US, "%.2f", maxAmount * percentage / 100)
                             },
@@ -103,8 +162,8 @@ fun TradeScreen(navController: NavHostController, asset: Asset) {
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = if (selectedPercentage == percentage) primary_color else Color(
                                     0xFFE3F2FD
-                                ), // Light Blue for unselected
-                                contentColor = if (selectedPercentage == percentage) Color.White else Color.Black // Adjust text color
+                                ),
+                                contentColor = if (selectedPercentage == percentage) Color.White else Color.Black
                             )
                         ) {
                             Text("$percentage%")
@@ -115,38 +174,32 @@ fun TradeScreen(navController: NavHostController, asset: Asset) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Buy and Sell Buttons
-            Row(
+            // Action Button (Buy or Sell)
+            Button(
+                onClick = {
+                    val amountValue = amount.toDoubleOrNull() ?: 0.0
+                    if (isBuySelected) {
+                        tradeViewmodel.buyAsset(asset, asset.price, amountValue)
+                        Toast.makeText(navController.context, "Bought successfully", Toast.LENGTH_SHORT).show()
+                    } else {
+                        tradeViewmodel.sellAsset(asset, amountValue, asset.price)
+                        Toast.makeText(navController.context, "Sold successfully", Toast.LENGTH_SHORT).show()
+                    }
+                },
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isBuySelected) primary_color else Color.Red
+                )
             ) {
-                Button(
-                    onClick = {
-                        tradeViewmodel.buyAsset(asset, amount.toDoubleOrNull() ?: 0.0)
-                        Toast.makeText(navController.context, "Buy", Toast.LENGTH_SHORT).show()
-                    },
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(containerColor = primary_color)
-                ) {
-                    Text("Buy", fontWeight = FontWeight.Bold, color = Color.White, fontSize = 20.sp)
-                }
-
-                Button(
-                    onClick = {
-                        tradeViewmodel.sellAsset(asset, amount.toDoubleOrNull() ?: 0.0)
-                        Toast.makeText(navController.context, "Sell", Toast.LENGTH_SHORT).show()
-                    },
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
-                ) {
-                    Text(
-                        "Sell",
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        fontSize = 20.sp
-                    )
-                }
+                Text(
+                    if (isBuySelected) "Buy" else "Sell",
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    fontSize = 20.sp
+                )
             }
         }
     }
 }
+
+
