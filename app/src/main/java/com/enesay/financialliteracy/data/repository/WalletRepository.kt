@@ -48,7 +48,7 @@ class WalletRepository @Inject constructor(val firestore: FirebaseFirestore) {
         // Convert the assets map to a list of Asset objects
         return assetsMap.map { (symbol, details) ->
             Asset(
-                id = symbol, // Symbol as the unique identifier
+                id = details["id"].toString(), // Symbol as the unique identifier
                 name = details["name"] as? String ?: "Unknown", // Get the name or default to "Unknown"
                 symbol = symbol,
                 price = (details["purchasePrice"] as? Double) ?: 0.0, // Get the purchase price or default to 0.0
@@ -73,6 +73,7 @@ class WalletRepository @Inject constructor(val firestore: FirebaseFirestore) {
             val newQuantity = currentQuantity + asset.quantity
 
             existingAsset.toMutableMap().apply {
+                this["id"] = asset.id
                 this["quantity"] = newQuantity
                 this["purchasePrice"] = purchasePrice // Update to reflect the latest price
                 this["purchaseAmount"] = purchaseAmount
@@ -80,6 +81,7 @@ class WalletRepository @Inject constructor(val firestore: FirebaseFirestore) {
             }
         } else {
             mapOf(
+                "id" to asset.id,
                 "name" to asset.name,
                 "symbol" to asset.symbol,
                 "quantity" to asset.quantity,

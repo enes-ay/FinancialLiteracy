@@ -1,5 +1,6 @@
 package com.enesay.financialliteracy.ui.presentation.Trade
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -51,7 +52,7 @@ fun TradeScreen(navController: NavHostController, asset: Asset,
     val userAssets by tradeViewmodel.userAssets.collectAsState()
 
     // Fetch the asset balance from userAssets
-    val userAssetBalance = userAssets.find { it.id.contains(asset.id) }?.quantity ?: 0.0
+    val userAssetBalance = userAssets.find { it.id == asset.id }?.quantity ?: 0.0
 
     // Format price and balance values
     val formattedPrice = String.format(Locale.US, "%,.2f", asset.price)
