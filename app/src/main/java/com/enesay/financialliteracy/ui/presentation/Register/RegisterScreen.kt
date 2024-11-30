@@ -138,7 +138,7 @@ fun Register(navController: NavController) {
                                     registerViewmodel.signUp(email.value, password.value)
                                 }
                             },
-                            modifier = Modifier.width(300.dp),
+                            modifier = Modifier.width(300.dp).padding(top = 10.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = primary_color
                             )
@@ -157,7 +157,7 @@ fun Register(navController: NavController) {
                         Text(text = (authState as AuthState.Error).message, color = Color.Red)
                         Button(
                             onClick = { registerViewmodel.signUp(email.value, password.value) },
-                            modifier = Modifier.width(300.dp),
+                            modifier = Modifier.width(300.dp).padding(top = 10.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.error
                             )

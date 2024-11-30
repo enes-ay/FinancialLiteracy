@@ -52,19 +52,6 @@ fun Profile(navController: NavController) {
     var showDialog by remember { mutableStateOf(false) }
     val userPreferencesDataStore = DataStoreHelper(context = LocalContext.current)
 
-    val mockList = remember {
-        mutableStateListOf(
-            "Edit Profile",
-            "Favorite List",
-            "FAQ",
-            "Sign Out",
-            "ABCD EFG",
-            "SEDGSED",
-            "WESDGSE",
-            "SDGSDB",
-            "SDBHSD"
-        )
-    }
     val loginViewmodel: LoginViewmodel = hiltViewModel()
     val authState by loginViewmodel.authState
     val scope = rememberCoroutineScope()
@@ -99,12 +86,13 @@ fun Profile(navController: NavController) {
                         .padding(vertical = 5.dp), verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Image(Icons.Default.Person, contentDescription = "",
+                    Image(
+                        Icons.Default.Person, contentDescription = "",
                         modifier = Modifier
                             .size(60.dp)
                             .padding(10.dp)
                             .weight(2f)
-                            )
+                    )
 
                     SignOutDialog(
                         showDialog = showDialog,
@@ -113,7 +101,7 @@ fun Profile(navController: NavController) {
                             loginViewmodel.signOut()
                             if (authState is AuthState.Idle) {
                                 navController.navigate("login") {
-                                    popUpTo(0){
+                                    popUpTo(0) {
                                         inclusive = true
                                     }
                                 }
@@ -159,7 +147,7 @@ fun Profile(navController: NavController) {
                 item {
                     ProfileItemsRow("Log out", onclik = {
                         showDialog = true
-                    })
+                    }, color = Color.Red, showIcon = false)
                 }
             }
         }
@@ -168,7 +156,12 @@ fun Profile(navController: NavController) {
 }
 
 @Composable
-private fun ProfileItemsRow(title: String, onclik: () -> Unit) {
+private fun ProfileItemsRow(
+    title: String,
+    onclik: () -> Unit,
+    color: Color = Color.Black,
+    showIcon: Boolean = true
+) {
     Row(modifier = Modifier
         .fillMaxWidth()
         .clickable { onclik() }) {
@@ -178,11 +171,14 @@ private fun ProfileItemsRow(title: String, onclik: () -> Unit) {
                 .padding(horizontal = 30.dp, vertical = 20.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = title, fontSize = 20.sp)
-            Icon(
-                imageVector = Icons.Default.ArrowForward,
-                contentDescription = "setting icon"
-            )
+            Text(text = title, fontSize = 20.sp, color = color)
+            if (showIcon) {
+                Icon(
+                    imageVector = Icons.Default.ArrowForward,
+                    contentDescription = "setting icon",
+                    tint = color
+                )
+            }
         }
     }
 }
