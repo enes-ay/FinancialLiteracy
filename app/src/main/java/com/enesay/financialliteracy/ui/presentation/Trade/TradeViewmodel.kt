@@ -91,9 +91,15 @@ class TradeViewmodel @Inject constructor(
                 val userAssets = walletRepository.getUserAssets(userId)
                 val userAsset = userAssets.find { it.symbol == asset.symbol }
 
+                // Validate if the user owns the coin
+                if (userAsset == null) {
+                    _tradeState.value = TradeState.Warning("You do not own any ${asset.symbol} to sell")
+                    return@launch
+                }
+
                 // Validate if the user has enough quantity to sell
-                if (userAsset == null || userAsset.quantity < quantity) {
-                    _errorMessage.value = "Insufficient ${asset.symbol} to sell"
+                if (userAsset.quantity < quantity) {
+                    _tradeState.value = TradeState.Warning("Insufficient ${asset.symbol} to sell")
                     return@launch
                 }
 
@@ -108,11 +114,12 @@ class TradeViewmodel @Inject constructor(
                 _transactionSuccess.value = true
                 loadUserData()
             } catch (e: Exception) {
-                _errorMessage.value = e.message
+                _tradeState.value = TradeState.Error(e.message ?: "An unknown error occurred.")
             } finally {
                 _isLoading.value = false
             }
         }
     }
+
 }
 

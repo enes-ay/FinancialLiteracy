@@ -166,8 +166,11 @@ fun TradeScreen(navController: NavHostController, asset: Asset,
                             onClick = {
                                 selectedPercentage = percentage
                                 val maxAmount = if (isBuySelected) balance else userAssetBalance
-                                amount =
-                                    String.format(Locale.US, "%.2f", maxAmount * percentage / 100)
+                                amount = if (isBuySelected) {
+                                    String.format(Locale.US, "%.2f", (maxAmount * percentage / 100) / asset.price)
+                                }else{
+                                    String.format(Locale.US, "%.2f", (maxAmount * percentage / 100))
+                                }
                             },
                             modifier = Modifier
                                 .weight(1f)
