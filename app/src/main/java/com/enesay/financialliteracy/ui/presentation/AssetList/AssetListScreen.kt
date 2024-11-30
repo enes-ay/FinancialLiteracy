@@ -50,7 +50,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.enesay.financialliteracy.model.DataCrypto
-import com.enesay.financialliteracy.ui.presentation.Portfolio.AssetRow
+import com.enesay.financialliteracy.model.Trade.Asset
 import com.enesay.financialliteracy.ui.presentation.Trade.TradeViewmodel
 import com.enesay.financialliteracy.ui.theme.primary_color
 import com.google.gson.Gson
@@ -160,7 +160,7 @@ fun FavoriteAssetsList() {
 }
 
 @Composable
-fun CryptosList(cryptoList: List<DataCrypto>, navController: NavHostController, tradeViewmodel: TradeViewmodel) {
+fun CryptosList(cryptoList: List<Asset>, navController: NavHostController, tradeViewmodel: TradeViewmodel) {
 
     LazyColumn(
         modifier = Modifier
@@ -168,9 +168,7 @@ fun CryptosList(cryptoList: List<DataCrypto>, navController: NavHostController, 
             .padding(horizontal = 10.dp)
     ) {
         items(cryptoList) { crypto ->
-            // API'den gelen DataCrypto modelini kullanarak her bir satırı gösteriyoruz
-            Log.d("gelendata", "${crypto.name}")
-            CryptoRow(crypto, onClick = {
+            AssetRow(crypto, onClick = {
                 val crypto_json = Gson().toJson(crypto)
                 navController.navigate("assetTrade/$crypto_json")
             })
@@ -179,9 +177,9 @@ fun CryptosList(cryptoList: List<DataCrypto>, navController: NavHostController, 
 }
 
 @Composable
-fun CryptoRow(crypto: DataCrypto, onClick: () -> Unit = {}) {
-    val formattedPrice = String.format(Locale.US,"%,.2f", crypto.quote.USD.price)
-    val formattedMarketCap = String.format(Locale.US,"%,.2f", crypto.quote.USD.market_cap)
+fun AssetRow(asset: Asset, onClick: () -> Unit = {}) {
+    val formattedPrice = String.format(Locale.US,"%,.2f", asset.price)
+   // val formattedMarketCap = String.format(Locale.US,"%,.2f", crypto.)
 
     Card(
         modifier = Modifier
@@ -195,7 +193,7 @@ fun CryptoRow(crypto: DataCrypto, onClick: () -> Unit = {}) {
             modifier = Modifier.fillMaxWidth().padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp),
         ) {
-            Text(text = "${crypto.symbol}", fontSize = 23.sp, color = primary_color, fontWeight = FontWeight.Medium)
+            Text(text = "${asset.symbol}", fontSize = 23.sp, color = primary_color, fontWeight = FontWeight.Medium)
             Text(text = "$${formattedPrice}", fontSize = 18.sp, fontWeight = FontWeight.Medium)
         }
     }

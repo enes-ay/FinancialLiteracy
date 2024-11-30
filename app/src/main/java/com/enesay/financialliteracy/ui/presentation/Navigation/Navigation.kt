@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.enesay.financialliteracy.model.DataCrypto
+import com.enesay.financialliteracy.model.Trade.Asset
 import com.enesay.financialliteracy.model.Trade.toAsset
 import com.enesay.financialliteracy.ui.presentation.CategoryDetail.CategoryDetail
 import com.enesay.financialliteracy.ui.presentation.Home.Home
@@ -46,6 +47,7 @@ fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
         }
         composable("login") {
             Login(navController = navController)
+
         }
         composable(
             "categoryDetail/{id}",
@@ -80,9 +82,8 @@ fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
         )
         {
             val crypto_json = it.arguments?.getString("crypto")
-            val crypto = Gson().fromJson(crypto_json, DataCrypto::class.java)
-            TradeScreen(navController = navController, asset = crypto.toAsset())
-
+            val crypto = Gson().fromJson(crypto_json, Asset::class.java)
+            TradeScreen(navController = navController, asset = crypto)
         }
 
     }

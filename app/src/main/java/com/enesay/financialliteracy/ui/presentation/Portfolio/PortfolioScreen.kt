@@ -40,8 +40,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.enesay.financialliteracy.model.Trade.Asset
+import com.enesay.financialliteracy.ui.presentation.AssetList.AssetRow
 import com.enesay.financialliteracy.ui.presentation.Login.LoginViewmodel
 import com.enesay.financialliteracy.ui.theme.primary_color
+import com.google.gson.Gson
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,7 +88,7 @@ fun PortfolioScreen(navController: NavHostController) {
             if (assets.isEmpty()) {
                 EmptyState(paddingValues)
             } else {
-                AssetList(assets = assets)
+                AssetList(assets = assets, navController)
             }
         }
     }
@@ -141,25 +143,32 @@ fun BalanceCard(balance: String) {
 
 
 @Composable
-fun AssetList(assets: List<Asset>) {
+fun AssetList(assets: List<Asset>, navController: NavHostController) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 5.dp, horizontal = 16.dp)
+            .padding(vertical = 5.dp, horizontal = 16.dp),
+        contentPadding = PaddingValues(bottom = 75.dp)
     ) {
         items(assets) { asset ->
-            AssetRow(asset)
+            AssetRow(asset, onClick = {
+                val assetJson = Gson().toJson(asset)
+                navController.navigate("assetTrade/$assetJson")
+            })
         }
     }
 }
 
 @Composable
-fun AssetRow(asset: Asset) {
+fun AssetRow2(asset: Asset) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
-            .shadow(elevation = 4.dp, shape = RoundedCornerShape(8.dp), clip = false), // Gölge ve köşeleri yuvarlama
+            .shadow(elevation = 4.dp, shape = RoundedCornerShape(8.dp), clip = false)
+            .clickable {
+
+            }, // Gölge ve köşeleri yuvarlama
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp) // Hafif gri gölge efekti
     ) {
