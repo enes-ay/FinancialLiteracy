@@ -46,13 +46,13 @@ fun TradeScreen(navController: NavHostController, asset: Asset,
     var isBuySelected by remember { mutableStateOf(true) }
     var amount by remember { mutableStateOf("") }
     var selectedPercentage by remember { mutableStateOf<Int?>(null) }
+    val tradeState by tradeViewmodel.tradeState.observeAsState()
 
-    // Observe balance and user assets from the ViewModel
     val balance by tradeViewmodel.balance.observeAsState(0.0)
     val userAssets by tradeViewmodel.userAssets.collectAsState()
 
-    // Fetch the asset balance from userAssets
     val userAssetBalance = userAssets.find { it.id == asset.id }?.quantity ?: 0.0
+    var warningMessage by remember { mutableStateOf("") }
 
     // Format price and balance values
     val formattedPrice = String.format(Locale.US, "%,.2f", asset.price)
@@ -62,6 +62,18 @@ fun TradeScreen(navController: NavHostController, asset: Asset,
     // Load user data when the composable is first displayed
     LaunchedEffect(Unit) {
         tradeViewmodel.loadUserData()
+    }
+
+    // Update warningMessage when tradeState changes
+    LaunchedEffect(tradeState) {
+        when (tradeState) {
+            is TradeState.Warning -> {
+                warningMessage = (tradeState as TradeState.Warning).message
+            }
+            else -> {
+                warningMessage = "" // Clear warning message on success or other states
+            }
+        }
     }
 
     Scaffold(modifier = Modifier.fillMaxSize()) { paddingValues ->
@@ -173,6 +185,16 @@ fun TradeScreen(navController: NavHostController, asset: Asset,
                 }
             }
 
+            // Display warning message
+            if (warningMessage.isNotEmpty()) {
+                Text(
+                    text = warningMessage,
+                    color = Color.Red,
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
+
             Spacer(modifier = Modifier.height(16.dp))
 
             // Action Button (Buy or Sell)
@@ -181,10 +203,8 @@ fun TradeScreen(navController: NavHostController, asset: Asset,
                     val amountValue = amount.toDoubleOrNull() ?: 0.0
                     if (isBuySelected) {
                         tradeViewmodel.buyAsset(asset, asset.price, amountValue)
-                        Toast.makeText(navController.context, "Bought successfully", Toast.LENGTH_SHORT).show()
                     } else {
                         tradeViewmodel.sellAsset(asset, amountValue, asset.price)
-                        Toast.makeText(navController.context, "Sold successfully", Toast.LENGTH_SHORT).show()
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),

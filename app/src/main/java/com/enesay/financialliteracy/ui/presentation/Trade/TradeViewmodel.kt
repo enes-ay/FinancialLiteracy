@@ -39,6 +39,9 @@ class TradeViewmodel @Inject constructor(
     private val _transactionSuccess = MutableLiveData<Boolean>()
     val transactionSuccess: LiveData<Boolean> get() = _transactionSuccess
 
+    private val _tradeState = MutableLiveData<TradeState>()
+    val tradeState: LiveData<TradeState> = _tradeState
+
     fun loadUserData() {
         val userId = authRepository.getCurrentUserId() ?: return
         viewModelScope.launch {
@@ -57,9 +60,13 @@ class TradeViewmodel @Inject constructor(
     fun buyAsset(asset: Asset, purchasePrice: Double, quantity: Double) {
         val userId = authRepository.getCurrentUserId() ?: return
         viewModelScope.launch {
-            _isLoading.value = true
+            _tradeState.value = TradeState.Loading
             try {
                 val purchaseAmount = purchasePrice * quantity
+                if ((_balance.value ?: 0.0) < purchaseAmount) {
+                    _tradeState.value = TradeState.Warning("Insufficient balance to buy the asset.")
+                    return@launch
+                }
                 walletRepository.addUserAsset(
                     userId = userId,
                     asset = asset.copy(quantity = quantity),
@@ -68,12 +75,10 @@ class TradeViewmodel @Inject constructor(
                     purchaseDate = System.currentTimeMillis().toString()
                 )
                 walletRepository.updateUserBalance(userId, (_balance.value ?: 0.0) - purchaseAmount)
-                _transactionSuccess.value = true
+                _tradeState.value = TradeState.Success
                 loadUserData()
             } catch (e: Exception) {
-                _errorMessage.value = e.message
-            } finally {
-                _isLoading.value = false
+                _tradeState.value = TradeState.Error(e.message ?: "An unknown error occurred.")
             }
         }
     }
