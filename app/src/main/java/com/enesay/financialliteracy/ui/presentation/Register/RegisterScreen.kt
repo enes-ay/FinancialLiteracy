@@ -37,7 +37,7 @@ import com.enesay.financialliteracy.ui.theme.primary_color
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Register(modifier: Modifier = Modifier, navController: NavController) {
+fun Register(navController: NavController) {
 
     val registerViewmodel: RegisterViewmodel = hiltViewModel()
     val authState by registerViewmodel.authState
@@ -45,8 +45,12 @@ fun Register(modifier: Modifier = Modifier, navController: NavController) {
     Scaffold(modifier = Modifier.fillMaxSize()) { paddingValues ->
         val email = rememberSaveable { mutableStateOf("") }
         val password = rememberSaveable { mutableStateOf("") }
+        val name = rememberSaveable { mutableStateOf("") }
+        val surname = rememberSaveable { mutableStateOf("") }
         val emailError = rememberSaveable { mutableStateOf<String?>(null) }
         val passwordError = rememberSaveable { mutableStateOf<String?>(null) }
+        val nameError = rememberSaveable { mutableStateOf<String?>(null) }
+        val surnameError = rememberSaveable { mutableStateOf<String?>(null) }
 
         Box(
             modifier = Modifier
@@ -57,65 +61,61 @@ fun Register(modifier: Modifier = Modifier, navController: NavController) {
             contentAlignment = Alignment.Center
         ) {
             Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     modifier = Modifier
                         .wrapContentSize()
-                        .padding(vertical = 20.dp),
+                        .padding(bottom = 10.dp),
                     text = "Sign up",
                     style = MaterialTheme.typography.displaySmall,
                     fontWeight = FontWeight.Medium,
                     color = primary_color
                 )
+                CustomTextField(
+                    value = name.value,
+                    onValueChange = {
+                        name.value = it
+                        nameError.value = null
+                    },
+                    label = "Name",
+                    isError = nameError.value != null,
+                    errorMessage = nameError.value
+                )
 
-                // e-mail field
-                OutlinedTextField(
+                CustomTextField(
+                    value = surname.value,
+                    onValueChange = {
+                        surname.value = it
+                        surnameError.value = null
+                    },
+                    label = "Surname",
+                    isError = surnameError.value != null,
+                    errorMessage = surnameError.value
+                )
+
+                CustomTextField(
                     value = email.value,
                     onValueChange = {
                         email.value = it
                         emailError.value = null
                     },
-                    label = { Text("Email") },
+                    label = "Email",
                     isError = emailError.value != null,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        containerColor = Color.White,
-                        focusedBorderColor = Color.Gray,
-                        unfocusedBorderColor = Color.Gray,
-                        errorBorderColor = Color.Red,
-                        errorLabelColor = Color.Red,
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
+                    errorMessage = emailError.value
                 )
 
-                if (emailError.value != null) {
-                    Text(text = emailError.value!!, color = Color.Red, fontSize = 12.sp)
-                }
-
-                // Password Field
-                OutlinedTextField(
+                CustomTextField(
                     value = password.value,
                     onValueChange = {
                         password.value = it
                         passwordError.value = null
                     },
-                    label = { Text("Password") },
+                    label = "Password",
                     isError = passwordError.value != null,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        containerColor = Color.White,
-                        focusedBorderColor = Color.Gray,
-                        unfocusedBorderColor = Color.Gray,
-                        errorBorderColor = Color.Red,
-                        errorLabelColor = Color.Red,
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
+                    errorMessage = passwordError.value
                 )
-                if (passwordError.value != null) {
-                    Text(text = passwordError.value!!, color = Color.Red, fontSize = 12.sp)
-                }
 
                 // Auth State Handling
                 when (authState) {
@@ -128,6 +128,12 @@ fun Register(modifier: Modifier = Modifier, navController: NavController) {
                                 if (password.value.isBlank()) {
                                     passwordError.value = "Password cannot be empty"
                                 }
+                                if (surname.value.isBlank()) {
+                                    surnameError.value = "Surname cannot be empty"
+                                }
+                                if (name.value.isBlank()) {
+                                    nameError.value = "Name cannot be empty"
+                                }
                                 if (emailError.value == null && passwordError.value == null) {
                                     registerViewmodel.signUp(email.value, password.value)
                                 }
@@ -137,7 +143,7 @@ fun Register(modifier: Modifier = Modifier, navController: NavController) {
                                 containerColor = primary_color
                             )
                         ) {
-                            Text("Sign up", color = Color.White, fontSize = 17.sp)
+                            Text("Sign Up", color = Color.White, fontSize = 17.sp)
                         }
 
                     is AuthState.Loading -> CircularProgressIndicator()
@@ -178,5 +184,42 @@ fun Register(modifier: Modifier = Modifier, navController: NavController) {
             }
         }
 
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CustomTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    isError: Boolean,
+    errorMessage: String?,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        OutlinedTextField(
+            value = value,
+            onValueChange = onValueChange,
+            label = { Text(label) },
+            isError = isError,
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                containerColor = Color.White,
+                focusedBorderColor = Color.Gray,
+                unfocusedBorderColor = Color.Gray,
+                errorBorderColor = Color.Red,
+                errorLabelColor = Color.Red,
+            ),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        if (isError && errorMessage != null) {
+            Text(
+                text = errorMessage,
+                color = Color.Red,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(start = 8.dp, top = 4.dp)
+            )
+        }
     }
 }
