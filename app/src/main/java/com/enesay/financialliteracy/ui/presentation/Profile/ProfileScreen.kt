@@ -118,6 +118,24 @@ fun Profile(navController: NavController) {
                                 .background(secondary_color.copy(alpha = 0.2f)) // Subtle background
                                 .padding(16.dp)
                         )
+                        SignOutDialog(
+                            showDialog = showDialog,
+                            onDismiss = { showDialog = false },
+                            onConfirm = {
+                                loginViewmodel.signOut()
+                                if (authState is AuthState.Idle) {
+                                    navController.navigate("login") {
+                                        popUpTo(0) {
+                                            inclusive = true
+                                        }
+                                    }
+                                    scope.launch {
+                                        userPreferencesDataStore.clearUserId()
+                                    }
+                                }
+                                showDialog = false
+                            },
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
                         Column {
                             Text(
