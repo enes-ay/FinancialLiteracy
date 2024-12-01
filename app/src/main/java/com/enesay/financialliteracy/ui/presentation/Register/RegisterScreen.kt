@@ -135,7 +135,7 @@ fun Register(navController: NavController) {
                                     nameError.value = "Name cannot be empty"
                                 }
                                 if (emailError.value == null && passwordError.value == null) {
-                                    registerViewmodel.signUp(email.value, password.value)
+                                    registerViewmodel.signUp(email.value, password.value, name.value, surname.value)
                                 }
                             },
                             modifier = Modifier.width(300.dp).padding(top = 10.dp),
@@ -150,13 +150,17 @@ fun Register(navController: NavController) {
 
                     is AuthState.Authenticated -> {
                         Text(text = "Registration is Successful!")
-                        navController.navigate("home")
+                        navController.navigate("home"){
+                            popUpTo("register"){
+                                inclusive = true
+                            }
+                        }
                     }
 
                     is AuthState.Error -> {
                         Text(text = (authState as AuthState.Error).message, color = Color.Red)
                         Button(
-                            onClick = { registerViewmodel.signUp(email.value, password.value) },
+                            onClick = { registerViewmodel.signUp(email.value, password.value, name.value, surname.value) },
                             modifier = Modifier.width(300.dp).padding(top = 10.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.error
