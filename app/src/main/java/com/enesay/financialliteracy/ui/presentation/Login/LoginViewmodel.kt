@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.enesay.financialliteracy.common.Resource
 import com.enesay.financialliteracy.data.repository.AuthRepository
+import com.enesay.financialliteracy.model.User.User
 import com.enesay.financialliteracy.ui.presentation.Register.AuthState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -18,6 +19,10 @@ class LoginViewmodel @Inject constructor(private val authRepository: AuthReposit
     val authState: State<AuthState> = _authState
     val userLoggedIn = mutableStateOf(authRepository.isUserLoggedIn())
     val currentUser = mutableStateOf(authRepository.getCurrentUserId())
+
+
+    private val _userInfo = mutableStateOf<User?>(null)
+    val userInfo: State<User?> = _userInfo
 
     init {
         userLoggedIn.value= authRepository.isUserLoggedIn()
@@ -44,6 +49,18 @@ class LoginViewmodel @Inject constructor(private val authRepository: AuthReposit
                 AuthState.Idle
             }
             is Resource.Error -> AuthState.Error(result.exception.message ?: "Unknown error")
+        }
+    }
+
+    fun getUserInfo() = viewModelScope.launch {
+        val userId = authRepository.getCurrentUserId()
+        if (userId != null) {
+            when (val result = authRepository.getUserProfile(userId)) {
+                is Resource.Success -> _userInfo.value = result.data
+                is Resource.Error -> {
+                    // Hata durumunda gerekli işlemleri yap
+                }
+            }
         }
     }
 
