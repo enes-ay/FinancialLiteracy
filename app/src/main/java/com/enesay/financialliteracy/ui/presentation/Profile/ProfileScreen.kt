@@ -6,16 +6,22 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -24,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -32,6 +39,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -53,8 +61,13 @@ fun Profile(navController: NavController) {
     val userPreferencesDataStore = DataStoreHelper(context = LocalContext.current)
 
     val loginViewmodel: LoginViewmodel = hiltViewModel()
+    val userInfo by loginViewmodel.userInfo
     val authState by loginViewmodel.authState
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        loginViewmodel.getUserInfo()
+    }
 
     Scaffold(topBar = {
         CenterAlignedTopAppBar(
@@ -73,58 +86,54 @@ fun Profile(navController: NavController) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(300.dp)
-                    .weight(1f)
-                    .background(secondary_color),
-                horizontalArrangement = Arrangement.SpaceEvenly,
+                    .height(200.dp)
+                    .padding(16.dp) // Add padding around the Row
+                    .background(Color.Transparent), // Remove unnecessary solid background
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(
+                // Profile Section
+                Card(
                     modifier = Modifier
-                        .fillMaxSize()
                         .weight(1f)
-                        .padding(vertical = 5.dp), verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .fillMaxHeight()
+                        .padding(8.dp),
+                    colors = CardDefaults.cardColors(containerColor = secondary_color),// Add padding inside the card
+                    elevation = CardDefaults.cardElevation(8.dp), // Add elevation for shadow
+                    shape = RoundedCornerShape(16.dp) // Rounded corners for a modern look
                 ) {
-                    Image(
-                        Icons.Default.Person, contentDescription = "",
+                    Row(
                         modifier = Modifier
-                            .size(60.dp)
-                            .padding(10.dp)
-                            .weight(2f)
-                    )
-
-                    SignOutDialog(
-                        showDialog = showDialog,
-                        onDismiss = { showDialog = false },
-                        onConfirm = {
-                            loginViewmodel.signOut()
-                            if (authState is AuthState.Idle) {
-                                navController.navigate("login") {
-                                    popUpTo(0) {
-                                        inclusive = true
-                                    }
-                                }
-                                scope.launch {
-                                    userPreferencesDataStore.clearUserId()
-                                }
-                            }
-                            showDialog = false
-                        },
-                    )
-
-                    Text(text = "Enes Ay", fontSize = 25.sp, fontWeight = FontWeight.Bold)
-                }
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(text = "dsgsdg")
-
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        Image(
+                            Icons.Default.Person, // Placeholder for profile image
+                            contentDescription = "Profile Icon",
+                            modifier = Modifier
+                                .size(80.dp) // Larger size for profile picture
+                                .clip(CircleShape) // Circular profile picture
+                                .background(secondary_color.copy(alpha = 0.2f)) // Subtle background
+                                .padding(16.dp)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Column {
+                            Text(
+                                text = "${userInfo?.name} ${userInfo?.surname}",
+                                fontSize = 22.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = userInfo?.email ?: "Loading...",
+                                fontSize = 16.sp,
+                                color = Color.Gray
+                            )
+                        }
+                    }
                 }
             }
             LazyColumn(
