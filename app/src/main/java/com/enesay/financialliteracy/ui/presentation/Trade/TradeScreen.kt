@@ -84,34 +84,6 @@ fun TradeScreen(navController: NavHostController, asset: Asset,
                 .padding(16.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // Toggle Menu for Buy/Sell
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Button(
-                    onClick = { isBuySelected = true },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isBuySelected) primary_color else Color(0xFFE3F2FD),
-                        contentColor = if (isBuySelected) Color.White else Color.Black
-                    )
-                ) {
-                    Text("Buy")
-                }
-
-                Button(
-                    onClick = { isBuySelected = false },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (!isBuySelected) primary_color else Color(0xFFE3F2FD),
-                        contentColor = if (!isBuySelected) Color.White else Color.Black
-                    )
-                ) {
-                    Text("Sell")
-                }
-            }
-
             // Display Asset Details and Balance Information
             Column(horizontalAlignment = Alignment.Start, modifier = Modifier.padding(top = 10.dp)) {
                 Text(
@@ -139,6 +111,33 @@ fun TradeScreen(navController: NavHostController, asset: Asset,
                     color = Color.Gray
                 )
             }
+            // Toggle Menu for Buy/Sell
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 5.dp),
+                horizontalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                Button(
+                    onClick = { isBuySelected = true },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isBuySelected) primary_color else Color(0xFFE3F2FD),
+                        contentColor = if (isBuySelected) Color.White else Color.Black
+                    )
+                ) {
+                    Text("Buy")
+                }
+
+                Button(
+                    onClick = { isBuySelected = false },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (!isBuySelected) Color.Red else Color(0xFFE3F2FD),
+                        contentColor = if (!isBuySelected) Color.White else Color.Black
+                    )
+                ) {
+                    Text("Sell")
+                }
+            }
 
             // Amount Input and Percentage Buttons
             Column {
@@ -158,7 +157,7 @@ fun TradeScreen(navController: NavHostController, asset: Asset,
 
                 // Percentage Selection Buttons
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     listOf(25, 50, 75, 100).forEach { percentage ->
@@ -205,9 +204,9 @@ fun TradeScreen(navController: NavHostController, asset: Asset,
                 onClick = {
                     val amountValue = amount.toDoubleOrNull() ?: 0.0
                     if (isBuySelected) {
-                        tradeViewmodel.buyAsset(asset, asset.price, amountValue)
+                        tradeViewmodel.buyAsset(asset = asset, quantity = amountValue, purchasePrice =  asset.price)
                     } else {
-                        tradeViewmodel.sellAsset(asset, amountValue, asset.price)
+                        tradeViewmodel.sellAsset(asset = asset, quantity = amountValue, sellPrice = asset.price)
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -225,5 +224,3 @@ fun TradeScreen(navController: NavHostController, asset: Asset,
         }
     }
 }
-
-
