@@ -49,16 +49,15 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PortfolioScreen(navController: NavHostController) {
-    var viewModel: PortfolioViewmodel = hiltViewModel()
     var loginViewmodel: LoginViewmodel = hiltViewModel()
     var portfolioViewmodel: PortfolioViewmodel = hiltViewModel()
-    val assets by viewModel.userAssets.collectAsState()
-    val balance by viewModel.balance.collectAsState()
+    val assets by portfolioViewmodel.userAssets.collectAsState()
+    val balance by portfolioViewmodel.balance.collectAsState()
     val currentUserId by loginViewmodel.currentUser
 
     LaunchedEffect(balance){
         currentUserId?.let {
-        viewModel.getBalance(it)
+        portfolioViewmodel.calculateBalance(it)
         portfolioViewmodel.getUserAssets(it)}
     }
 
@@ -158,31 +157,6 @@ fun AssetList(assets: List<Asset>, navController: NavHostController) {
         }
     }
 }
-
-@Composable
-fun AssetRow2(asset: Asset) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
-            .shadow(elevation = 4.dp, shape = RoundedCornerShape(8.dp), clip = false)
-            .clickable {
-
-            }, // Gölge ve köşeleri yuvarlama
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp) // Hafif gri gölge efekti
-    ) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(5.dp),
-            horizontalAlignment = Alignment.Start
-        ) {
-            Text(text = asset.symbol,  fontWeight = FontWeight.Medium, fontSize = 22.sp, color = primary_color)
-            Text(text = "${asset.quantity}",  fontWeight = FontWeight.Medium,style = MaterialTheme.typography.bodyLarge)
-        }
-    }
-}
-
 
 @Composable
 fun EmptyState(paddingValues: PaddingValues) {

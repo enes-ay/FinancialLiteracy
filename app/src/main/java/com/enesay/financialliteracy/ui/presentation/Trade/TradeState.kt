@@ -5,4 +5,5 @@ sealed class TradeState {
     object Success : TradeState()
     data class Warning(val message: String) : TradeState()
     data class Error(val message: String) : TradeState()
+    object Idle : TradeState() // İşlem yapılmadığında kullanılan durum
 }

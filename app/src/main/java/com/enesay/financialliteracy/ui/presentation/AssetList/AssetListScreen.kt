@@ -179,6 +179,7 @@ fun CryptosList(cryptoList: List<Asset>, navController: NavHostController, trade
 @Composable
 fun AssetRow(asset: Asset, onClick: () -> Unit = {}) {
     val formattedPrice = String.format(Locale.US,"%,.2f", asset.price)
+    val formattedQuantity = String.format(Locale.US,"%,.2f", asset.quantity)
    // val formattedMarketCap = String.format(Locale.US,"%,.2f", crypto.)
 
     Card(
@@ -195,6 +196,7 @@ fun AssetRow(asset: Asset, onClick: () -> Unit = {}) {
         ) {
             Text(text = "${asset.symbol}", fontSize = 23.sp, color = primary_color, fontWeight = FontWeight.Medium)
             Text(text = "$${formattedPrice}", fontSize = 18.sp, fontWeight = FontWeight.Medium)
+            Text(text = "${formattedQuantity}", fontSize = 17.sp, fontWeight = FontWeight.Light)
         }
     }
 }

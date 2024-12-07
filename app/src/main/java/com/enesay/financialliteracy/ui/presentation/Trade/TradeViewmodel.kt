@@ -112,6 +112,7 @@ class TradeViewmodel @Inject constructor(
 
                 // Update local state
                 _transactionSuccess.value = true
+                _tradeState.value = TradeState.Success
                 loadUserData()
             } catch (e: Exception) {
                 _tradeState.value = TradeState.Error(e.message ?: "An unknown error occurred.")
@@ -121,5 +122,8 @@ class TradeViewmodel @Inject constructor(
         }
     }
 
+    fun resetTradeState() {
+        _tradeState.value = TradeState.Idle
+    }
 }
 

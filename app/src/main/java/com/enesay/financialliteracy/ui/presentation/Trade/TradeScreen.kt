@@ -2,7 +2,9 @@ package com.enesay.financialliteracy.ui.presentation.Trade
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,13 +12,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -28,19 +39,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.enesay.financialliteracy.model.Trade.Asset
 import com.enesay.financialliteracy.ui.theme.primary_color
+import kotlinx.coroutines.delay
 import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TradeScreen(navController: NavHostController, asset: Asset,
-                ) {
+fun TradeScreen(
+    navController: NavHostController, asset: Asset,
+) {
     // State for toggling between Buy and Sell
     val tradeViewmodel: TradeViewmodel = hiltViewModel()
     var isBuySelected by remember { mutableStateOf(true) }
@@ -70,22 +87,72 @@ fun TradeScreen(navController: NavHostController, asset: Asset,
             is TradeState.Warning -> {
                 warningMessage = (tradeState as TradeState.Warning).message
             }
+
             else -> {
                 warningMessage = "" // Clear warning message on success or other states
             }
         }
     }
 
-    Scaffold(modifier = Modifier.fillMaxSize()) { paddingValues ->
+    if (tradeState is TradeState.Success || tradeState is TradeState.Warning || tradeState is TradeState.Error) {
+        val (message, icon, iconColor) = when (tradeState) {
+            is TradeState.Success -> Triple(
+                if (isBuySelected) "Purchase Successful!" else "Sale Successful!",
+                Icons.Default.CheckCircle,
+                Color.Green
+            )
+
+            is TradeState.Warning -> Triple(
+                (tradeState as TradeState.Warning).message,
+                Icons.Default.Warning,
+                Color.Yellow
+            )
+
+            is TradeState.Error -> Triple(
+                (tradeState as TradeState.Error).message,
+                Icons.Default.Warning,
+                Color.Red
+            )
+
+            else -> null
+        } ?: return
+
+        TradeResultDialog(
+            message = message,
+            icon = icon,
+            iconColor = iconColor,
+            onDismiss = { tradeViewmodel.resetTradeState() }
+        )
+
+        // Dialog'u otomatik olarak kapat
+        LaunchedEffect(tradeState) {
+            delay(1000) // 1 saniye bekle
+            tradeViewmodel.resetTradeState()
+        }
+    }
+
+
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = "Trade", fontWeight = FontWeight.Bold) },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = primary_color, titleContentColor = Color.White
+                )
+            )
+        },
+        modifier = Modifier.fillMaxSize()
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.SpaceBetween
+                .padding(12.dp),
+            verticalArrangement = Arrangement.SpaceAround
         ) {
             // Display Asset Details and Balance Information
-            Column(horizontalAlignment = Alignment.Start, modifier = Modifier.padding(top = 10.dp)) {
+            Column(horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.Top) {
                 Text(
                     text = asset.name,
                     fontSize = 28.sp,
@@ -96,19 +163,19 @@ fun TradeScreen(navController: NavHostController, asset: Asset,
                 Text(
                     text = "$formattedPrice USD",
                     fontSize = 22.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.Gray
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
                     text = if (isBuySelected) {
-                        "Available Balance: $formattedBalance USDT"
+                        "Available USD: $formattedBalance"
                     } else {
-                        "Available ${asset.name}: $formattedAssetBalance"
+                        "Available ${asset.symbol}: $formattedAssetBalance"
                     },
                     fontSize = 18.sp,
-                    color = Color.Gray
+                    color = Color.Black
                 )
             }
             // Toggle Menu for Buy/Sell
@@ -140,12 +207,7 @@ fun TradeScreen(navController: NavHostController, asset: Asset,
             }
 
             // Amount Input and Percentage Buttons
-            Column {
-                Text(
-                    text = "Enter Amount",
-                    fontSize = 21.sp,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
+            Column(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
                     value = amount,
                     onValueChange = { amount = it },
@@ -157,7 +219,9 @@ fun TradeScreen(navController: NavHostController, asset: Asset,
 
                 // Percentage Selection Buttons
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 5.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     listOf(25, 50, 75, 100).forEach { percentage ->
@@ -166,8 +230,12 @@ fun TradeScreen(navController: NavHostController, asset: Asset,
                                 selectedPercentage = percentage
                                 val maxAmount = if (isBuySelected) balance else userAssetBalance
                                 amount = if (isBuySelected) {
-                                    String.format(Locale.US, "%.2f", (maxAmount * percentage / 100) / asset.price)
-                                }else{
+                                    String.format(
+                                        Locale.US,
+                                        "%.2f",
+                                        (maxAmount * percentage / 100) / asset.price
+                                    )
+                                } else {
                                     String.format(Locale.US, "%.2f", (maxAmount * percentage / 100))
                                 }
                             },
@@ -175,9 +243,15 @@ fun TradeScreen(navController: NavHostController, asset: Asset,
                                 .weight(1f)
                                 .padding(horizontal = 4.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = if (selectedPercentage == percentage) primary_color else Color(
-                                    0xFFE3F2FD
-                                ),
+                                containerColor = if (selectedPercentage == percentage && isBuySelected) {
+                                    primary_color
+                                } else if (selectedPercentage == percentage && !isBuySelected) {
+                                    Color.Red
+                                } else {
+                                    Color(
+                                        0xFFE3F2FD
+                                    )
+                                },
                                 contentColor = if (selectedPercentage == percentage) Color.White else Color.Black
                             )
                         ) {
@@ -186,7 +260,6 @@ fun TradeScreen(navController: NavHostController, asset: Asset,
                     }
                 }
             }
-
             // Display warning message
             if (warningMessage.isNotEmpty()) {
                 Text(
@@ -204,9 +277,17 @@ fun TradeScreen(navController: NavHostController, asset: Asset,
                 onClick = {
                     val amountValue = amount.toDoubleOrNull() ?: 0.0
                     if (isBuySelected) {
-                        tradeViewmodel.buyAsset(asset = asset, quantity = amountValue, purchasePrice =  asset.price)
+                        tradeViewmodel.buyAsset(
+                            asset = asset,
+                            quantity = amountValue,
+                            purchasePrice = asset.price
+                        )
                     } else {
-                        tradeViewmodel.sellAsset(asset = asset, quantity = amountValue, sellPrice = asset.price)
+                        tradeViewmodel.sellAsset(
+                            asset = asset,
+                            quantity = amountValue,
+                            sellPrice = asset.price
+                        )
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -224,3 +305,42 @@ fun TradeScreen(navController: NavHostController, asset: Asset,
         }
     }
 }
+
+@Composable
+fun TradeResultDialog(
+    message: String,
+    icon: ImageVector,
+    iconColor: Color,
+    onDismiss: () -> Unit
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Box(
+            modifier = Modifier
+                .size(250.dp)
+                .background(Color.White, shape = RoundedCornerShape(16.dp))
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = iconColor,
+                    modifier = Modifier.size(48.dp)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = message,
+                    fontSize = 18.sp,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+    }
+}
+
