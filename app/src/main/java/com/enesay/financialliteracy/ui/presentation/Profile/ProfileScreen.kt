@@ -16,13 +16,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -44,6 +46,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -211,6 +214,7 @@ private fun ProfileItemsRow(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignOutDialog(
     showDialog: Boolean,
@@ -218,19 +222,59 @@ fun SignOutDialog(
     onConfirm: () -> Unit,
 ) {
     if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { },
-            title = { Text("Are you sure you want to log out?") },
-            confirmButton = {
-                TextButton(onClick = { onConfirm() }) {
-                    Text("Yes")
+        AlertDialog (
+            onDismissRequest = { onDismiss() },
+            title = {
+                Text(
+                    text = "Log Out",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            text = {
+                Text(
+                    text = "Are you sure you want to log out?",
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+                )
+            },
+            buttons = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        Button(
+                            onClick = { onConfirm() },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Red,
+                                contentColor = Color.White
+                            ),
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier.weight(1f).padding(end = 8.dp)
+                        ) {
+                            Text("Yes")
+                        }
+                        OutlinedButton(
+                            onClick = { onDismiss() },
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier.weight(1f).padding(start = 8.dp)
+                        ) {
+                            Text("No")
+                        }
+                    }
                 }
             },
-            dismissButton = {
-                TextButton(onClick = { onDismiss() }) {
-                    Text("No")
-                }
-            }
+            shape = RoundedCornerShape(16.dp),
+            modifier = Modifier.padding(16.dp)
         )
     }
 }

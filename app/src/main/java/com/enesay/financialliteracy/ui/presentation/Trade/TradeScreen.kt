@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -128,12 +130,10 @@ fun TradeScreen(
 
         // Dialog'u otomatik olarak kapat
         LaunchedEffect(tradeState) {
-            delay(1000) // 1 saniye bekle
+            delay(1300) // 1 saniye bekle
             tradeViewmodel.resetTradeState()
         }
     }
-
-
 
     Scaffold(
         topBar = {
@@ -163,22 +163,13 @@ fun TradeScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "$formattedPrice USD",
+                    text = "$$formattedPrice",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
-                    text = if (isBuySelected) {
-                        "Available USD: $formattedBalance"
-                    } else {
-                        "Available ${asset.symbol}: $formattedAssetBalance"
-                    },
-                    fontSize = 18.sp,
-                    color = Color.Black
-                )
             }
             // Toggle Menu for Buy/Sell
             Row(
@@ -217,9 +208,19 @@ fun TradeScreen(
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth()
                 )
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Percentage Selection Buttons
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    modifier = Modifier.padding(horizontal = 5.dp),
+                    text = if (isBuySelected) {
+                        "Max: $formattedBalance USD"
+                    } else {
+                        "Max: $formattedAssetBalance ${asset.symbol}"
+                    },
+                    fontSize = 15.sp,
+                    color = Color.Black
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                // Percentage Selection Button
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -242,7 +243,7 @@ fun TradeScreen(
                                 }
                             },
                             modifier = Modifier
-                                .weight(1f)
+                                .wrapContentSize()
                                 .padding(horizontal = 4.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = if (selectedPercentage == percentage && isBuySelected) {

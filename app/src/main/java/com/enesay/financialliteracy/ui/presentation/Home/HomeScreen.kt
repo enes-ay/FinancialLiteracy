@@ -7,7 +7,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -16,7 +15,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -26,14 +24,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -43,6 +40,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.enesay.financialliteracy.R
 import com.enesay.financialliteracy.ui.presentation.Screen
 import com.enesay.financialliteracy.ui.theme.category_item1_color
 import com.enesay.financialliteracy.ui.theme.category_item2_color
@@ -55,17 +53,13 @@ import com.enesay.financialliteracy.ui.theme.primary_color
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home(navController: NavController) {
+
     val homeViewmodel: HomeViewmodel = hiltViewModel()
     val educationalContentList by homeViewmodel.educationalContent.collectAsState(initial = emptyList())
 
-    val scope = rememberCoroutineScope()
-
-    LaunchedEffect(key1 = true) {
-
-    }
     Scaffold(topBar = {
         TopAppBar(
-            title = { Text(text = "Financial Literacy", fontWeight = FontWeight.Bold) },
+            title = { Text(text = stringResource(R.string.app_name), fontWeight = FontWeight.Bold) },
             colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                 containerColor = primary_color, titleContentColor = Color.White
             )
@@ -117,18 +111,11 @@ fun Home(navController: NavController) {
                             color = Color.White,
                             textAlign = TextAlign.Center,
                         )
-
-
                     }
                 }
-
-
             })
-
         }
-
     }
-
 }
 
 @Composable
@@ -181,6 +168,5 @@ fun BottomBar(navController: NavController) {
                 )
             )
         }
-
     }
 }

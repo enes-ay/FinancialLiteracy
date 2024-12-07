@@ -180,7 +180,6 @@ fun CryptosList(cryptoList: List<Asset>, navController: NavHostController, trade
 fun AssetRow(asset: Asset, onClick: () -> Unit = {}) {
     val formattedPrice = String.format(Locale.US,"%,.2f", asset.price)
     val formattedQuantity = String.format(Locale.US,"%,.2f", asset.quantity)
-   // val formattedMarketCap = String.format(Locale.US,"%,.2f", crypto.)
 
     Card(
         modifier = Modifier
@@ -194,9 +193,9 @@ fun AssetRow(asset: Asset, onClick: () -> Unit = {}) {
             modifier = Modifier.fillMaxWidth().padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp),
         ) {
-            Text(text = "${asset.symbol}", fontSize = 23.sp, color = primary_color, fontWeight = FontWeight.Medium)
-            Text(text = "$${formattedPrice}", fontSize = 18.sp, fontWeight = FontWeight.Medium)
-            Text(text = "${formattedQuantity}", fontSize = 17.sp, fontWeight = FontWeight.Light)
+            Text(text = "${asset.symbol}", fontSize = 21.sp, color = primary_color, fontWeight = FontWeight.Medium)
+            Text(text = "$${formattedPrice}", fontSize = 16.sp, fontWeight = FontWeight.Medium)
+            Text(text = "${formattedQuantity}", fontSize = 16.sp, fontWeight = FontWeight.Light)
         }
     }
 }
