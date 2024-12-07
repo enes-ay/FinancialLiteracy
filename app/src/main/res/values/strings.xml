@@ -1,3 +1,12 @@
 <resources>
-    <string name="app_name">FinancialLiteracy</string>
+    <string name="app_name">FinEdu</string>
+    <string name="btn_buy">Buy</string>
+    <string name="btn_sell">Sell</string>
+    <string name="txt_balance">Balance</string>
+    <string name="btn_logout">Log Out</string>
+    <string name="btn_login">Log In</string>
+    <string name="btn_register">Register</string>
+    <string name="txt_login">Log In</string>
+    <string name="txt_register">Register</string>
+    <string name="txt_amount">Amount</string>
 </resources>

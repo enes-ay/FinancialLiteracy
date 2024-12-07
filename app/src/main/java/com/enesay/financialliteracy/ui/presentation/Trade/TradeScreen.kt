@@ -40,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -48,6 +49,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.enesay.financialliteracy.R
 import com.enesay.financialliteracy.model.Trade.Asset
 import com.enesay.financialliteracy.ui.theme.primary_color
 import kotlinx.coroutines.delay
@@ -192,7 +194,7 @@ fun TradeScreen(
                         contentColor = if (isBuySelected) Color.White else Color.Black
                     )
                 ) {
-                    Text("Buy")
+                    Text(stringResource(R.string.btn_buy))
                 }
 
                 Button(
@@ -202,7 +204,7 @@ fun TradeScreen(
                         contentColor = if (!isBuySelected) Color.White else Color.Black
                     )
                 ) {
-                    Text("Sell")
+                    Text(stringResource(R.string.btn_sell))
                 }
             }
 
@@ -211,7 +213,7 @@ fun TradeScreen(
                 OutlinedTextField(
                     value = amount,
                     onValueChange = { amount = it },
-                    label = { Text("Amount") },
+                    label = { Text(stringResource(R.string.txt_amount)) },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -296,7 +298,7 @@ fun TradeScreen(
                 )
             ) {
                 Text(
-                    if (isBuySelected) "Buy" else "Sell",
+                    if (isBuySelected) stringResource(R.string.btn_buy) else stringResource(R.string.btn_sell),
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
                     fontSize = 20.sp

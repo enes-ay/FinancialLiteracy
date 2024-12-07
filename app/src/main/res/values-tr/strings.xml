@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FinEdu</string>
+    <string name="btn_buy">Al</string>
+    <string name="btn_sell">Sat</string>
+    <string name="txt_balance">Bakiye</string>
+    <string name="btn_logout">Çıkış Yap</string>
+    <string name="btn_login">Giriş Yap</string>
+    <string name="btn_register">Kayıt Ol</string>
+    <string name="txt_login">Giriş Yap</string>
+    <string name="txt_register">Kayıt Ol</string>
+    <string name="txt_amount">Miktar</string>
+</resources>
