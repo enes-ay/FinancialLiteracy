@@ -1,7 +1,6 @@
 package com.enesay.financialliteracy.ui.presentation.Home
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,6 +15,7 @@ import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -41,7 +41,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.enesay.financialliteracy.R
-import com.enesay.financialliteracy.ui.presentation.Screen
+import com.enesay.financialliteracy.ui.presentation.Screens
 import com.enesay.financialliteracy.ui.theme.category_item1_color
 import com.enesay.financialliteracy.ui.theme.category_item2_color
 import com.enesay.financialliteracy.ui.theme.category_item3_color
@@ -121,10 +121,10 @@ fun Home(navController: NavController) {
 @Composable
 fun BottomBar(navController: NavController) {
     val items = listOf(
-        Screen.Home,
-        Screen.List,
-        Screen.Profile,
-        Screen.Portolio
+        Screens.Home,
+        Screens.List,
+        Screens.Profile,
+        Screens.Portolio
     )
     NavigationBar(
         modifier = Modifier.border(
@@ -154,8 +154,7 @@ fun BottomBar(navController: NavController) {
                     }
                 },
                 icon = {
-                    Image(
-                        modifier = Modifier.size(24.dp),
+                  Icon(
                         painter = painterResource(id = item.iconId),
                         contentDescription = item.label
                     )

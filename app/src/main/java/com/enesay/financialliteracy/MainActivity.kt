@@ -17,7 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import com.enesay.financialliteracy.ui.presentation.Home.BottomBar
 import com.enesay.financialliteracy.ui.presentation.Login.LoginViewmodel
 import com.enesay.financialliteracy.ui.presentation.Navigation.Navigation
-import com.enesay.financialliteracy.ui.presentation.Screen
+import com.enesay.financialliteracy.ui.presentation.Screens
 import com.enesay.financialliteracy.ui.theme.FinancialLiteracyTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -56,7 +56,7 @@ private fun shouldShowBottomBar(navController: NavController): Boolean {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     return when (currentDestination?.route) {
-        Screen.Home.route, Screen.List.route, Screen.Profile.route, Screen.Portolio.route -> true // Replace with your routes
+        Screens.Home.route, Screens.List.route, Screens.Profile.route, Screens.Portolio.route -> true // Replace with your routes
         else -> false
     }
 }

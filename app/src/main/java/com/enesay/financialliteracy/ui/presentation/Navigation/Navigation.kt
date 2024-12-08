@@ -65,7 +65,8 @@ fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
         composable("stockList") {
             AssetListScreen(navController = navController)
         }
-        composable("stockDetail/{symbol}",
+        composable(
+            "stockDetail/{symbol}",
             arguments = listOf(navArgument("symbol") {
                 type = NavType.StringType
             })
@@ -73,9 +74,9 @@ fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
         {
             val stockSymbol = it.arguments?.getString("symbol")
             StockDetailScreen(navController = navController, stockSymbol)
-
         }
-        composable("assetTrade/{crypto}",
+        composable(
+            "assetTrade/{crypto}",
             arguments = listOf(navArgument("crypto") {
                 type = NavType.StringType
             })
@@ -85,7 +86,5 @@ fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
             val crypto = Gson().fromJson(crypto_json, Asset::class.java)
             TradeScreen(navController = navController, asset = crypto)
         }
-
     }
-
 }

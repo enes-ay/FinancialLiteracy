@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -154,22 +155,38 @@ fun TradeScreen(
             verticalArrangement = Arrangement.SpaceAround
         ) {
             // Display Asset Details and Balance Information
-            Column(horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.Top) {
-                Text(
-                    text = asset.name,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = primary_color
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "$$formattedPrice",
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black
-                )
-                Spacer(modifier = Modifier.height(16.dp))
+            Row(modifier = Modifier.fillMaxWidth().wrapContentHeight(), horizontalArrangement = Arrangement.SpaceBetween){
+                Column(modifier = Modifier.wrapContentHeight().weight(2f), horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.Top) {
+                    Text(
+                        text = asset.name,
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = primary_color
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "$$formattedPrice",
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                }
 
+                Column (modifier = Modifier.wrapContentHeight().weight(1f)) {
+                    Text(
+                        text = "Market Cap",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Light,
+                        color = Color.Black
+                    )
+                    Spacer(modifier = Modifier.height(15.dp))
+                    Text(
+                        text = "$$formattedBalance",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.Black
+                    )
+                }
             }
             // Toggle Menu for Buy/Sell
             Row(
