@@ -9,4 +9,9 @@
     <string name="txt_login">Log In</string>
     <string name="txt_register">Register</string>
     <string name="txt_amount">Amount</string>
+    <string name="switch_dark_mode">Dark Mode</string>
+    <string name="change_language">Language</string>
+    <string name="change_language_title">Change app language</string>
+    <string name="txt_ok">Okay</string>
+    <string name="txt_cancel">Cancel</string>
 </resources>

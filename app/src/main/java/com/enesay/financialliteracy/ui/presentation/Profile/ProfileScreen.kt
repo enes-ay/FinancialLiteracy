@@ -1,5 +1,7 @@
 package com.enesay.financialliteracy.ui.presentation.Profile
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,7 +30,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -45,22 +51,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.enesay.financialliteracy.MainActivity
+import com.enesay.financialliteracy.R
 import com.enesay.financialliteracy.ui.presentation.Login.LoginViewmodel
 import com.enesay.financialliteracy.ui.presentation.Register.AuthState
 import com.enesay.financialliteracy.ui.theme.primary_color
 import com.enesay.financialliteracy.ui.theme.secondary_color
 import com.enesay.financialliteracy.utils.DataStoreHelper
+import com.enesay.financialliteracy.utils.setAppLocale
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Profile(navController: NavController) {
+fun Profile(navController: NavController, context: Context) {
     var showDialog by remember { mutableStateOf(false) }
     val userPreferencesDataStore = DataStoreHelper(context = LocalContext.current)
 
@@ -68,9 +78,28 @@ fun Profile(navController: NavController) {
     val userInfo by loginViewmodel.userInfo
     val authState by loginViewmodel.authState
     val scope = rememberCoroutineScope()
+    var isDarkMode by remember { mutableStateOf(false) }
+    var showLanguageDialog by remember { mutableStateOf(false) }
+    var selectedLanguage by remember { mutableStateOf("English") } // Default language
 
     LaunchedEffect(Unit) {
         loginViewmodel.getUserInfo()
+    }
+    if (showLanguageDialog) {
+        LanguageSelectionDialog(
+            currentLanguage = selectedLanguage,
+            onLanguageSelected = { language ->
+                selectedLanguage = language
+                showLanguageDialog = false
+
+                    // Dil değişikliği işlemi
+                    val newContext = context.setAppLocale(language)
+                    val intent = Intent(newContext, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    context.startActivity(intent)
+            },
+            onDismissRequest = { showLanguageDialog = false }
+        )
     }
 
     Scaffold(topBar = {
@@ -164,19 +193,37 @@ fun Profile(navController: NavController) {
                     .weight(4f), horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 item {
-                    ProfileItemsRow("Edit Profile", onclik = {})
+                    ProfileItemsRow("Edit Profile", onClick = {})
                 }
                 item {
-                    ProfileItemsRow("Favorite List", onclik = {})
+                    ProfileItemsRow("FAQ", onClick = {})
                 }
                 item {
-                    ProfileItemsRow("Language", onclik = {})
+                    ProfileItemsRow(stringResource(R.string.change_language), onClick = {
+                        showLanguageDialog = true
+                    })
                 }
                 item {
-                    ProfileItemsRow("FAQ", onclik = {})
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 30.dp, vertical = 10.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = stringResource(R.string.switch_dark_mode), fontSize = 20.sp)
+
+                        Switch(
+                            checked = isDarkMode,
+                            onCheckedChange = { isChecked ->
+                                isDarkMode = isChecked
+                                // Handle dark mode toggle logic here
+                            }
+                        )
+                    }
                 }
                 item {
-                    ProfileItemsRow("Log out", onclik = {
+                    ProfileItemsRow("Log out", onClick = {
                         showDialog = true
                     }, color = Color.Red, showIcon = false)
                 }
@@ -189,18 +236,19 @@ fun Profile(navController: NavController) {
 @Composable
 private fun ProfileItemsRow(
     title: String,
-    onclik: () -> Unit,
+    onClick: () -> Unit,
     color: Color = Color.Black,
     showIcon: Boolean = true
 ) {
     Row(modifier = Modifier
         .fillMaxWidth()
-        .clickable { onclik() }) {
+        .clickable { onClick() }) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 30.dp, vertical = 20.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(horizontal = 30.dp, vertical = 20.dp).padding(end = 13.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = title, fontSize = 20.sp, color = color)
             if (showIcon) {
@@ -214,7 +262,6 @@ private fun ProfileItemsRow(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignOutDialog(
     showDialog: Boolean,
@@ -275,6 +322,67 @@ fun SignOutDialog(
             },
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier.padding(16.dp)
+        )
+    }
+}
+
+@Composable
+fun LanguageSelectionDialog(
+    currentLanguage: String,
+    onLanguageSelected: (String) -> Unit,
+    onDismissRequest: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        title = {
+            Text(
+                text = stringResource(R.string.change_language_title),
+                style = MaterialTheme.typography.titleMedium
+            )
+        },
+        text = {
+            Column (modifier = Modifier.padding(top = 10.dp)) {
+                LanguageOption(
+                    language = "English",
+                    isSelected = currentLanguage == "English",
+                    onClick = { onLanguageSelected("English") }
+                )
+                LanguageOption(
+                    language = "Turkish",
+                    isSelected = currentLanguage == "Turkish",
+                    onClick = { onLanguageSelected("Turkish") }
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text(text = stringResource(R.string.txt_cancel))
+            }
+        }
+    )
+}
+
+@Composable
+fun LanguageOption(
+    language: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 8.dp).padding(top = 2.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        RadioButton(
+            selected = isSelected,
+            onClick = onClick
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = language,
+            style = MaterialTheme.typography.bodyLarge
         )
     }
 }

@@ -10,4 +10,9 @@
     <string name="txt_login">Giriş Yap</string>
     <string name="txt_register">Kayıt Ol</string>
     <string name="txt_amount">Miktar</string>
+    <string name="switch_dark_mode">Karanlık Mod</string>
+    <string name="change_language">Dil</string>
+    <string name="change_language_title">Uygulama dilini değiştir</string>
+    <string name="txt_ok">Tamam</string>
+    <string name="txt_cancel">Vazgeç</string>
 </resources>

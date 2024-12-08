@@ -34,10 +34,10 @@ fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
             Home(navController = navController)
         }
         composable("profile") {
-            Profile(navController = navController)
+            Profile(navController = navController, context = navController.context)
         }
         composable("list") {
-            Profile(navController = navController)
+            Profile(navController = navController, context = navController.context)
         }
         composable("portfolio") {
             PortfolioScreen(navController = navController)
