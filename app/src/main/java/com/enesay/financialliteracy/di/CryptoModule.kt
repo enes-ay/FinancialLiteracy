@@ -4,6 +4,7 @@ import com.enesay.financialliteracy.data.datasource.CryptoRemoteDataSource
 import com.enesay.financialliteracy.data.repository.CryptoRepository
 import com.enesay.financialliteracy.service.AuthInterceptor
 import com.enesay.financialliteracy.service.CryptoService
+import com.enesay.financialliteracy.ui.presentation.AssetList.AssetListViewmodel
 import com.enesay.financialliteracy.utils.Constants.API_KEY_CRYPTO
 import com.enesay.financialliteracy.utils.Constants.BASE_URL_CRYPTO
 import dagger.Module
@@ -47,5 +48,10 @@ object CryptoModule {
             .create(CryptoService::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun provideAssetListViewModel(cryptoRepository: CryptoRepository): AssetListViewmodel {
+        return AssetListViewmodel(cryptoRepository)
+    }
 
 }
