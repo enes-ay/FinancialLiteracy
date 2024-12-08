@@ -188,12 +188,7 @@ fun Login(navController: NavController) {
                         is AuthState.Loading -> CircularProgressIndicator()
 
                         is AuthState.Authenticated -> {
-                            Text(
-                                text = "Login Successful!",
-                                color = MaterialTheme.colorScheme.primary
-                            )
                                 LaunchedEffect(AuthState.Authenticated) {
-                                    Log.e("launch", "auth state")
                                     scope.launch {
                                         if (rememberMeState.value) {
                                             userPreferencesDataStore.saveUserPreferences(

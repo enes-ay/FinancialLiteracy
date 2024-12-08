@@ -28,11 +28,13 @@ class LoginViewmodel @Inject constructor(private val authRepository: AuthReposit
         userLoggedIn.value= authRepository.isUserLoggedIn()
     }
 
-    fun signIn(email:String, password:String) = viewModelScope.launch{
-        if(email.isEmpty() || password.isEmpty()){
+    fun signIn(email: String, password: String) = viewModelScope.launch {
+        // İşlem başlamadan önce Loading durumunu ayarla
+        _authState.value = AuthState.Loading
+
+        if (email.isEmpty() || password.isEmpty()) {
             _authState.value = AuthState.Error("Email or Password cannot be null")
-        }
-        else{
+        } else {
             val result = authRepository.signIn(email, password)
             _authState.value = when (result) {
                 is Resource.Success -> AuthState.Authenticated

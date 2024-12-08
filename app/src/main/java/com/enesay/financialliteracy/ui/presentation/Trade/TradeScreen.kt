@@ -86,19 +86,6 @@ fun TradeScreen(
         tradeViewmodel.loadUserData()
     }
 
-    // Update warningMessage when tradeState changes
-    LaunchedEffect(tradeState) {
-        when (tradeState) {
-            is TradeState.Warning -> {
-                warningMessage = (tradeState as TradeState.Warning).message
-            }
-
-            else -> {
-                warningMessage = "" // Clear warning message on success or other states
-            }
-        }
-    }
-
     if (tradeState is TradeState.Success || tradeState is TradeState.Warning || tradeState is TradeState.Error) {
         val (message, icon, iconColor) = when (tradeState) {
             is TradeState.Success -> Triple(
@@ -336,8 +323,8 @@ fun TradeResultDialog(
     Dialog(onDismissRequest = onDismiss) {
         Box(
             modifier = Modifier
-                .size(250.dp)
-                .background(Color.White, shape = RoundedCornerShape(16.dp))
+                .size(200.dp)
+                .background(Color.White, shape = RoundedCornerShape(8.dp))
                 .padding(16.dp),
             contentAlignment = Alignment.Center
         ) {

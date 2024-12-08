@@ -18,6 +18,8 @@ class RegisterViewmodel @Inject constructor(private val authRepository: AuthRepo
     val authState: State<AuthState> = _authState
 
     fun signUp(email:String, password:String, name:String, surname:String) = viewModelScope.launch{
+        _authState.value = AuthState.Loading
+
         if(email.isEmpty() || password.isEmpty()){
             _authState.value = AuthState.Error("Email or Password cannot be null")
         }

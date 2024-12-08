@@ -149,7 +149,6 @@ fun Register(navController: NavController) {
                     is AuthState.Loading -> CircularProgressIndicator()
 
                     is AuthState.Authenticated -> {
-                        Text(text = "Registration is Successful!")
                         navController.navigate("home"){
                             popUpTo("register"){
                                 inclusive = true
