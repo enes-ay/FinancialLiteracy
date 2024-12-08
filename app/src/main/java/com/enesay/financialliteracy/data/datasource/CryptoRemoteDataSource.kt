@@ -1,6 +1,6 @@
 package com.enesay.financialliteracy.data.datasource
 
-import com.enesay.financialliteracy.model.DataCrypto
+import com.enesay.financialliteracy.model.Crypto.DataCrypto
 import com.enesay.financialliteracy.service.CryptoService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

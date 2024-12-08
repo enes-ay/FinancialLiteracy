@@ -1,4 +1,4 @@
-package com.enesay.financialliteracy.model
+package com.enesay.financialliteracy.model.Stock
 
 data class Data(
     val `52_week_high`: Double,

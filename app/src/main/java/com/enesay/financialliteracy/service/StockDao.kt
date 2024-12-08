@@ -1,7 +1,7 @@
 package com.enesay.financialliteracy.service
 
-import com.enesay.financialliteracy.model.ApiResponse
-import com.enesay.financialliteracy.model.SearchResponse
+import com.enesay.financialliteracy.model.Stock.ApiResponse
+import com.enesay.financialliteracy.model.Stock.SearchResponse
 import com.enesay.financialliteracy.utils.Constants
 import retrofit2.http.GET
 import retrofit2.http.Query

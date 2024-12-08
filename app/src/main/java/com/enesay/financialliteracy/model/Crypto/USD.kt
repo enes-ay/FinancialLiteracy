@@ -1,4 +1,4 @@
-package com.enesay.financialliteracy.model
+package com.enesay.financialliteracy.model.Crypto
 
 data class USD(
     val fully_diluted_market_cap: Double,

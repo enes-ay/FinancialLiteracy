@@ -1,4 +1,4 @@
-package com.enesay.financialliteracy.model
+package com.enesay.financialliteracy.model.Stock
 
 data class SearchResponse(
     val count: Int,

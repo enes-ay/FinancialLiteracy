@@ -3,7 +3,7 @@ package com.enesay.financialliteracy.ui.presentation
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.enesay.financialliteracy.data.repository.StockRepository
-import com.enesay.financialliteracy.model.ApiResponse
+import com.enesay.financialliteracy.model.Stock.ApiResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

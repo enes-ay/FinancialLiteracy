@@ -1,6 +1,6 @@
 package com.enesay.financialliteracy.service
 
-import com.enesay.financialliteracy.model.LatestResponse
+import com.enesay.financialliteracy.model.Crypto.LatestResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

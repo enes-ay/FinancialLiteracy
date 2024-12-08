@@ -1,4 +1,4 @@
-package com.enesay.financialliteracy.model
+package com.enesay.financialliteracy.model.Crypto
 
 data class DataCrypto(
     val circulating_supply: Double,

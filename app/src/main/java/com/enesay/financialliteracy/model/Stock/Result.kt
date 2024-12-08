@@ -1,4 +1,4 @@
-package com.enesay.financialliteracy.model
+package com.enesay.financialliteracy.model.Stock
 
 data class Result(
     val description: String,

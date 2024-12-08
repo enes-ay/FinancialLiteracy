@@ -1,6 +1,5 @@
 package com.enesay.financialliteracy.ui.presentation.AssetList
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -49,7 +48,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.enesay.financialliteracy.model.DataCrypto
 import com.enesay.financialliteracy.model.Trade.Asset
 import com.enesay.financialliteracy.ui.presentation.Trade.TradeViewmodel
 import com.enesay.financialliteracy.ui.theme.primary_color

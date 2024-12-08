@@ -1,6 +1,6 @@
 package com.enesay.financialliteracy.model.Trade
 
-import com.enesay.financialliteracy.model.DataCrypto
+import com.enesay.financialliteracy.model.Crypto.DataCrypto
 
 data class Asset(
     val id: String = "",

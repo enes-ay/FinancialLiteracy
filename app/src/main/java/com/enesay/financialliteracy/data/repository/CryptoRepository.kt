@@ -1,7 +1,7 @@
 package com.enesay.financialliteracy.data.repository
 
 import com.enesay.financialliteracy.data.datasource.CryptoRemoteDataSource
-import com.enesay.financialliteracy.model.DataCrypto
+import com.enesay.financialliteracy.model.Crypto.DataCrypto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import javax.inject.Inject

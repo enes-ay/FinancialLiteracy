@@ -7,9 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.enesay.financialliteracy.model.DataCrypto
 import com.enesay.financialliteracy.model.Trade.Asset
-import com.enesay.financialliteracy.model.Trade.toAsset
 import com.enesay.financialliteracy.ui.presentation.CategoryDetail.CategoryDetail
 import com.enesay.financialliteracy.ui.presentation.Home.Home
 import com.enesay.financialliteracy.ui.presentation.Login.Login
