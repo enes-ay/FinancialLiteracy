@@ -15,7 +15,6 @@ import com.enesay.financialliteracy.ui.presentation.Portfolio.PortfolioScreen
 import com.enesay.financialliteracy.ui.presentation.Profile.Profile
 import com.enesay.financialliteracy.ui.presentation.Register.Register
 import com.enesay.financialliteracy.ui.presentation.Splash.Splash
-import com.enesay.financialliteracy.ui.presentation.StockDetail.StockDetailScreen
 import com.enesay.financialliteracy.ui.presentation.AssetList.AssetListScreen
 import com.enesay.financialliteracy.ui.presentation.Trade.TradeScreen
 import com.google.gson.Gson
@@ -62,16 +61,6 @@ fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
         }
         composable("stockList") {
             AssetListScreen(navController = navController)
-        }
-        composable(
-            "stockDetail/{symbol}",
-            arguments = listOf(navArgument("symbol") {
-                type = NavType.StringType
-            })
-        )
-        {
-            val stockSymbol = it.arguments?.getString("symbol")
-            StockDetailScreen(navController = navController, stockSymbol)
         }
         composable(
             "assetTrade/{crypto}",

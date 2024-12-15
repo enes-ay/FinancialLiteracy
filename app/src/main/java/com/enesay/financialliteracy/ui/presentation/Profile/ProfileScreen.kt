@@ -20,12 +20,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
-import androidx.compose.material.OutlinedButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,7 +38,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -53,13 +49,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.enesay.financialliteracy.MainActivity
 import com.enesay.financialliteracy.R
+import com.enesay.financialliteracy.ui.components.SimpleDialog
 import com.enesay.financialliteracy.ui.presentation.Login.LoginViewmodel
 import com.enesay.financialliteracy.ui.presentation.Register.AuthState
 import com.enesay.financialliteracy.ui.theme.primary_color
@@ -151,7 +147,9 @@ fun Profile(navController: NavController, context: Context) {
                                 .background(secondary_color.copy(alpha = 0.2f)) // Subtle background
                                 .padding(16.dp)
                         )
-                        SignOutDialog(
+                        SimpleDialog(
+                            title = stringResource(R.string.logout_title),
+                            message = stringResource(R.string.logout_message),
                             showDialog = showDialog,
                             onDismiss = { showDialog = false },
                             onConfirm = {
@@ -259,70 +257,6 @@ private fun ProfileItemsRow(
                 )
             }
         }
-    }
-}
-
-@Composable
-fun SignOutDialog(
-    showDialog: Boolean,
-    onDismiss: () -> Unit,
-    onConfirm: () -> Unit,
-) {
-    if (showDialog) {
-        AlertDialog (
-            onDismissRequest = { onDismiss() },
-            title = {
-                Text(
-                    text = "Log Out",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            },
-            text = {
-                Text(
-                    text = "Are you sure you want to log out?",
-                    fontSize = 16.sp,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
-                )
-            },
-            buttons = {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        Button(
-                            onClick = { onConfirm() },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.Red,
-                                contentColor = Color.White
-                            ),
-                            shape = RoundedCornerShape(8.dp),
-                            modifier = Modifier.weight(1f).padding(end = 8.dp)
-                        ) {
-                            Text("Yes")
-                        }
-                        OutlinedButton(
-                            onClick = { onDismiss() },
-                            shape = RoundedCornerShape(8.dp),
-                            modifier = Modifier.weight(1f).padding(start = 8.dp)
-                        ) {
-                            Text("No")
-                        }
-                    }
-                }
-            },
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.padding(16.dp)
-        )
     }
 }
 
