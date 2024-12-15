@@ -18,6 +18,7 @@ class DataStoreHelper(private val context: Context) {
         val EMAIL_KEY = stringPreferencesKey("email")
         val PASSWORD_KEY = stringPreferencesKey("password")
         val USER_ID = stringPreferencesKey("user_id")
+        val DARK_MODE_KEY = booleanPreferencesKey("dark_mode") // Dark mode anahtarı
     }
 
     // Save user preferences
@@ -39,6 +40,14 @@ class DataStoreHelper(private val context: Context) {
             preferences.remove(USER_ID) // USER_ID anahtarını kaldır
         }
     }
+
+    // Save dark mode preference
+    suspend fun saveDarkModePreference(isDarkMode: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[DARK_MODE_KEY] = isDarkMode
+        }
+    }
+
     // Get rememberMe state as a Flow
     val rememberMeFlow: Flow<Boolean> = context.dataStore.data
         .map { preferences ->
@@ -60,5 +69,11 @@ class DataStoreHelper(private val context: Context) {
     val userIdFlow: Flow<String?> = context.dataStore.data
         .map { preferences ->
             preferences[USER_ID]
+        }
+
+    // Get dark mode preference as a Flow
+    val darkModeFlow: Flow<Boolean> = context.dataStore.data
+        .map { preferences ->
+            preferences[DARK_MODE_KEY] ?: false
         }
 }

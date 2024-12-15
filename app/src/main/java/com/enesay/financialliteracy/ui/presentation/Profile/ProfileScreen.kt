@@ -37,6 +37,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,19 +63,20 @@ import com.enesay.financialliteracy.ui.theme.primary_color
 import com.enesay.financialliteracy.ui.theme.secondary_color
 import com.enesay.financialliteracy.utils.DataStoreHelper
 import com.enesay.financialliteracy.utils.setAppLocale
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Profile(navController: NavController, context: Context) {
+
     var showDialog by remember { mutableStateOf(false) }
     val userPreferencesDataStore = DataStoreHelper(context = LocalContext.current)
-
     val loginViewmodel: LoginViewmodel = hiltViewModel()
     val userInfo by loginViewmodel.userInfo
     val authState by loginViewmodel.authState
     val scope = rememberCoroutineScope()
-    var isDarkMode by remember { mutableStateOf(false) }
+    var isDarkMode = userPreferencesDataStore.darkModeFlow.collectAsState(initial = false).value
     var showLanguageDialog by remember { mutableStateOf(false) }
     var selectedLanguage by remember { mutableStateOf("English") } // Default language
 
@@ -217,7 +219,10 @@ fun Profile(navController: NavController, context: Context) {
                             checked = isDarkMode,
                             onCheckedChange = { isChecked ->
                                 isDarkMode = isChecked
-                                // Handle dark mode toggle logic here
+                                scope.launch {
+                                    delay(400)
+                                    userPreferencesDataStore.saveDarkModePreference(isDarkMode)
+                                }
                             }
                         )
                     }
