@@ -1,9 +1,13 @@
 package com.enesay.financialliteracy.data.repository
 
-import com.enesay.financialliteracy.data.datasource.StockDataSource
+import com.enesay.financialliteracy.model.StockModels.Stock
+import com.enesay.financialliteracy.service.StockService
+import javax.inject.Inject
 
-class StockRepository (var stockDataSource: StockDataSource){
+class StockRepository @Inject constructor(val api: StockService) {
 
-    suspend fun getStocks(symbols: String) = stockDataSource.getStocks(symbols)
-    suspend fun searchStock(query: String) = stockDataSource.searchStock(query)
+    suspend fun getStockQuotes(symbols: String): List<Stock> {
+        val response = api.getStockQuotes(symbols)
+        return response.values.toList() // Convert Map values to a List
+    }
 }

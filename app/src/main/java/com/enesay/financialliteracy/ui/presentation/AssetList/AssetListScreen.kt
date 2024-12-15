@@ -1,5 +1,6 @@
 package com.enesay.financialliteracy.ui.presentation.AssetList
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -48,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.enesay.financialliteracy.model.StockModels.Stock
 import com.enesay.financialliteracy.model.Trade.Asset
 import com.enesay.financialliteracy.ui.presentation.Trade.TradeViewmodel
 import com.enesay.financialliteracy.ui.theme.primary_color
@@ -62,9 +64,11 @@ fun AssetListScreen(navController: NavHostController) {
     val assetListViewModel : AssetListViewmodel = hiltViewModel()
     val tradeViewmodel : TradeViewmodel = hiltViewModel()
     val cryptoList by assetListViewModel.cryptoData.collectAsState()
+    val stockList by assetListViewModel.stocks.collectAsState()
 
     LaunchedEffect(true) {
         assetListViewModel.getCryptoData()
+     //   assetListViewModel.getStockQuotes("TSLA,AAPL,AMZN,META,NFLX,GOOGL,MSFT,NVDA,BABA,AMD,INTC,ORCL,ADBE,CRM,SPCE,SHOP,DIS,PEP,WMT,WFC,JPM")
     }
 
     Scaffold(
@@ -91,7 +95,7 @@ fun AssetListScreen(navController: NavHostController) {
             when (selectedTabIndex) {
                 0 -> CryptosList(cryptoList, navController, tradeViewmodel)
                 1 -> FavoriteAssetsList()
-                2 -> StocksList()
+                2 -> StocksList(stockList)
             }
         }
     }
@@ -177,7 +181,7 @@ fun CryptosList(cryptoList: List<Asset>, navController: NavHostController, trade
 @Composable
 fun AssetRow(asset: Asset, onClick: () -> Unit = {}) {
     val formattedPrice = String.format(Locale.US,"%,.2f", asset.price)
-    val formattedQuantity = String.format(Locale.US,"%,.2f", asset.quantity)
+    val formattedQuantity = String.format(Locale.US,"%,.3f", asset.quantity)
 
     Card(
         modifier = Modifier
@@ -199,15 +203,17 @@ fun AssetRow(asset: Asset, onClick: () -> Unit = {}) {
 }
 
 @Composable
-fun StocksList() {
+fun StocksList(stockList: List<Stock>) {
     // Hisse senetlerinin listesi
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 10.dp)
     ) {
-
-
+        items(stockList){
+            Log.d("stock", "StocksList: ${it.name}")
+            Text(text = it.name)
+        }
     }
 }
 
