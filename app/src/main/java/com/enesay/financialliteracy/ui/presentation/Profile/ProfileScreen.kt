@@ -166,6 +166,8 @@ fun Profile(navController: NavController, context: Context) {
                                 }
                                 showDialog = false
                             },
+                            negativeButtonText = stringResource(R.string.txt_cancel),
+                            positiveButtonText = stringResource(R.string.btn_logout),
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Column {

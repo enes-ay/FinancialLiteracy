@@ -93,6 +93,8 @@ fun TradeScreen(
             SimpleDialog(
                 title = stringResource(R.string.login_required_title),
                 message = stringResource(R.string.login_required_message),
+                negativeButtonText = stringResource(R.string.txt_cancel),
+                positiveButtonText = stringResource(R.string.btn_login),
                 showDialog = showDialog,
                 onDismiss = { showLoginWarningDialog = false },
                 onConfirm = {

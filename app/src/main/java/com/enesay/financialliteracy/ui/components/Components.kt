@@ -27,6 +27,8 @@ fun SimpleDialog(
     showDialog: Boolean,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
+    negativeButtonText: String,
+    positiveButtonText: String,
     colorBtn: Color = Color.Red
 ) {
     if (showDialog) {
@@ -69,14 +71,14 @@ fun SimpleDialog(
                             shape = RoundedCornerShape(8.dp),
                             modifier = Modifier.weight(1f).padding(end = 8.dp)
                         ) {
-                            Text("Yes")
+                            Text(positiveButtonText)
                         }
                         OutlinedButton(
                             onClick = { onDismiss() },
                             shape = RoundedCornerShape(8.dp),
                             modifier = Modifier.weight(1f).padding(start = 8.dp)
                         ) {
-                            Text("No")
+                            Text(negativeButtonText)
                         }
                     }
                 }
