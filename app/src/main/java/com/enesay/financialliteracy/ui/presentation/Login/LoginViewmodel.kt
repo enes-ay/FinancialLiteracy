@@ -17,9 +17,9 @@ class LoginViewmodel @Inject constructor(private val authRepository: AuthReposit
 
     private val _authState = mutableStateOf<AuthState>(AuthState.Idle)
     val authState: State<AuthState> = _authState
+
     val userLoggedIn = mutableStateOf(authRepository.isUserLoggedIn())
     val currentUser = mutableStateOf(authRepository.getCurrentUserId())
-
 
     private val _userInfo = mutableStateOf<User?>(null)
     val userInfo: State<User?> = _userInfo

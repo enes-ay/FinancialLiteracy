@@ -14,4 +14,10 @@
     <string name="change_language_title">Change app language</string>
     <string name="txt_ok">Okay</string>
     <string name="txt_cancel">Cancel</string>
+    <string name="txt_continue_without_login">Continue without login</string>
+    <string name="login_required_title">Login required</string>
+    <string name="login_required_message"> To use this feature, you must be logged in.</string>
+    <string name="logout_title">Log out</string>"
+    <string name="logout_message"> Are you sure you want to log out?</string>
+    <string name="invalid_amount_warning">Please enter a valid amount.</string>
 </resources>

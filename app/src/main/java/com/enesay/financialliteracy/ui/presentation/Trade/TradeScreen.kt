@@ -54,6 +54,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.enesay.financialliteracy.R
 import com.enesay.financialliteracy.model.Trade.Asset
+import com.enesay.financialliteracy.ui.components.SimpleDialog
+import com.enesay.financialliteracy.ui.presentation.Login.LoginViewmodel
 import com.enesay.financialliteracy.ui.theme.primary_color
 import kotlinx.coroutines.delay
 import java.util.Locale
@@ -65,6 +67,7 @@ fun TradeScreen(
 ) {
     // State for toggling between Buy and Sell
     val tradeViewmodel: TradeViewmodel = hiltViewModel()
+    val loginViewmodel: LoginViewmodel = hiltViewModel()
     var isBuySelected by remember { mutableStateOf(true) }
     var amount by remember { mutableStateOf("") }
     var selectedPercentage by remember { mutableStateOf<Int?>(null) }
@@ -80,6 +83,30 @@ fun TradeScreen(
     val formattedPrice = String.format(Locale.US, "%,.2f", asset.price)
     val formattedBalance = String.format(Locale.US, "%,.2f", balance)
     val formattedAssetBalance = String.format(Locale.US, "%,.2f", userAssetBalance)
+    var showLoginWarningDialog by remember { mutableStateOf(false) }
+
+    val isLoggedIn = loginViewmodel.userLoggedIn.value
+
+    @Composable
+    fun ShowLoginWarningDialog(showDialog: Boolean) {
+        if (showDialog) {
+            SimpleDialog(
+                title = stringResource(R.string.login_required_title),
+                message = stringResource(R.string.login_required_message),
+                showDialog = showDialog,
+                onDismiss = { showLoginWarningDialog = false },
+                onConfirm = {
+                    navController.navigate("login") {
+                        popUpTo(0) {
+                            inclusive = true
+                        }
+                    }
+                    showLoginWarningDialog = false
+                },
+                colorBtn = primary_color
+            )
+        }
+    }
 
     // Load user data when the composable is first displayed
     LaunchedEffect(Unit) {
@@ -118,7 +145,7 @@ fun TradeScreen(
 
         // Dialog'u otomatik olarak kapat
         LaunchedEffect(tradeState) {
-            delay(1300) // 1 saniye bekle
+            delay(1300) // 1.3 saniye bekle
             tradeViewmodel.resetTradeState()
         }
     }
@@ -141,9 +168,22 @@ fun TradeScreen(
                 .padding(12.dp),
             verticalArrangement = Arrangement.SpaceAround
         ) {
+
+            ShowLoginWarningDialog(showDialog = showLoginWarningDialog)
             // Display Asset Details and Balance Information
-            Row(modifier = Modifier.fillMaxWidth().wrapContentHeight(), horizontalArrangement = Arrangement.SpaceBetween){
-                Column(modifier = Modifier.wrapContentHeight().weight(2f), horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.Top) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .weight(2f),
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.Top
+                ) {
                     Text(
                         text = asset.name,
                         fontSize = 28.sp,
@@ -159,7 +199,11 @@ fun TradeScreen(
                     )
                 }
 
-                Column (modifier = Modifier.wrapContentHeight().weight(1f)) {
+                Column(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .weight(1f)
+                ) {
                     Text(
                         text = "Market Cap",
                         fontSize = 20.sp,
@@ -277,12 +321,16 @@ fun TradeScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             // Action Button (Buy or Sell)
             Button(
                 onClick = {
                     val amountValue = amount.toDoubleOrNull() ?: 0.0
+
+                    if (isLoggedIn.not()) {
+                        showLoginWarningDialog = true
+                    }
                     if (isBuySelected) {
                         tradeViewmodel.buyAsset(
                             asset = asset,
@@ -318,7 +366,8 @@ fun TradeResultDialog(
     message: String,
     icon: ImageVector,
     iconColor: Color,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    showOk: Boolean = false
 ) {
     Dialog(onDismissRequest = onDismiss) {
         Box(
@@ -346,8 +395,12 @@ fun TradeResultDialog(
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
                 )
+                if (showOk) {
+                    Button(onClick = {}) {
+                        Text(text = "OK")
+                    }
+                }
             }
         }
     }
 }
-

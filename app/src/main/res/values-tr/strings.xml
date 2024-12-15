@@ -15,4 +15,10 @@
     <string name="change_language_title">Uygulama dilini değiştir</string>
     <string name="txt_ok">Tamam</string>
     <string name="txt_cancel">Vazgeç</string>
+    <string name="txt_continue_without_login">Üye olmadan devam et</string>
+    <string name="login_required_title">Giriş yapmanız gerekli</string>
+    <string name="login_required_message">Bu özelliği kullanabilmeniz için giiş yapmanız gerekiyor.</string>
+    <string name="logout_title">Çıkış yap</string>"
+    <string name="logout_message">Çıkış yapmak isteğinize emin misiniz?</string>
+    <string name="invalid_amount_warning">Lütfen geçerli bir miktar giriniz.</string>
 </resources>
