@@ -12,7 +12,9 @@ val Pink40 = Color(0xFF7D5260)
 
 val primary_color = Color(0xFF28A042)
 val secondary_color = Color(0xFFC6EECA)
-val black_color = Color(0xFF000000)
+val BlackColor = Color(0xFF000000)
+val WhiteColor = Color(0xFFFFFFFF)
+val GrayColor = Color(0xFF1C1C1C)
 
 val category_item1_color = Color(0xFF4205F0)
 val category_item2_color = Color(0xFF177E00)

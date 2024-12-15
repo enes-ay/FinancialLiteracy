@@ -197,7 +197,7 @@ fun TradeScreen(
                         text = "$$formattedPrice",
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
 
@@ -210,14 +210,14 @@ fun TradeScreen(
                         text = "Market Cap",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Light,
-                        color = Color.Black
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                     Spacer(modifier = Modifier.height(15.dp))
                     Text(
                         text = "$$formattedBalance",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color.Black
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }
@@ -267,7 +267,7 @@ fun TradeScreen(
                         "Max: $formattedAssetBalance ${asset.symbol}"
                     },
                     fontSize = 15.sp,
-                    color = Color.Black
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 // Percentage Selection Button

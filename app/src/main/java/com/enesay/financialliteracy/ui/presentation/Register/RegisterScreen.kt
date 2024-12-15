@@ -16,6 +16,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -56,7 +57,6 @@ fun Register(navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(Color.White, shape = RoundedCornerShape(16.dp))
                 .padding(24.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -206,8 +206,8 @@ fun CustomTextField(
             onValueChange = onValueChange,
             label = { Text(label) },
             isError = isError,
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                containerColor = Color.White,
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedContainerColor = MaterialTheme.colorScheme.background,
                 focusedBorderColor = Color.Gray,
                 unfocusedBorderColor = Color.Gray,
                 errorBorderColor = Color.Red,

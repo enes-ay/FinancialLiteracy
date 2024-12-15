@@ -25,6 +25,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -110,7 +111,7 @@ fun ModernTabRow(
     LazyRow(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
             .padding(vertical = 8.dp)
     ) {
         items(tabs.size) { index ->
@@ -132,7 +133,7 @@ fun ModernTabRow(
             ) {
                 Text(
                     text = tabs[index],
-                    color = if (isSelected) Color.White else Color.Black,
+                    color =  MaterialTheme.colorScheme.onPrimary,
                     fontWeight = FontWeight.Medium,
                     fontSize = 16.sp
                 )
@@ -188,16 +189,16 @@ fun AssetRow(asset: Asset, onClick: () -> Unit = {}) {
             .fillMaxWidth()
             .padding(vertical = 4.dp)
             .clickable { onClick() },
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer),
         elevation = CardDefaults.elevatedCardElevation(4.dp)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp),
         ) {
-            Text(text = "${asset.symbol}", fontSize = 21.sp, color = primary_color, fontWeight = FontWeight.Medium)
-            Text(text = "$${formattedPrice}", fontSize = 16.sp, fontWeight = FontWeight.Medium)
-            Text(text = "${formattedQuantity}", fontSize = 16.sp, fontWeight = FontWeight.Light)
+            Text(text = "${asset.symbol}", fontSize = 21.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Medium)
+            Text(text = "$${formattedPrice}", fontSize = 16.sp, color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Medium)
+            Text(text = "${formattedQuantity}", fontSize = 16.sp, color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Light)
         }
     }
 }
@@ -232,7 +233,7 @@ fun TopBarWithSearch(modifier: Modifier = Modifier) {
         TextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
-            placeholder = { Text(text = "Search asset") },
+            placeholder = { Text(text = "Search asset", color = MaterialTheme.colorScheme.onPrimary) },
             leadingIcon = {
                 if (isFocused) {
                     IconButton(onClick = {
@@ -266,7 +267,7 @@ fun TopBarWithSearch(modifier: Modifier = Modifier) {
             singleLine = true,
             shape = RoundedCornerShape(8.dp),
             colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.White,
+                containerColor = MaterialTheme.colorScheme.background,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
             ),

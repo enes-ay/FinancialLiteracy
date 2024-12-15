@@ -46,6 +46,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.enesay.financialliteracy.R
 import com.enesay.financialliteracy.ui.presentation.Register.AuthState
+import com.enesay.financialliteracy.ui.theme.WhiteColor
 import com.enesay.financialliteracy.ui.theme.primary_color
 import com.enesay.financialliteracy.ui.theme.secondary_color
 import com.enesay.financialliteracy.utils.DataStoreHelper
@@ -61,44 +62,41 @@ fun Login(navController: NavController) {
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
     ) { paddingValues ->
+        // Collect DataStore values
+        val rememberMe = userPreferencesDataStore.rememberMeFlow.collectAsState(initial = false)
+        val email = userPreferencesDataStore.emailFlow.collectAsState(initial = "")
+        val password = userPreferencesDataStore.passwordFlow.collectAsState(initial = "")
 
+        // States for input fields
+        val emailState = rememberSaveable { mutableStateOf(email.value ?: "") }
+        val passwordState = rememberSaveable { mutableStateOf(password.value ?: "") }
+        val rememberMeState = rememberSaveable { mutableStateOf(rememberMe.value) }
+
+        val emailError = rememberSaveable { mutableStateOf<String?>(null) }
+        val passwordError = rememberSaveable { mutableStateOf<String?>(null) }
+        val scope = rememberCoroutineScope()
+
+        LaunchedEffect(key1 = rememberMe.value, key2 = email.value, key3 = password.value) {
+            Log.e("launch", "triggered")
+            emailState.value = email.value ?: ""
+            passwordState.value = password.value ?: ""
+            rememberMeState.value = rememberMe.value
+        }
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues),
+                .padding(paddingValues)
+                .background(MaterialTheme.colorScheme.background),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Collect DataStore values
-            val rememberMe = userPreferencesDataStore.rememberMeFlow.collectAsState(initial = false)
-            val email = userPreferencesDataStore.emailFlow.collectAsState(initial = "")
-            val password = userPreferencesDataStore.passwordFlow.collectAsState(initial = "")
-
-            // States for input fields
-            val emailState = rememberSaveable { mutableStateOf(email.value ?: "") }
-            val passwordState = rememberSaveable { mutableStateOf(password.value ?: "") }
-            val rememberMeState = rememberSaveable { mutableStateOf(rememberMe.value) }
-
-            val emailError = rememberSaveable { mutableStateOf<String?>(null) }
-            val passwordError = rememberSaveable { mutableStateOf<String?>(null) }
-            val scope = rememberCoroutineScope()
-
-            LaunchedEffect(key1 = rememberMe.value, key2 = email.value, key3 = password.value) {
-                Log.e("launch", "triggered")
-                emailState.value = email.value ?: ""
-                passwordState.value = password.value ?: ""
-                rememberMeState.value = rememberMe.value
-            }
-
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.White, shape = RoundedCornerShape(16.dp)),
+                modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                Column(modifier = Modifier.padding(20.dp),
+                Column(
+                    modifier = Modifier.padding(20.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -122,7 +120,7 @@ fun Login(navController: NavController) {
                         label = { Text("Email") },
                         isError = emailError.value != null,
                         colors = TextFieldDefaults.outlinedTextFieldColors(
-                            containerColor = Color.White,
+                            containerColor = MaterialTheme.colorScheme.background,
                             focusedBorderColor = Color.Gray,
                             unfocusedBorderColor = Color.Gray,
                             errorBorderColor = Color.Red,
@@ -144,7 +142,7 @@ fun Login(navController: NavController) {
                         label = { Text("Password") },
                         isError = passwordError.value != null,
                         colors = TextFieldDefaults.outlinedTextFieldColors(
-                            containerColor = Color.White,
+                            containerColor = MaterialTheme.colorScheme.background,
                             focusedBorderColor = Color.Gray,
                             unfocusedBorderColor = Color.Gray,
                             errorBorderColor = Color.Red,
@@ -166,7 +164,11 @@ fun Login(navController: NavController) {
                             onCheckedChange = {
                                 rememberMeState.value = it
                             })
-                        Text("Remember me", fontSize = 18.sp)
+                        Text(
+                            "Remember me",
+                            fontSize = 18.sp,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
                     }
 
                     when (authState) {
@@ -187,21 +189,26 @@ fun Login(navController: NavController) {
                                 containerColor = primary_color,
                             )
                         ) {
-                            Text("Sign in", fontSize = 17.sp, fontWeight = FontWeight.Medium)
+                            Text(
+                                "Sign in",
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = WhiteColor
+                            )
                         }
 
                         is AuthState.Loading -> CircularProgressIndicator()
 
                         is AuthState.Authenticated -> {
-                                LaunchedEffect(AuthState.Authenticated) {
-                                    scope.launch {
-                                        if (rememberMeState.value) {
-                                            userPreferencesDataStore.saveUserPreferences(
-                                                rememberMeState.value,
-                                                emailState.value,
-                                                passwordState.value
-                                            )
-                                        }
+                            LaunchedEffect(AuthState.Authenticated) {
+                                scope.launch {
+                                    if (rememberMeState.value) {
+                                        userPreferencesDataStore.saveUserPreferences(
+                                            rememberMeState.value,
+                                            emailState.value,
+                                            passwordState.value
+                                        )
+                                    }
 //                                        Log.d("login", loginViewmodel.currentUser.value.toString())
 //                                        loginViewmodel.currentUser.value?.let {
 //                                            Log.d("homel", it )
@@ -209,8 +216,8 @@ fun Login(navController: NavController) {
 //                                                it
 //                                            )
 //                                        }
-                                    }
                                 }
+                            }
 
                             navController.navigate("home") {
                                 popUpTo("login") { inclusive = true }
@@ -240,36 +247,46 @@ fun Login(navController: NavController) {
                         }
                     }
 
-                    Row (modifier= Modifier.fillMaxWidth().padding(10.dp),
-                        horizontalArrangement = Arrangement.Absolute.Center){
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
+                        horizontalArrangement = Arrangement.Absolute.Center
+                    ) {
                         Text(
                             text = "Don't have an account? ",
                             fontSize = 16.sp,
-                            color = MaterialTheme.colorScheme.secondary,
-                            textAlign = TextAlign.Center
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Medium
                         )
                         Text(
-                            text = "Create here!",
+                            text = " Create here!",
                             modifier = Modifier
                                 .clickable { navController.navigate("register") },
                             fontSize = 16.sp,
                             color = primary_color,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Medium
                         )
 
                     }
                     TextButton(
                         modifier = Modifier.padding(top = 15.dp),
                         onClick = {
-                         navController.navigate("home")
+                            navController.navigate("home")
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Gray, contentColor = Color.White),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Gray,
+                            contentColor = Color.White
+                        ),
                     ) {
                         Text(
                             modifier = Modifier.padding(2.dp),
                             text = stringResource(R.string.txt_continue_without_login),
                             fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold)
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }

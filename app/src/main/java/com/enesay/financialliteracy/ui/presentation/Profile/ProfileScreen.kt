@@ -237,7 +237,7 @@ fun Profile(navController: NavController, context: Context) {
 private fun ProfileItemsRow(
     title: String,
     onClick: () -> Unit,
-    color: Color = Color.Black,
+    color: Color = MaterialTheme.colorScheme.onPrimary,
     showIcon: Boolean = true
 ) {
     Row(modifier = Modifier
