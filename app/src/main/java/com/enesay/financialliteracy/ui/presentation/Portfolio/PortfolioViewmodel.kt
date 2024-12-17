@@ -45,7 +45,7 @@ class PortfolioViewmodel @Inject constructor(
             val userAssets = repository.getUserAssets(userId) // Kullanıcı varlıkları
 
             // Güncel fiyatlar
-            assetListViewModel.cryptoData.collect { cryptoList ->
+            assetListViewModel.cryptoList.collect { cryptoList ->
                 val balance = userAssets.sumOf { asset ->
                     val currentPrice =
                         cryptoList.find { it.symbol == asset.symbol }?.price ?: 0.0

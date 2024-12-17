@@ -28,8 +28,8 @@ object CryptoModule {
 
     @Provides
     @Singleton
-    fun provideCryptoRepository(remoteDataSource: CryptoRemoteDataSource): CryptoRepository {
-        return CryptoRepository(remoteDataSource)
+    fun provideCryptoRepository(@Named("cryptoService") cryptoService: CryptoService): CryptoRepository {
+        return CryptoRepository(cryptoService = cryptoService)
     }
 
     @Provides

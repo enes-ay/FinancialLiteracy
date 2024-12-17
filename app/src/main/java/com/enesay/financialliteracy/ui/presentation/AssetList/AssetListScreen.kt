@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -39,6 +41,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
@@ -60,16 +64,14 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AssetListScreen(navController: NavHostController) {
-    val tabs = listOf("Crypto", "Favorites", "Stock","Bonds")
+    val tabs = listOf("Crypto", "Favorites", "Stock", "Bonds")
     var selectedTabIndex by remember { mutableStateOf(0) }
-    val assetListViewModel : AssetListViewmodel = hiltViewModel()
-    val tradeViewmodel : TradeViewmodel = hiltViewModel()
-    val cryptoList by assetListViewModel.cryptoData.collectAsState()
+    val assetListViewModel: AssetListViewmodel = hiltViewModel()
+    val cryptoList by assetListViewModel.cryptoList.collectAsState()
     val stockList by assetListViewModel.stocks.collectAsState()
 
     LaunchedEffect(true) {
         assetListViewModel.getCryptoData()
-     //   assetListViewModel.getStockQuotes("TSLA,AAPL,AMZN,META,NFLX,GOOGL,MSFT,NVDA,BABA,AMD,INTC,ORCL,ADBE,CRM,SPCE,SHOP,DIS,PEP,WMT,WFC,JPM")
     }
 
     Scaffold(
@@ -94,11 +96,52 @@ fun AssetListScreen(navController: NavHostController) {
 
             // Display content based on the selected tab
             when (selectedTabIndex) {
-                0 -> CryptosList(cryptoList, navController, tradeViewmodel)
+                0 -> CryptosList(cryptoList, navController, assetListViewModel)
                 1 -> FavoriteAssetsList()
                 2 -> StocksList(stockList)
             }
         }
+    }
+}
+
+@Composable
+fun CryptosList(
+    cryptoList: List<Asset>,
+    navController: NavHostController,
+    assetListViewModel: AssetListViewmodel
+) {
+    val isLoading by assetListViewModel.isLoading.collectAsState()  // Yükleme durumunu dinle
+    val listState = rememberLazyListState()
+
+    LazyColumn(state = listState) {
+        items(cryptoList) { crypto ->
+            AssetRow(crypto, onClick = {
+                val crypto_json = Gson().toJson(crypto)
+                navController.navigate("assetTrade/$crypto_json")
+            })
+        }
+
+        // Yükleniyor göstergesi
+        if (isLoading) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillParentMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+        }
+    }
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
+            .collect { lastVisibleItemIndex ->
+                if (lastVisibleItemIndex != null && lastVisibleItemIndex >= cryptoList.size - 1 && !isLoading) {
+                    assetListViewModel.getCryptoData()
+                }
+            }
     }
 }
 
@@ -133,7 +176,7 @@ fun ModernTabRow(
             ) {
                 Text(
                     text = tabs[index],
-                    color =  MaterialTheme.colorScheme.onPrimary,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     fontWeight = FontWeight.Medium,
                     fontSize = 16.sp
                 )
@@ -162,27 +205,11 @@ fun FavoriteAssetsList() {
     }
 }
 
-@Composable
-fun CryptosList(cryptoList: List<Asset>, navController: NavHostController, tradeViewmodel: TradeViewmodel) {
-
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 10.dp)
-    ) {
-        items(cryptoList) { crypto ->
-            AssetRow(crypto, onClick = {
-                val crypto_json = Gson().toJson(crypto)
-                navController.navigate("assetTrade/$crypto_json")
-            })
-        }
-    }
-}
 
 @Composable
 fun AssetRow(asset: Asset, onClick: () -> Unit = {}) {
-    val formattedPrice = String.format(Locale.US,"%,.2f", asset.price)
-    val formattedQuantity = String.format(Locale.US,"%,.3f", asset.quantity)
+    val formattedPrice = String.format(Locale.US, "%,.2f", asset.price)
+    val formattedQuantity = String.format(Locale.US, "%,.3f", asset.quantity)
 
     Card(
         modifier = Modifier
@@ -193,12 +220,29 @@ fun AssetRow(asset: Asset, onClick: () -> Unit = {}) {
         elevation = CardDefaults.elevatedCardElevation(4.dp)
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp),
         ) {
-            Text(text = "${asset.symbol}", fontSize = 21.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Medium)
-            Text(text = "$${formattedPrice}", fontSize = 16.sp, color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Medium)
-            Text(text = "${formattedQuantity}", fontSize = 16.sp, color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Light)
+            Text(
+                text = "${asset.symbol}",
+                fontSize = 21.sp,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Medium
+            )
+            Text(
+                text = "$${formattedPrice}",
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onPrimary,
+                fontWeight = FontWeight.Medium
+            )
+            Text(
+                text = "${formattedQuantity}",
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onPrimary,
+                fontWeight = FontWeight.Light
+            )
         }
     }
 }
@@ -211,7 +255,7 @@ fun StocksList(stockList: List<Stock>) {
             .fillMaxSize()
             .padding(horizontal = 10.dp)
     ) {
-        items(stockList){
+        items(stockList) {
             Log.d("stock", "StocksList: ${it.name}")
             Text(text = it.name)
         }
@@ -233,7 +277,12 @@ fun TopBarWithSearch(modifier: Modifier = Modifier) {
         TextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
-            placeholder = { Text(text = "Search asset", color = MaterialTheme.colorScheme.onPrimary) },
+            placeholder = {
+                Text(
+                    text = "Search asset",
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            },
             leadingIcon = {
                 if (isFocused) {
                     IconButton(onClick = {
