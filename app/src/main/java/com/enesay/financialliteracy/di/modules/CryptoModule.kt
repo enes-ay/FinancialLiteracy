@@ -1,17 +1,13 @@
-package com.enesay.financialliteracy.di
+package com.enesay.financialliteracy.di.modules
 
 import com.enesay.financialliteracy.data.datasource.CryptoRemoteDataSource
 import com.enesay.financialliteracy.data.repository.CryptoRepository
 import com.enesay.financialliteracy.data.repository.StockRepository
 import com.enesay.financialliteracy.service.AuthInterceptor
 import com.enesay.financialliteracy.service.CryptoService
-import com.enesay.financialliteracy.service.StockInterceptor
-import com.enesay.financialliteracy.service.StockService
 import com.enesay.financialliteracy.ui.presentation.AssetList.AssetListViewmodel
 import com.enesay.financialliteracy.utils.Constants.API_KEY_CRYPTO
-import com.enesay.financialliteracy.utils.Constants.API_KEY_STOCK
 import com.enesay.financialliteracy.utils.Constants.BASE_URL_CRYPTO
-import com.enesay.financialliteracy.utils.Constants.BASE_URL_STOCK
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

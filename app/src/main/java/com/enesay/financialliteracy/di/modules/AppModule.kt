@@ -1,4 +1,4 @@
-package com.enesay.financialliteracy.di
+package com.enesay.financialliteracy.di.modules
 
 import android.content.Context
 import com.enesay.financialliteracy.utils.DataStoreHelper
@@ -11,7 +11,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class AppModule {
+object AppModule {
     @Provides
     @Singleton
     fun provideDataStoreHelper(

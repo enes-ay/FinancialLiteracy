@@ -1,4 +1,4 @@
-package com.enesay.financialliteracy.di
+package com.enesay.financialliteracy.di.modules
 
 import com.enesay.financialliteracy.data.datasource.WalletDatasource
 import com.enesay.financialliteracy.data.repository.AuthRepository
