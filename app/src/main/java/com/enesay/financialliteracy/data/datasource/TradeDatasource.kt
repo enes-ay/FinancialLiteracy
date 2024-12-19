@@ -18,12 +18,12 @@ class TradeDatasource @Inject constructor(val firestore: FirebaseFirestore)  {
         val transaction = Transaction(type = "BUY", amount = amount)
         transactionsCollection.add(transaction)
 
-        userAssetsCollection.document(asset.id).get().addOnSuccessListener { document ->
+        userAssetsCollection.document(asset.id.toString()).get().addOnSuccessListener { document ->
             if (document.exists()) {
                 val updatedQuantity = document.getDouble("quantity")!! + amount
-                userAssetsCollection.document(asset.id).update("quantity", updatedQuantity)
+                userAssetsCollection.document(asset.id.toString()).update("quantity", updatedQuantity)
             } else {
-                userAssetsCollection.document(asset.id).set(asset.copy(quantity = amount))
+                userAssetsCollection.document(asset.id.toString()).set(asset.copy(quantity = amount))
             }
         }
     }
@@ -31,10 +31,10 @@ class TradeDatasource @Inject constructor(val firestore: FirebaseFirestore)  {
         val transaction = Transaction(type = "SELL", amount = amount)
         transactionsCollection.add(transaction)
 
-        userAssetsCollection.document(asset.id).get().addOnSuccessListener { document ->
+        userAssetsCollection.document(asset.id.toString()).get().addOnSuccessListener { document ->
             if (document.exists()) {
                 val updatedQuantity = document.getDouble("quantity")!! - amount
-                userAssetsCollection.document(asset.id).update("quantity", updatedQuantity)
+                userAssetsCollection.document(asset.id.toString()).update("quantity", updatedQuantity)
             }
         }
     }
