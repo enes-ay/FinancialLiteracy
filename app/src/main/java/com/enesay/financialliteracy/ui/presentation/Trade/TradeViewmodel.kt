@@ -67,6 +67,10 @@ class TradeViewmodel @Inject constructor(
                     _tradeState.value = TradeState.Warning("Insufficient balance to buy the asset.")
                     return@launch
                 }
+                if (quantity <= 0) {
+                    _tradeState.value = TradeState.Warning("invalid quantity")
+                    return@launch
+                }
                 walletRepository.addUserAsset(
                     userId = userId,
                     asset = asset.copy(quantity = quantity),
