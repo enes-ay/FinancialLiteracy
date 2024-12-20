@@ -1,6 +1,7 @@
 package com.enesay.financialliteracy.ui.presentation.Login
 
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -9,9 +10,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -21,6 +25,7 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -45,6 +50,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.enesay.financialliteracy.R
+import com.enesay.financialliteracy.ui.components.SimpleOutlinedButton
 import com.enesay.financialliteracy.ui.presentation.Register.AuthState
 import com.enesay.financialliteracy.ui.theme.WhiteColor
 import com.enesay.financialliteracy.ui.theme.primary_color
@@ -60,8 +66,7 @@ fun Login(navController: NavController) {
     val userPreferencesDataStore = DataStoreHelper(context = LocalContext.current)
 
     Scaffold(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
         // Collect DataStore values
         val rememberMe = userPreferencesDataStore.rememberMeFlow.collectAsState(initial = false)
@@ -92,8 +97,7 @@ fun Login(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+                modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
             ) {
                 Column(
                     modifier = Modifier.padding(20.dp),
@@ -111,8 +115,7 @@ fun Login(navController: NavController) {
                     )
 
                     // E-mail field
-                    OutlinedTextField(
-                        value = emailState.value,
+                    OutlinedTextField(value = emailState.value,
                         onValueChange = {
                             emailState.value = it
                             emailError.value = null
@@ -126,15 +129,13 @@ fun Login(navController: NavController) {
                             errorBorderColor = Color.Red,
                             errorLabelColor = Color.Red,
                         ),
-                        modifier = Modifier
-                            .fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth()
                     )
                     if (emailError.value != null) {
                         Text(text = emailError.value!!, color = Color.Red, fontSize = 12.sp)
                     }
                     // Password Field
-                    OutlinedTextField(
-                        value = passwordState.value,
+                    OutlinedTextField(value = passwordState.value,
                         onValueChange = {
                             passwordState.value = it
                             passwordError.value = null
@@ -148,8 +149,7 @@ fun Login(navController: NavController) {
                             errorBorderColor = Color.Red,
                             errorLabelColor = Color.Red,
                         ),
-                        modifier = Modifier
-                            .fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth()
                     )
                     if (passwordError.value != null) {
                         Text(text = passwordError.value!!, color = Color.Red, fontSize = 12.sp)
@@ -158,8 +158,7 @@ fun Login(navController: NavController) {
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Checkbox(
-                            colors = CheckboxDefaults.colors(checkedColor = primary_color),
+                        Checkbox(colors = CheckboxDefaults.colors(checkedColor = primary_color),
                             checked = rememberMeState.value,
                             onCheckedChange = {
                                 rememberMeState.value = it
@@ -172,30 +171,58 @@ fun Login(navController: NavController) {
                     }
 
                     when (authState) {
-                        is AuthState.Idle -> Button(
-                            onClick = {
-                                if (emailState.value.isBlank()) {
-                                    emailError.value = "Email cannot be empty"
-                                }
-                                if (passwordState.value.isBlank()) {
-                                    passwordError.value = "Password cannot be empty"
-                                }
-                                if (emailError.value == null && passwordError.value == null) {
-                                    loginViewmodel.signIn(emailState.value, passwordState.value)
-                                }
-                            },
-                            modifier = Modifier.width(300.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = primary_color,
+                        is AuthState.Idle ->
+
+//                            OutlinedButton(
+//                                onClick = {
+//                                    if (emailState.value.isBlank()) {
+//                                        emailError.value = "Email cannot be empty"
+//                                    }
+//                                    if (passwordState.value.isBlank()) {
+//                                        passwordError.value = "Password cannot be empty"
+//                                    }
+//                                    if (emailError.value == null && passwordError.value == null) {
+//                                        loginViewmodel.signIn(emailState.value, passwordState.value)
+//                                    }
+//                                },
+//                                shape = RoundedCornerShape(22.dp), // Modern rounded corners
+//                                border = BorderStroke(
+//                                    1.2.dp,
+//                                    MaterialTheme.colorScheme.primary
+//                                ), // Customize border
+//                                colors = ButtonDefaults.outlinedButtonColors(
+//                                    contentColor = MaterialTheme.colorScheme.onPrimary,
+//                                    disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(
+//                                        alpha = 0.4f
+//                                    )
+//                                ),
+//                                modifier = Modifier
+//                                    .padding(8.dp)
+//                                    .width(250.dp)
+//                                    .height(45.dp) // Fixed height for consistency
+//                            ) {
+//                                Text(
+//                                    "Sign in",
+//                                    fontSize = 19.sp,
+//                                    fontWeight = FontWeight.Bold,
+//                                    color = MaterialTheme.colorScheme.primary
+//                                )
+//                            }
+
+                            SimpleOutlinedButton(
+                                text = stringResource(R.string.btn_login),
+                                onClick = {
+                                    if (emailState.value.isBlank()) {
+                                        emailError.value = "Email cannot be empty"
+                                    }
+                                    if (passwordState.value.isBlank()) {
+                                        passwordError.value = "Password cannot be empty"
+                                    }
+                                    if (emailError.value == null && passwordError.value == null) {
+                                        loginViewmodel.signIn(emailState.value, passwordState.value)
+                                    }
+                                },
                             )
-                        ) {
-                            Text(
-                                "Sign in",
-                                fontSize = 17.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = WhiteColor
-                            )
-                        }
 
                         is AuthState.Loading -> CircularProgressIndicator()
 
@@ -230,20 +257,16 @@ fun Login(navController: NavController) {
                                 color = Color.Red,
                                 fontSize = 14.sp
                             )
-                            Button(
+                            SimpleOutlinedButton(
+                                text = stringResource(R.string.btn_retry),
                                 onClick = {
                                     loginViewmodel.signIn(
-                                        emailState.value,
-                                        passwordState.value
+                                        emailState.value, passwordState.value
                                     )
                                 },
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.error
-                                )
-                            ) {
-                                Text("Retry", color = Color.White)
-                            }
+                                borderColor = MaterialTheme.colorScheme.error,
+                                textColor = MaterialTheme.colorScheme.error
+                            )
                         }
                     }
 
@@ -262,31 +285,13 @@ fun Login(navController: NavController) {
                         )
                         Text(
                             text = " Create here!",
-                            modifier = Modifier
-                                .clickable { navController.navigate("register") },
+                            modifier = Modifier.clickable { navController.navigate("register") },
                             fontSize = 16.sp,
                             color = primary_color,
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight.Medium
                         )
 
-                    }
-                    TextButton(
-                        modifier = Modifier.padding(top = 15.dp),
-                        onClick = {
-                            navController.navigate("home")
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Gray,
-                            contentColor = Color.White
-                        ),
-                    ) {
-                        Text(
-                            modifier = Modifier.padding(2.dp),
-                            text = stringResource(R.string.txt_continue_without_login),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
-                        )
                     }
                 }
             }

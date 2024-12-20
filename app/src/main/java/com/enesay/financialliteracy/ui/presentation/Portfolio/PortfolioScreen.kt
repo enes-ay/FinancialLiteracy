@@ -153,7 +153,7 @@ fun AssetList(assets: List<Asset>, navController: NavHostController) {
             AssetRow(asset, onClick = {
                 val assetJson = Gson().toJson(asset)
                 navController.navigate("assetTrade/$assetJson")
-            })
+            }, isShowQuantity = true)
         }
     }
 }

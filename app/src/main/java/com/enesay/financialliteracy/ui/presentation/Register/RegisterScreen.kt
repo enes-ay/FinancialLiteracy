@@ -1,12 +1,15 @@
 package com.enesay.financialliteracy.ui.presentation.Register
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,6 +22,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,11 +32,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.enesay.financialliteracy.R
+import com.enesay.financialliteracy.ui.components.SimpleOutlinedButton
 import com.enesay.financialliteracy.ui.theme.primary_color
 
 
@@ -116,11 +123,13 @@ fun Register(navController: NavController) {
                     isError = passwordError.value != null,
                     errorMessage = passwordError.value
                 )
+                Spacer(modifier = Modifier.size(23.dp))
 
                 // Auth State Handling
                 when (authState) {
                     is AuthState.Idle ->
-                        Button(
+                        SimpleOutlinedButton(
+                            text = stringResource(R.string.btn_register),
                             onClick = {
                                 if (email.value.isBlank()) {
                                     emailError.value = "Email cannot be empty"
@@ -135,22 +144,21 @@ fun Register(navController: NavController) {
                                     nameError.value = "Name cannot be empty"
                                 }
                                 if (emailError.value == null && passwordError.value == null) {
-                                    registerViewmodel.signUp(email.value, password.value, name.value, surname.value)
+                                    registerViewmodel.signUp(
+                                        email.value,
+                                        password.value,
+                                        name.value,
+                                        surname.value
+                                    )
                                 }
                             },
-                            modifier = Modifier.width(300.dp).padding(top = 10.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = primary_color
-                            )
-                        ) {
-                            Text("Sign Up", color = Color.White, fontSize = 17.sp)
-                        }
+                        )
 
                     is AuthState.Loading -> CircularProgressIndicator()
 
                     is AuthState.Authenticated -> {
-                        navController.navigate("home"){
-                            popUpTo("register"){
+                        navController.navigate("home") {
+                            popUpTo("register") {
                                 inclusive = true
                             }
                         }
@@ -158,30 +166,60 @@ fun Register(navController: NavController) {
 
                     is AuthState.Error -> {
                         Text(text = (authState as AuthState.Error).message, color = Color.Red)
-                        Button(
-                            onClick = { registerViewmodel.signUp(email.value, password.value, name.value, surname.value) },
-                            modifier = Modifier.width(300.dp).padding(top = 10.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.error
-                            )
-                        ) {
-                            Text("Retry", color = Color.White, fontSize = 17.sp)
-                        }
 
+                        SimpleOutlinedButton(
+                            text = stringResource(R.string.btn_retry),
+                            onClick = {
+                                registerViewmodel.signUp(
+                                    email.value,
+                                    password.value,
+                                    name.value,
+                                    surname.value
+                                )
+                            },
+                            borderColor = MaterialTheme.colorScheme.error,
+                            textColor = MaterialTheme.colorScheme.error
+                        )
                     }
                 }
-                Button(
+
+                SimpleOutlinedButton(
+                    text = stringResource(R.string.txt_cancel),
                     onClick = {
                         navController.navigate("login") {
                             popUpTo("register")
                         }
                     },
-                    modifier = Modifier.width(300.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = primary_color
-                    )
+                    borderColor = MaterialTheme.colorScheme.error,
+                    textColor = MaterialTheme.colorScheme.error
+                )
+
+                TextButton(
+                    onClick = {
+                        navController.navigate("home")
+                    },
+                    shape = RoundedCornerShape(22.dp), // Modern rounded corners
+                    border = BorderStroke(
+                        1.2.dp,
+                        MaterialTheme.colorScheme.primary
+                    ), // Customize border
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                        disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(
+                            alpha = 0.4f
+                        )
+                    ),
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .padding(top = 20.dp)
+                        .wrapContentSize()// Fixed height for consistency
                 ) {
-                    Text("Cancel", color = Color.White, fontSize = 17.sp)
+                    Text(
+                        modifier = Modifier.padding(5.dp),
+                        text = stringResource(R.string.txt_continue_without_register),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium
+                    )
                 }
 
             }

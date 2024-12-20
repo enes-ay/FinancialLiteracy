@@ -6,6 +6,7 @@
     <string name="btn_logout">Log Out</string>
     <string name="btn_login">Log In</string>
     <string name="btn_register">Register</string>
+    <string name="btn_retry">Retry</string>
     <string name="txt_login">Log In</string>
     <string name="txt_register">Register</string>
     <string name="txt_amount">Amount</string>
@@ -14,7 +15,7 @@
     <string name="change_language_title">Change app language</string>
     <string name="txt_ok">Okay</string>
     <string name="txt_cancel">Cancel</string>
-    <string name="txt_continue_without_login">Continue without login</string>
+    <string name="txt_continue_without_register">Continue without register</string>
     <string name="login_required_title">Login required</string>
     <string name="login_required_message"> To use this feature, you must be logged in.</string>
     <string name="logout_title">Log out</string>"

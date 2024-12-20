@@ -177,8 +177,10 @@ fun TradeScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(horizontal = 10.dp)
                     .wrapContentHeight(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
                     modifier = Modifier
@@ -189,9 +191,9 @@ fun TradeScreen(
                 ) {
                     Text(
                         text = asset.name,
-                        fontSize = 28.sp,
+                        fontSize = 30.sp,
                         fontWeight = FontWeight.Bold,
-                        color = primary_color
+                        color = primary_color,
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
@@ -202,28 +204,26 @@ fun TradeScreen(
                     )
                 }
 
-                Column(
-                    modifier = Modifier
-                        .wrapContentHeight()
-                        .weight(1.5f)
-                ) {
-                 Column(verticalArrangement = Arrangement.Center,
-                     horizontalAlignment = Alignment.CenterHorizontally){
+                 Column(
+                     modifier = Modifier
+                         .wrapContentHeight()
+                         .weight(1.5f),
+                     verticalArrangement = Arrangement.Center,
+                     horizontalAlignment = Alignment.End){
                      Text(
                          text = stringResource(R.string.txt_market_cap),
-                         fontSize = 16.sp,
-                         fontWeight = FontWeight.Medium,
-                         color = MaterialTheme.colorScheme.onPrimary
+                         fontSize = 18.sp,
+                         fontWeight = FontWeight.Light,
+                         color = MaterialTheme.colorScheme.onPrimary,
                      )
-                     Spacer(modifier = Modifier.height(13.dp))
+                     Spacer(modifier = Modifier.height(12.dp))
                      Text(
                          text = formattedMarketCap,
-                         fontSize = 17.sp,
+                         fontSize = 21.sp,
                          fontWeight = FontWeight.Bold,
                          color = MaterialTheme.colorScheme.onPrimary
                      )
                  }
-                }
             }
             // Toggle Menu for Buy/Sell
             Row(

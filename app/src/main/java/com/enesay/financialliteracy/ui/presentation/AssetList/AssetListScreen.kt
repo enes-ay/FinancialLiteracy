@@ -113,7 +113,7 @@ fun CryptosList(
     val isLoading by assetListViewModel.isLoading.collectAsState()  // Yükleme durumunu dinle
     val listState = rememberLazyListState()
 
-    LazyColumn(state = listState) {
+    LazyColumn(state = listState, modifier = Modifier.padding(horizontal = 10.dp)) {
         items(cryptoList) { crypto ->
             AssetRow(crypto, onClick = {
                 val crypto_json = Gson().toJson(crypto)
@@ -207,7 +207,7 @@ fun FavoriteAssetsList() {
 
 
 @Composable
-fun AssetRow(asset: Asset, onClick: () -> Unit = {}) {
+fun AssetRow(asset: Asset, onClick: () -> Unit = {}, isShowQuantity: Boolean = false) {
     val formattedPrice = String.format(Locale.US, "%,.2f", asset.price)
     val formattedQuantity = String.format(Locale.US, "%,.3f", asset.quantity)
 
@@ -237,12 +237,14 @@ fun AssetRow(asset: Asset, onClick: () -> Unit = {}) {
                 color = MaterialTheme.colorScheme.onPrimary,
                 fontWeight = FontWeight.Medium
             )
-            Text(
-                text = "${formattedQuantity}",
-                fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.onPrimary,
-                fontWeight = FontWeight.Light
-            )
+            if(isShowQuantity){
+                Text(
+                    text = "${formattedQuantity}",
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    fontWeight = FontWeight.Light
+                )
+            }
         }
     }
 }

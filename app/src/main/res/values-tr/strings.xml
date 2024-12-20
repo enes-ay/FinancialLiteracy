@@ -6,6 +6,7 @@
     <string name="txt_balance">Bakiye</string>
     <string name="btn_logout">Çıkış Yap</string>
     <string name="btn_login">Giriş Yap</string>
+    <string name="btn_retry">Yeniden Dene</string>
     <string name="btn_register">Kayıt Ol</string>
     <string name="txt_login">Giriş Yap</string>
     <string name="txt_register">Kayıt Ol</string>
@@ -15,7 +16,7 @@
     <string name="change_language_title">Uygulama dilini değiştir</string>
     <string name="txt_ok">Tamam</string>
     <string name="txt_cancel">Vazgeç</string>
-    <string name="txt_continue_without_login">Üye olmadan devam et</string>
+    <string name="txt_continue_without_register">Üye olmadan devam et</string>
     <string name="login_required_title">Giriş yapmanız gerekli</string>
     <string name="login_required_message">Bu özelliği kullanabilmeniz için giiş yapmanız gerekiyor.</string>
     <string name="logout_title">Çıkış yap</string>"
