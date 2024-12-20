@@ -1,7 +1,6 @@
 package com.enesay.financialliteracy.ui.presentation.Profile
 
 import android.content.Context
-import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,8 +18,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
@@ -28,11 +27,11 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -50,11 +49,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import java.util.Locale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.enesay.financialliteracy.MainActivity
 import com.enesay.financialliteracy.R
 import com.enesay.financialliteracy.ui.components.SimpleDialog
 import com.enesay.financialliteracy.ui.presentation.Login.LoginViewmodel
@@ -68,7 +67,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Profile(navController: NavController, context: Context) {
+fun Profile(navController: NavController) {
 
     var showDialog by remember { mutableStateOf(false) }
     val userPreferencesDataStore = DataStoreHelper(context = LocalContext.current)
@@ -77,28 +76,13 @@ fun Profile(navController: NavController, context: Context) {
     val authState by loginViewmodel.authState
     val scope = rememberCoroutineScope()
     var isDarkMode = userPreferencesDataStore.darkModeFlow.collectAsState(initial = false).value
-    var showLanguageDialog by remember { mutableStateOf(false) }
-    var selectedLanguage by remember { mutableStateOf("English") } // Default language
+    var showSheet by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         loginViewmodel.getUserInfo()
     }
-    if (showLanguageDialog) {
-        LanguageSelectionDialog(
-            currentLanguage = selectedLanguage,
-            onLanguageSelected = { language ->
-                selectedLanguage = language
-                showLanguageDialog = false
-
-                    // Dil değişikliği işlemi
-                    val newContext = context.setAppLocale(language)
-                    val intent = Intent(newContext, MainActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    context.startActivity(intent)
-            },
-            onDismissRequest = { showLanguageDialog = false }
-        )
-    }
+    //val localeManager = remember { LocaleManager(context) }
 
     Scaffold(topBar = {
         TopAppBar(
@@ -202,7 +186,7 @@ fun Profile(navController: NavController, context: Context) {
                 }
                 item {
                     ProfileItemsRow(stringResource(R.string.change_language), onClick = {
-                        showLanguageDialog = true
+                        showSheet = true
                     })
                 }
                 item {
@@ -232,10 +216,24 @@ fun Profile(navController: NavController, context: Context) {
                         showDialog = true
                     }, color = Color.Red, showIcon = false)
                 }
+
+            }
+            if (showSheet) {
+                LanguageSelectionBottomSheet(
+                    onLanguageSelected = { selectedLanguage ->
+                        scope.launch {
+                            userPreferencesDataStore.saveLanguagePreference(selectedLanguage.language)
+                        }
+                        setAppLocale(context, selectedLanguage.language)
+                        showSheet = false
+
+                    },
+                    onDismissRequest = { showSheet = false },
+                    currentLocale = Locale.getDefault()
+                )
             }
         }
     }
-
 }
 
 @Composable
@@ -251,14 +249,15 @@ private fun ProfileItemsRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 30.dp, vertical = 20.dp).padding(end = 13.dp),
+                .padding(horizontal = 30.dp, vertical = 20.dp)
+                .padding(end = 13.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = title, fontSize = 20.sp, color = color)
             if (showIcon) {
                 Icon(
-                    imageVector = Icons.Default.ArrowForward,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                     contentDescription = "setting icon",
                     tint = color
                 )
@@ -267,63 +266,64 @@ private fun ProfileItemsRow(
     }
 }
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LanguageSelectionDialog(
-    currentLanguage: String,
-    onLanguageSelected: (String) -> Unit,
+fun LanguageSelectionBottomSheet(
+    currentLocale: Locale,
+    onLanguageSelected: (Locale) -> Unit,
     onDismissRequest: () -> Unit
 ) {
-    AlertDialog(
-        onDismissRequest = onDismissRequest,
-        title = {
+    // Remember selected language
+    var selectedLocale by remember { mutableStateOf(currentLocale) }
+
+    ModalBottomSheet(
+        onDismissRequest = onDismissRequest
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(
-                text = stringResource(R.string.change_language_title),
-                style = MaterialTheme.typography.titleMedium
+                text = "Select Language",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 16.dp)
             )
-        },
-        text = {
-            Column (modifier = Modifier.padding(top = 10.dp)) {
-                LanguageOption(
-                    language = "English",
-                    isSelected = currentLanguage == "English",
-                    onClick = { onLanguageSelected("English") }
-                )
-                LanguageOption(
-                    language = "Turkish",
-                    isSelected = currentLanguage == "Turkish",
-                    onClick = { onLanguageSelected("Turkish") }
-                )
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismissRequest) {
-                Text(text = stringResource(R.string.txt_cancel))
+
+            val languages = listOf(
+                "English" to Locale("en"),
+                "Turkish" to Locale("tr")
+            )
+
+            languages.forEach { language ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            selectedLocale = language.second
+                            onLanguageSelected(language.second)
+                        }
+                        .padding(vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = language.second == selectedLocale,
+                        onClick = {
+                            selectedLocale = language.second
+                            onLanguageSelected(language.second)
+                        }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = language.first,
+                        fontSize = 18.sp,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
             }
         }
-    )
-}
-
-@Composable
-fun LanguageOption(
-    language: String,
-    isSelected: Boolean,
-    onClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 8.dp).padding(top = 2.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        RadioButton(
-            selected = isSelected,
-            onClick = onClick
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            text = language,
-            style = MaterialTheme.typography.bodyLarge
-        )
     }
 }

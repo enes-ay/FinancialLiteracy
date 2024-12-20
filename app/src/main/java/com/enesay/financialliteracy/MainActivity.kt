@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -20,8 +21,9 @@ import com.enesay.financialliteracy.ui.presentation.Navigation.Navigation
 import com.enesay.financialliteracy.ui.presentation.Screens
 import com.enesay.financialliteracy.ui.theme.FinancialLiteracyTheme
 import com.enesay.financialliteracy.utils.DataStoreHelper
+import com.enesay.financialliteracy.utils.setAppLocale
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -45,6 +47,21 @@ class MainActivity : ComponentActivity() {
                     }) { paddingValues ->
 
                     Navigation(navController = navController, paddingValues = paddingValues)
+                }
+            }
+        }
+
+        // DataStoreHelper örneği
+        val userPreferencesDataStore = DataStoreHelper(context = this)
+
+        // Kaydedilmiş dil tercihini uygulama diline ayarlayın
+        lifecycleScope.launch {
+            userPreferencesDataStore.languageFlow.collect { savedLanguage ->
+                if (savedLanguage != null) {
+                    setAppLocale(this@MainActivity, savedLanguage)
+                }
+                else{
+                    setAppLocale(this@MainActivity, "en")
                 }
             }
         }

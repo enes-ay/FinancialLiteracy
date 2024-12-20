@@ -11,6 +11,41 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class DataStoreHelper(private val context: Context) {
+
+    // Get rememberMe state as a Flow
+    val rememberMeFlow: Flow<Boolean> = context.dataStore.data
+        .map { preferences ->
+            preferences[REMEMBER_ME_KEY] ?: false
+        }
+
+    // Get email as a Flow
+    val emailFlow: Flow<String?> = context.dataStore.data
+        .map { preferences ->
+            preferences[EMAIL_KEY]
+        }
+
+    // Get password as a Flow
+    val passwordFlow: Flow<String?> = context.dataStore.data
+        .map { preferences ->
+            preferences[PASSWORD_KEY]
+        }
+
+    val userIdFlow: Flow<String?> = context.dataStore.data
+        .map { preferences ->
+            preferences[USER_ID]
+        }
+
+    val languageFlow: Flow<String?> = context.dataStore.data
+        .map { preferences ->
+            preferences[LANGUAGE_KEY]
+        }
+
+    // Get dark mode preference as a Flow
+    val darkModeFlow: Flow<Boolean> = context.dataStore.data
+        .map { preferences ->
+            preferences[DARK_MODE_KEY] ?: false
+        }
+
     companion object {
         private val Context.dataStore :DataStore<Preferences> by preferencesDataStore("user_preferences")
 
@@ -19,6 +54,7 @@ class DataStoreHelper(private val context: Context) {
         val PASSWORD_KEY = stringPreferencesKey("password")
         val USER_ID = stringPreferencesKey("user_id")
         val DARK_MODE_KEY = booleanPreferencesKey("dark_mode") // Dark mode anahtarı
+        val LANGUAGE_KEY = stringPreferencesKey("language")
     }
 
     // Save user preferences
@@ -48,32 +84,11 @@ class DataStoreHelper(private val context: Context) {
         }
     }
 
-    // Get rememberMe state as a Flow
-    val rememberMeFlow: Flow<Boolean> = context.dataStore.data
-        .map { preferences ->
-            preferences[REMEMBER_ME_KEY] ?: false
+    suspend fun saveLanguagePreference(languageCode: String) {
+        context.dataStore.edit { preferences ->
+            preferences[LANGUAGE_KEY] = languageCode
         }
-
-    // Get email as a Flow
-    val emailFlow: Flow<String?> = context.dataStore.data
-        .map { preferences ->
-            preferences[EMAIL_KEY]
-        }
-
-    // Get password as a Flow
-    val passwordFlow: Flow<String?> = context.dataStore.data
-        .map { preferences ->
-            preferences[PASSWORD_KEY]
-        }
-
-    val userIdFlow: Flow<String?> = context.dataStore.data
-        .map { preferences ->
-            preferences[USER_ID]
-        }
-
-    // Get dark mode preference as a Flow
-    val darkModeFlow: Flow<Boolean> = context.dataStore.data
-        .map { preferences ->
-            preferences[DARK_MODE_KEY] ?: false
-        }
+    }
 }
+
+
