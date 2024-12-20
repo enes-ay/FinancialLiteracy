@@ -20,4 +20,5 @@
     <string name="logout_title">Log out</string>"
     <string name="logout_message"> Are you sure you want to log out?</string>
     <string name="invalid_amount_warning">Please enter a valid amount.</string>
+    <string name="txt_market_cap">Market Cap</string>
 </resources>

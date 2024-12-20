@@ -82,6 +82,7 @@ fun TradeScreen(
     // Format price and balance values
     val formattedPrice = String.format(Locale.US, "%,.2f", asset.price)
     val formattedBalance = String.format(Locale.US, "%,.2f", balance)
+    val formattedMarketCap =  formatMarketCap(asset.self_reported_market_cap)
     val formattedAssetBalance = String.format(Locale.US, "%,.2f", userAssetBalance)
     var showLoginWarningDialog by remember { mutableStateOf(false) }
 
@@ -204,21 +205,24 @@ fun TradeScreen(
                 Column(
                     modifier = Modifier
                         .wrapContentHeight()
-                        .weight(1f)
+                        .weight(1.5f)
                 ) {
-                    Text(
-                        text = "Market Cap",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Light,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                    Spacer(modifier = Modifier.height(15.dp))
-                    Text(
-                        text = "$$formattedBalance",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
+                 Column(verticalArrangement = Arrangement.Center,
+                     horizontalAlignment = Alignment.CenterHorizontally){
+                     Text(
+                         text = stringResource(R.string.txt_market_cap),
+                         fontSize = 16.sp,
+                         fontWeight = FontWeight.Medium,
+                         color = MaterialTheme.colorScheme.onPrimary
+                     )
+                     Spacer(modifier = Modifier.height(13.dp))
+                     Text(
+                         text = formattedMarketCap,
+                         fontSize = 17.sp,
+                         fontWeight = FontWeight.Bold,
+                         color = MaterialTheme.colorScheme.onPrimary
+                     )
+                 }
                 }
             }
             // Toggle Menu for Buy/Sell
@@ -404,5 +408,14 @@ fun TradeResultDialog(
                 }
             }
         }
+    }
+}
+
+fun formatMarketCap(value: Double): String {
+    return when {
+        value >= 1_000_000_000_000 -> String.format(Locale.US, "$%.2fT", value / 1_000_000_000_000)
+        value >= 1_000_000_000 -> String.format(Locale.US, "$%.2fB", value / 1_000_000_000)
+        value >= 1_000_000 -> String.format(Locale.US, "%.2fM", value / 1_000_000)
+        else -> String.format(Locale.US, "%.2f", value)
     }
 }
