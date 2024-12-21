@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,12 +18,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,6 +45,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -58,6 +64,7 @@ import com.enesay.financialliteracy.R
 import com.enesay.financialliteracy.model.Education.EducationalContent
 import com.enesay.financialliteracy.model.Trade.Asset
 import com.enesay.financialliteracy.ui.presentation.Screens
+import com.enesay.financialliteracy.ui.theme.AssetCardColor
 import com.enesay.financialliteracy.ui.theme.category_item1_color
 import com.enesay.financialliteracy.ui.theme.category_item2_color
 import com.enesay.financialliteracy.ui.theme.category_item3_color
@@ -77,11 +84,9 @@ fun Home(navController: NavController) {
         TopAppBar(
             title = {
                 Text(
-                    text = stringResource(R.string.app_name),
-                    fontWeight = FontWeight.Bold
+                    text = stringResource(R.string.app_name), fontWeight = FontWeight.Bold
                 )
-            },
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                 containerColor = primary_color, titleContentColor = Color.White
             )
         )
@@ -118,28 +123,23 @@ fun Home(navController: NavController) {
                 })
             }
 
-            ProfitLossAndTopAssets(123.34,
-                listOf(
-                    Asset(
-                        1,
-                        "Bitcoin",
-                        "BTC",
-                        97000.0,
-                        1.2,
-                        234232.2,
-                        1,
-                        124125125215212.32,
-                        124312424124124.21
-                    )
-                ),
-                onAssetClick = {
-                    Toast.makeText(context, "Asset clicked", Toast.LENGTH_SHORT).show()
-                }
+            ProfitLossCard(123.34)
+            AssetCard(
+                asset = Asset(
+                    1,
+                    "Bitcoin",
+                    "BTC",
+                    97000.0,
+                    1.2,
+                    234232.2,
+                    1,
+                    124125125215212.32,
+                    124312424124124.21
+                )
             )
 
             LazyVerticalGrid(
-                modifier = Modifier
-                    .wrapContentSize(),
+                modifier = Modifier.wrapContentSize(),
                 columns = GridCells.Fixed(2),
             ) {
                 items(educationalContentList.count(), itemContent = {
@@ -178,151 +178,166 @@ fun Home(navController: NavController) {
         }
     }
 }
-    @Composable
-    fun FinancialLessonList(
-        lessons: List<EducationalContent>,
-        onLessonClick: (String) -> Unit
-    ) {
-        LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(5.dp),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(lessons) { lesson ->
-                LessonCard(
-                    lessonTitle = lesson.content_name,
-                    onClick = { onLessonClick(lesson.id) }
-                )
-            }
-        }
-    }
-
-    @Composable
-    fun LessonCard(
-        lessonTitle: String,
-        onClick: () -> Unit
-    ) {
-        Card(
-            modifier = Modifier
-                .width(200.dp)
-                .height(120.dp)
-                .clickable { onClick() },
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = lessonTitle,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(horizontal = 10.dp),
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
-    }
 
 @Composable
-fun ProfitLossAndTopAssets(
-    totalProfitLoss: Double,
-    assets: List<Asset>,
-    onAssetClick: (Asset) -> Unit
+fun FinancialLessonList(
+    lessons: List<EducationalContent>, onLessonClick: (String) -> Unit
 ) {
-    Column(
+    LazyRow(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(5.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // Profit or Loss Display
-        ProfitLossCard(totalProfitLoss)
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Top Assets Display
-        Text(
-            text = "Top Assets",
-            color = MaterialTheme.colorScheme.onSurface
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(assets) { asset ->
-                AssetCard(asset = asset, onClick = { onAssetClick(asset) })
-            }
+        items(lessons) { lesson ->
+            LessonCard(lessonTitle = lesson.content_name, onClick = { onLessonClick(lesson.id) })
         }
     }
 }
 
+@Composable
+fun LessonCard(
+    lessonTitle: String, onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .width(200.dp)
+            .height(120.dp)
+            .clickable { onClick() },
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = lessonTitle,
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 10.dp),
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
 
 @Composable
 fun ProfitLossCard(totalProfitLoss: Double) {
     val isProfit = totalProfitLoss >= 0
+    val icon = if (isProfit) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown
+    val backgroundColor = if (isProfit) Brush.horizontalGradient(
+        colors = listOf(Color(0xFFDFF6E1), Color(0xFFB2DFDB))
+    ) else Brush.horizontalGradient(
+        colors = listOf(Color(0xFFFFE5E5), Color(0xFFFFCDD2))
+    )
+    val textColor = if (isProfit) Color(0xFF2E7D32) else Color(0xFFC62828)
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp),
+            .padding(16.dp)
+            .height(120.dp),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isProfit) Color(0xFFDFF6E1) else Color(
-                0xFFFFE5E5
-            )
-        ),
+        elevation = CardDefaults.cardElevation(6.dp)
     ) {
         Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+            modifier = Modifier
+                .fillMaxSize()
+                .background(backgroundColor)
+                .padding(16.dp)
         ) {
-            Text(
-                text = if (isProfit) "Profit: $${String.format("%.2f", totalProfitLoss)}"
-                else "Loss: $${String.format("%.2f", -totalProfitLoss)}",
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = if (isProfit) Color(0xFF2E7D32) else Color(0xFFC62828)
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                // Icon
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = textColor,
+                    modifier = Modifier.size(36.dp)
                 )
-            )
+
+                // Profit/Loss Text
+                Column(
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Text(
+                        text = if (isProfit) "Profit" else "Loss",
+                        fontWeight = FontWeight.Normal,
+                        color = textColor,
+                        fontSize = 35.sp
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "$${String.format("%.2f", kotlin.math.abs(totalProfitLoss))}",
+                        fontWeight = FontWeight.Normal,
+                        color = textColor,
+                        fontSize = 26.sp
+                    )
+                }
+            }
         }
     }
 }
 
 @Composable
-fun AssetCard(asset: Asset, onClick: () -> Unit) {
+fun AssetCard(asset: Asset) {
     Card(
         modifier = Modifier
-            .width(150.dp)
+            .fillMaxWidth()
+            .padding(16.dp)
             .height(100.dp)
-            .clickable { onClick() },
-        shape = RoundedCornerShape(16.dp)
+            .clickable { },
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(6.dp),
     ) {
         Column(
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(AssetCardColor),
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = asset.symbol,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Text(
-                text = "${asset.quantity} Units",
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-            )
-            Text(
-                text = "$${String.format("%.2f", asset.price * asset.quantity)}",
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                Text(
+                    text = asset.symbol,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 27.sp
+                )
+                Text(
+                    text = "$${String.format("%.2f", asset.price * asset.quantity)}",
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 23.sp
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                Text(
+                    text = asset.symbol,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 27.sp
+                )
+                Text(
+                    text = "$${String.format("%.2f", asset.price * asset.quantity)}",
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            }
+
         }
     }
 }
-

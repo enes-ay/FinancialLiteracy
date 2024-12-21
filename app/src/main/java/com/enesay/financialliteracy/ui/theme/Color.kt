@@ -15,6 +15,7 @@ val secondary_color = Color(0xFFC6EECA)
 val BlackColor = Color(0xFF000000)
 val WhiteColor = Color(0xFFFFFFFF)
 val GrayColor = Color(0xFF1C1C1C)
+val AssetCardColor = Color(0xFFAA86F3)
 
 val category_item1_color = Color(0xFF4205F0)
 val category_item2_color = Color(0xFF177E00)

@@ -20,7 +20,7 @@ import com.enesay.financialliteracy.ui.presentation.Trade.TradeScreen
 import com.google.gson.Gson
 
 @Composable
-fun Navigation(paddingValues: PaddingValues, navController: NavHostController) {
+fun Navigation(navController: NavHostController, paddingValues: PaddingValues) {
 
     NavHost(navController = navController, startDestination = "splash") {
 
