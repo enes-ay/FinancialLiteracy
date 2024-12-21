@@ -9,6 +9,10 @@
     <string name="btn_retry">Yeniden Dene</string>
     <string name="btn_register">Kayıt Ol</string>
     <string name="txt_login">Giriş Yap</string>
+    <string name="item_markets">Piyasalar</string>
+    <string name="item_profile">Profil</string>
+    <string name="item_portfolio">Portfolyo</string>
+    <string name="item_home">Anasayfa</string>
     <string name="txt_register">Kayıt Ol</string>
     <string name="txt_amount">Miktar</string>
     <string name="switch_dark_mode">Karanlık Mod</string>
@@ -23,4 +27,6 @@
     <string name="logout_message">Çıkış yapmak isteğinize emin misiniz?</string>
     <string name="invalid_amount_warning">Lütfen geçerli bir miktar giriniz.</string>
     <string name="txt_market_cap">Piyasa Değeri</string>
+    <string name="txt_my_assets">Varlıklarım</string>
+    <string name="txt_no_assets_found">Herhangi bir varlık bulunamadı.</string>
 </resources>

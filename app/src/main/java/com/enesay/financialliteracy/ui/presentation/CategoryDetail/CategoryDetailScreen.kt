@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
@@ -48,7 +49,7 @@ fun CategoryDetail(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = categoryDetail?.title ?: "Loading...",
+                        text = categoryDetail?.content_name ?: "Loading...",
                         fontWeight = FontWeight.Bold
                     )
                 },
@@ -73,13 +74,15 @@ fun CategoryDetail(
                         .padding(horizontal = 15.dp, vertical = 10.dp)
                 ) {
                     Text(
-                        text = categoryDetail?.title ?: "",
+                        text = categoryDetail?.content_name ?: "",
                         textAlign = TextAlign.Start,
                         fontSize = 26.sp,
+                        color = MaterialTheme.colors.onPrimary,
                         modifier = Modifier.padding(vertical = 10.dp)
                     )
                     Text(
-                        text = categoryDetail?.description ?: "",
+                        text = categoryDetail?.content_detail ?: "",
+                        color = MaterialTheme.colors.onPrimary,
                         textAlign = TextAlign.Start
                     )
                 }

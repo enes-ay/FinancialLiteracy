@@ -34,11 +34,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.enesay.financialliteracy.R
 import com.enesay.financialliteracy.model.Trade.Asset
 import com.enesay.financialliteracy.ui.presentation.AssetList.AssetRow
 import com.enesay.financialliteracy.ui.presentation.Login.LoginViewmodel
@@ -64,7 +66,7 @@ fun PortfolioScreen(navController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Portfolio", fontWeight = FontWeight.Bold) },
+                title = { Text(text = stringResource(R.string.item_portfolio), fontWeight = FontWeight.Bold) },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = primary_color, titleContentColor = Color.White
                 )
@@ -81,11 +83,11 @@ fun PortfolioScreen(navController: NavHostController) {
             val formattedBalance = String.format(Locale.US,"%,.2f", balance)
             BalanceCard(formattedBalance)
             Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp)) {
-                Text("Your Assets", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.txt_my_assets), fontSize = 20.sp, fontWeight = FontWeight.Bold)
             }
 
             if (assets.isEmpty()) {
-                EmptyState(paddingValues)
+                EmptyState()
             } else {
                 AssetList(assets = assets, navController)
             }
@@ -112,7 +114,7 @@ fun BalanceCard(balance: String) {
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = "Total Balance",
+                text = stringResource(R.string.txt_balance),
                 fontSize = 20.sp,
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
@@ -159,11 +161,11 @@ fun AssetList(assets: List<Asset>, navController: NavHostController) {
 }
 
 @Composable
-fun EmptyState(paddingValues: PaddingValues) {
+fun EmptyState() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = androidx.compose.ui.Alignment.Center
     ) {
-        Text("No assets found.")
+        Text(stringResource(R.string.txt_no_assets_found))
     }
 }

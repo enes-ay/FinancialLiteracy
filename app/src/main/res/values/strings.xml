@@ -7,6 +7,10 @@
     <string name="btn_login">Log In</string>
     <string name="btn_register">Register</string>
     <string name="btn_retry">Retry</string>
+    <string name="item_markets">Markets</string>
+    <string name="item_profile">Profile</string>
+    <string name="item_portfolio">Portfolio</string>
+    <string name="item_home">Home</string>
     <string name="txt_login">Log In</string>
     <string name="txt_register">Register</string>
     <string name="txt_amount">Amount</string>
@@ -22,4 +26,6 @@
     <string name="logout_message"> Are you sure you want to log out?</string>
     <string name="invalid_amount_warning">Please enter a valid amount.</string>
     <string name="txt_market_cap">Market Cap</string>
+    <string name="txt_my_assets">My Assets</string>
+    <string name="txt_no_assets_found">No assets found.</string>
 </resources>

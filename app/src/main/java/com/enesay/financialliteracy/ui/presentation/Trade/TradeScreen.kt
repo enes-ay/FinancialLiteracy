@@ -216,10 +216,10 @@ fun TradeScreen(
                          fontWeight = FontWeight.Light,
                          color = MaterialTheme.colorScheme.onPrimary,
                      )
-                     Spacer(modifier = Modifier.height(12.dp))
+                     Spacer(modifier = Modifier.height(16.dp))
                      Text(
                          text = formattedMarketCap,
-                         fontSize = 21.sp,
+                         fontSize = 20.sp,
                          fontWeight = FontWeight.Bold,
                          color = MaterialTheme.colorScheme.onPrimary
                      )

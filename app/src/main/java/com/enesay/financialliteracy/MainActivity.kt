@@ -16,7 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.enesay.financialliteracy.ui.presentation.Home.BottomBar
+import com.enesay.financialliteracy.ui.components.BottomBar
 import com.enesay.financialliteracy.ui.presentation.Navigation.Navigation
 import com.enesay.financialliteracy.ui.presentation.Screens
 import com.enesay.financialliteracy.ui.theme.FinancialLiteracyTheme
