@@ -117,6 +117,8 @@ class WalletRepository @Inject constructor(val firestore: FirebaseFirestore) {
         // Ensure the user has enough quantity to sell
         if (currentQuantity < amount) throw Exception("Insufficient quantity for asset $symbol")
 
+        if (amount < 0.001) throw Exception("Quantity amount is under the minimum level")
+
         // Update the asset's quantity
         val updatedQuantity = currentQuantity - amount
         if (updatedQuantity > 0) {
