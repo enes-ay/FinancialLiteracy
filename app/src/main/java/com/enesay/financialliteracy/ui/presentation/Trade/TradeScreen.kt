@@ -58,6 +58,8 @@ import com.enesay.financialliteracy.ui.components.SimpleDialog
 import com.enesay.financialliteracy.ui.presentation.Login.LoginViewmodel
 import com.enesay.financialliteracy.ui.theme.primary_color
 import kotlinx.coroutines.delay
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -77,13 +79,25 @@ fun TradeScreen(
     val userAssets by tradeViewmodel.userAssets.collectAsState()
 
     val userAssetBalance = userAssets.find { it.id == asset.id }?.quantity ?: 0.0
-    var warningMessage by remember { mutableStateOf("") }
+    val warningMessage by remember { mutableStateOf("") }
 
-    // Format price and balance values
     val formattedPrice = String.format(Locale.US, "%,.2f", asset.price)
-    val formattedBalance = String.format(Locale.US, "%,.2f", balance)
-    val formattedMarketCap =  formatMarketCap(asset.self_reported_market_cap)
-    val formattedAssetBalance = String.format(Locale.US, "%,.2f", userAssetBalance)
+    val formattedMarketCap = formatMarketCap(asset.self_reported_market_cap)
+
+    val formattedBalance = BigDecimal(balance)
+        .setScale(
+            3,
+            RoundingMode.DOWN
+        ).toDouble()
+
+    // val formattedAssetBalance = String.format(Locale.US, "%,.4f", userAssetBalance)
+    val formattedAssetBalance =
+        BigDecimal(userAssetBalance)
+            .setScale(
+                3,
+                RoundingMode.DOWN
+            ).toDouble()// Sonucu düz metin olarak al
+
     var showLoginWarningDialog by remember { mutableStateOf(false) }
 
     val isLoggedIn = loginViewmodel.userLoggedIn.value
@@ -204,26 +218,27 @@ fun TradeScreen(
                     )
                 }
 
-                 Column(
-                     modifier = Modifier
-                         .wrapContentHeight()
-                         .weight(1.5f),
-                     verticalArrangement = Arrangement.Center,
-                     horizontalAlignment = Alignment.End){
-                     Text(
-                         text = stringResource(R.string.txt_market_cap),
-                         fontSize = 18.sp,
-                         fontWeight = FontWeight.Light,
-                         color = MaterialTheme.colorScheme.onPrimary,
-                     )
-                     Spacer(modifier = Modifier.height(16.dp))
-                     Text(
-                         text = formattedMarketCap,
-                         fontSize = 20.sp,
-                         fontWeight = FontWeight.Bold,
-                         color = MaterialTheme.colorScheme.onPrimary
-                     )
-                 }
+                Column(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .weight(1.5f),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Text(
+                        text = stringResource(R.string.txt_market_cap),
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Light,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = formattedMarketCap,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
             }
             // Toggle Menu for Buy/Sell
             Row(
@@ -233,7 +248,10 @@ fun TradeScreen(
                 horizontalArrangement = Arrangement.spacedBy(2.dp)
             ) {
                 Button(
-                    onClick = { isBuySelected = true },
+                    onClick = {
+                        isBuySelected = true
+                        amount = ""
+                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (isBuySelected) primary_color else Color(0xFFE3F2FD),
                         contentColor = if (isBuySelected) Color.White else Color.Black
@@ -243,7 +261,10 @@ fun TradeScreen(
                 }
 
                 Button(
-                    onClick = { isBuySelected = false },
+                    onClick = {
+                        isBuySelected = false
+                        amount = ""
+                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (!isBuySelected) Color.Red else Color(0xFFE3F2FD),
                         contentColor = if (!isBuySelected) Color.White else Color.Black
@@ -285,15 +306,17 @@ fun TradeScreen(
                         Button(
                             onClick = {
                                 selectedPercentage = percentage
-                                val maxAmount = if (isBuySelected) balance else userAssetBalance
+                                val maxAmount =
+                                    if (isBuySelected) formattedBalance else formattedAssetBalance
                                 amount = if (isBuySelected) {
                                     String.format(
                                         Locale.US,
-                                        "%.2f",
+                                        "%.4f",
                                         (maxAmount * percentage / 100) / asset.price
                                     )
+
                                 } else {
-                                    String.format(Locale.US, "%.2f", (maxAmount * percentage / 100))
+                                    String.format(Locale.US, "%.4f", (maxAmount * percentage / 100))
                                 }
                             },
                             modifier = Modifier
