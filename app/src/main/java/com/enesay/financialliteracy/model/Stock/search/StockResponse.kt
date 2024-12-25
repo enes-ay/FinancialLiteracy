@@ -1,4 +1,4 @@
-package com.enesay.financialliteracy.model.Stock
+package com.enesay.financialliteracy.model.Stock.search
 
 data class StockResponse(
     val c: Double,

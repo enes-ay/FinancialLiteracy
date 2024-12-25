@@ -1,9 +1,8 @@
 package com.enesay.financialliteracy.data.repository
 
 import android.util.Log
-import com.enesay.financialliteracy.model.Stock.StockResponse
+import com.enesay.financialliteracy.model.Stock.search.StockResponse
 import com.enesay.financialliteracy.model.Stock.search.StockSearchResponse
-import com.enesay.financialliteracy.model.StockModels.Stock
 import com.enesay.financialliteracy.service.StockService
 import retrofit2.Response
 import javax.inject.Inject

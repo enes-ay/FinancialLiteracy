@@ -5,10 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.enesay.financialliteracy.data.repository.CryptoRepository
 import com.enesay.financialliteracy.data.repository.StockRepository
-import com.enesay.financialliteracy.model.Stock.StockResponse
-import com.enesay.financialliteracy.model.Stock.search.Result
-import com.enesay.financialliteracy.model.Stock.search.StockSearchResponse
-import com.enesay.financialliteracy.model.StockModels.Stock
+import com.enesay.financialliteracy.model.Stock.search.StockResponse
 import com.enesay.financialliteracy.model.Trade.Asset
 import com.enesay.financialliteracy.model.Trade.toAsset
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,9 +19,6 @@ class AssetListViewmodel @Inject constructor(
     private val repository: CryptoRepository,
     private val stockRepository: StockRepository,
 ) : ViewModel() {
-
-    private val _stocks = MutableStateFlow<List<Stock>>(emptyList())
-    val stocks: StateFlow<List<Stock>> = _stocks
 
     private val _cryptoList = MutableStateFlow<List<Asset>>(emptyList())
     val cryptoList: StateFlow<List<Asset>> = _cryptoList

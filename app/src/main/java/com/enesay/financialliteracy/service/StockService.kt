@@ -1,6 +1,6 @@
 package com.enesay.financialliteracy.service
 
-import com.enesay.financialliteracy.model.Stock.StockResponse
+import com.enesay.financialliteracy.model.Stock.search.StockResponse
 import com.enesay.financialliteracy.model.Stock.search.StockSearchResponse
 import com.enesay.financialliteracy.utils.Constants.API_KEY_STOCK
 import retrofit2.Response
