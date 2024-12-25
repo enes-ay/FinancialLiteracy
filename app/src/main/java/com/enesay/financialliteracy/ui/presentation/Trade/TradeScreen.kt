@@ -82,7 +82,7 @@ fun TradeScreen(
     val userAssetBalance = userAssets.find { it.id == asset.id }?.quantity ?: 0.0
     val warningMessage by remember { mutableStateOf("") }
 
-    val formattedPrice = String.format(Locale.US, "%,.2f", if (asset.asset_type == 1) asset.price else stockData?.price)
+    val formattedPrice = String.format(Locale.US, "%,.2f", if (asset.asset_type == 1) asset.price else stockData?.currentPrice)
     val formattedMarketCap = formatMarketCap(asset.self_reported_market_cap)
 
     val formattedBalance = BigDecimal(balance)
@@ -233,14 +233,14 @@ fun TradeScreen(
                     horizontalAlignment = Alignment.End
                 ) {
                     Text(
-                        text = stringResource(R.string.txt_market_cap),
+                        text = if (asset.asset_type == 1) stringResource(R.string.txt_market_cap) else stringResource(R.string.txt_daily_change),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Light,
                         color = MaterialTheme.colorScheme.onPrimary,
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = formattedMarketCap,
+                        text = if(asset.asset_type == 1) formattedMarketCap else "%" + stockData?.dailyChange.toString(),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimary
@@ -319,7 +319,7 @@ fun TradeScreen(
                                     String.format(
                                         Locale.US,
                                         "%.4f",
-                                        (maxAmount * percentage / 100) / asset.price
+                                        (maxAmount * percentage / 100) / (if (asset.asset_type == 1) asset.price else stockData?.currentPrice)!!
                                     )
 
                                 } else {

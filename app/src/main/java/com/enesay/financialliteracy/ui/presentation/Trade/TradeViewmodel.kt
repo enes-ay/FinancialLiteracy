@@ -13,6 +13,7 @@ import com.enesay.financialliteracy.data.repository.WalletRepository
 import com.enesay.financialliteracy.model.Stock.search.StockResponse
 import com.enesay.financialliteracy.model.Stock.search.toStock
 import com.enesay.financialliteracy.model.Trade.Asset
+import com.enesay.financialliteracy.model.Trade.StockAsset
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -46,8 +47,8 @@ class TradeViewmodel @Inject constructor(
     private val _tradeState = MutableLiveData<TradeState>()
     val tradeState: LiveData<TradeState> = _tradeState
 
-    private val _stockData = MutableStateFlow<Asset?>(null)
-    val stockData: StateFlow<Asset?> = _stockData
+    private val _stockData = MutableStateFlow<StockAsset?>(null)
+    val stockData: StateFlow<StockAsset?> = _stockData
 
     fun loadUserData() {
         val userId = authRepository.getCurrentUserId() ?: return
@@ -143,6 +144,7 @@ class TradeViewmodel @Inject constructor(
                 val result = stockRepository.getStockQuotes(symbol)
                 if(result.isSuccessful){
                     _stockData.value = result.body()?.toStock(symbol)
+
                     Log.d("stock data", result.body().toString())
                 }
                 else{

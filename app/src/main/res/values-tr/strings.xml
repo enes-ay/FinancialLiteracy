@@ -27,6 +27,7 @@
     <string name="logout_message">Çıkış yapmak isteğinize emin misiniz?</string>
     <string name="invalid_amount_warning">Lütfen geçerli bir miktar giriniz.</string>
     <string name="txt_market_cap">Piyasa Değeri</string>
+    <string name="txt_daily_change">Günlük Değişim</string>
     <string name="txt_my_assets">Varlıklarım</string>
     <string name="txt_no_assets_found">Herhangi bir varlık bulunamadı.</string>
 </resources>

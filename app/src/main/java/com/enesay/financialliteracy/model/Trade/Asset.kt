@@ -43,17 +43,3 @@ fun DataCrypto.toAsset(): Asset {
         asset_type = 1
     )
 }
-
-fun Result.toAsset(): Asset {
-    return Asset(
-        id = this.symbol,
-        name = this.displaySymbol,
-        symbol = this.symbol,
-        price = 0.0,
-        max_supply = 0.0,
-        cmc_rank = 0,
-        self_reported_market_cap = 0.0,
-        volume_24h = 0.0,
-        asset_type = 0
-    )
-}
