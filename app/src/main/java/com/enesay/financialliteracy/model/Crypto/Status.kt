@@ -1,4 +1,4 @@
-package com.enesay.financialliteracy.model.Stock
+package com.enesay.financialliteracy.model.Crypto
 
 data class Status(
     val credit_count: Int,

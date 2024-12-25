@@ -74,6 +74,7 @@ fun TradeScreen(
     var amount by remember { mutableStateOf("") }
     var selectedPercentage by remember { mutableStateOf<Int?>(null) }
     val tradeState by tradeViewmodel.tradeState.observeAsState()
+    val stockData by tradeViewmodel.stockData.collectAsState()
 
     val balance by tradeViewmodel.balance.observeAsState(0.0)
     val userAssets by tradeViewmodel.userAssets.collectAsState()
@@ -81,7 +82,7 @@ fun TradeScreen(
     val userAssetBalance = userAssets.find { it.id == asset.id }?.quantity ?: 0.0
     val warningMessage by remember { mutableStateOf("") }
 
-    val formattedPrice = String.format(Locale.US, "%,.2f", asset.price)
+    val formattedPrice = String.format(Locale.US, "%,.2f", if (asset.asset_type == 1) asset.price else stockData?.price)
     val formattedMarketCap = formatMarketCap(asset.self_reported_market_cap)
 
     val formattedBalance = BigDecimal(balance)
@@ -101,6 +102,12 @@ fun TradeScreen(
     var showLoginWarningDialog by remember { mutableStateOf(false) }
 
     val isLoggedIn = loginViewmodel.userLoggedIn.value
+
+    if(asset.asset_type == 0){
+        LaunchedEffect(true) {
+            tradeViewmodel.getStockData(asset.symbol)
+        }
+    }
 
     @Composable
     fun ShowLoginWarningDialog(showDialog: Boolean) {

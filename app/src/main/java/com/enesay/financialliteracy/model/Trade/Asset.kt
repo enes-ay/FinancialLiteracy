@@ -26,6 +26,8 @@ data class Asset(
     val self_reported_market_cap: Double,
     @ColumnInfo(name = "volume_24h")
     val volume_24h: Double,
+    @ColumnInfo(name = "asset_type")
+    val asset_type: Int,
     )
 
 fun DataCrypto.toAsset(): Asset {
@@ -38,6 +40,7 @@ fun DataCrypto.toAsset(): Asset {
         cmc_rank = this.cmc_rank,
         self_reported_market_cap = this.quote.USD.market_cap,
         volume_24h = this.quote.USD.volume_24h,
+        asset_type = 1
     )
 }
 
@@ -51,5 +54,6 @@ fun Result.toAsset(): Asset {
         cmc_rank = 0,
         self_reported_market_cap = 0.0,
         volume_24h = 0.0,
+        asset_type = 0
     )
 }

@@ -9,8 +9,8 @@ import javax.inject.Inject
 
 class StockRepository @Inject constructor(val stockService: StockService) {
 
-    suspend fun getStockQuotes(symbols: String): Response<StockResponse> {
-        val response = stockService.getStockQuotes(symbols)
+    suspend fun getStockQuotes(symbol: String): Response<StockResponse> {
+        val response = stockService.getStockQuotes(symbol)
 
         if(response.isSuccessful){
             return response

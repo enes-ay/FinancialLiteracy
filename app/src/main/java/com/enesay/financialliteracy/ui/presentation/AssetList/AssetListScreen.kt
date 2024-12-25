@@ -1,6 +1,5 @@
 package com.enesay.financialliteracy.ui.presentation.AssetList
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -56,8 +55,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.enesay.financialliteracy.model.Stock.StockResponse
-import com.enesay.financialliteracy.model.Stock.search.Result
 import com.enesay.financialliteracy.model.Trade.Asset
 import com.enesay.financialliteracy.ui.theme.primary_color
 import com.google.gson.Gson
@@ -70,7 +67,6 @@ fun AssetListScreen(navController: NavHostController) {
     var selectedTabIndex by remember { mutableStateOf(0) }
     val assetListViewModel: AssetListViewmodel = hiltViewModel()
     val cryptoList by assetListViewModel.cryptoList.collectAsState()
-    val stockList by assetListViewModel.stocks.collectAsState()
 
     val stockResponse by assetListViewModel.stockResponse.collectAsState()
     val errorMessage by assetListViewModel.errorMessage.collectAsState()

@@ -7,8 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.enesay.financialliteracy.common.Resource
 import com.enesay.financialliteracy.data.repository.AuthRepository
+import com.enesay.financialliteracy.data.repository.StockRepository
 import com.enesay.financialliteracy.data.repository.TradeRepository
 import com.enesay.financialliteracy.data.repository.WalletRepository
+import com.enesay.financialliteracy.model.Stock.search.StockResponse
+import com.enesay.financialliteracy.model.Stock.search.toStock
 import com.enesay.financialliteracy.model.Trade.Asset
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +24,8 @@ import javax.inject.Inject
 class TradeViewmodel @Inject constructor(
     private val authRepository: AuthRepository,
     private val tradeRepository: TradeRepository,
-    private val walletRepository: WalletRepository
+    private val walletRepository: WalletRepository,
+    private val stockRepository: StockRepository
 ) : ViewModel() {
 
     private val _errorMessage = MutableLiveData<String?>()
@@ -41,6 +45,9 @@ class TradeViewmodel @Inject constructor(
 
     private val _tradeState = MutableLiveData<TradeState>()
     val tradeState: LiveData<TradeState> = _tradeState
+
+    private val _stockData = MutableStateFlow<Asset?>(null)
+    val stockData: StateFlow<Asset?> = _stockData
 
     fun loadUserData() {
         val userId = authRepository.getCurrentUserId() ?: return
@@ -128,6 +135,26 @@ class TradeViewmodel @Inject constructor(
 
     fun resetTradeState() {
         _tradeState.value = TradeState.Idle
+    }
+
+    fun getStockData(symbol: String){
+        viewModelScope.launch {
+            try {
+                val result = stockRepository.getStockQuotes(symbol)
+                if(result.isSuccessful){
+                    _stockData.value = result.body()?.toStock(symbol)
+                    Log.d("stock data", result.body().toString())
+                }
+                else{
+                    _errorMessage.value = result.message()
+                }
+            }
+            catch (e: Exception){
+                _errorMessage.value = e.message
+                Log.d("stock data", e.message.toString())
+
+            }
+        }
     }
 }
 

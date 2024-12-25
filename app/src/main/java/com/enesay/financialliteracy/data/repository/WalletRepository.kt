@@ -57,6 +57,7 @@ class WalletRepository @Inject constructor(val firestore: FirebaseFirestore) {
                 cmc_rank = 0,
                 self_reported_market_cap = 0.0,
                 volume_24h = 0.0,
+                asset_type = 1
             )
         }
     }
