@@ -1,9 +1,13 @@
 package com.enesay.financialliteracy.ui.presentation.AssetList
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.enesay.financialliteracy.data.repository.CryptoRepository
 import com.enesay.financialliteracy.data.repository.StockRepository
+import com.enesay.financialliteracy.model.Stock.StockResponse
+import com.enesay.financialliteracy.model.Stock.search.Result
+import com.enesay.financialliteracy.model.Stock.search.StockSearchResponse
 import com.enesay.financialliteracy.model.StockModels.Stock
 import com.enesay.financialliteracy.model.Trade.Asset
 import com.enesay.financialliteracy.model.Trade.toAsset
@@ -31,6 +35,15 @@ class AssetListViewmodel @Inject constructor(
     private var currentStart = 1
     private val limit = 6
 
+    private val _stockResponse = MutableStateFlow<StockResponse?>(null)
+    val stockResponse: StateFlow<StockResponse?> = _stockResponse
+
+    private val _stockSearchList = MutableStateFlow<List<Asset>>(listOf())
+    val stockSearchList: StateFlow<List<Asset>> = _stockSearchList
+
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> = _errorMessage
+
     // Yeni veriyi yüklemek için trigger
     fun getCryptoData() {
         if (_isLoading.value) return // Çift yükleme önlenir
@@ -52,20 +65,55 @@ class AssetListViewmodel @Inject constructor(
         }
     }
 
-//    fun getCryptoData() {
-//        viewModelScope.launch {
-//            repository.getLatestCryptos()
-//                .collect { cryptoList ->
-//                    // Map DataCrypto to Asset and update the assets StateFlow
-//                    _cryptoData.value = cryptoList.map { it.toAsset() }
-//                }
-//        }
-//    }
-
-    fun getStockQuotes(symbols: String) {
+    fun fetchStockData(symbol: String) {
         viewModelScope.launch {
-            val quotes = stockRepository.getStockQuotes(symbols)
-            _stocks.value = quotes
+            try {
+                val response = stockRepository.getStockQuotes(symbol)
+                if (response.isSuccessful) {
+                    Log.d("asset", "success ${response.body().toString()}")
+                    // API çağrısı başarılıysa veriyi al
+                    _stockResponse.value = response.body()
+                    _errorMessage.value = null // Hata mesajını temizle
+                } else {
+                    // API çağrısı başarısızsa hata kodunu kontrol et
+                    val errorMessage = when (response.code()) {
+                        400 -> "Geçersiz istek. Lütfen girişlerinizi kontrol edin."
+                        401 -> "Yetkisiz erişim. API anahtarınızı kontrol edin."
+                        404 -> "Veri bulunamadı. Hatalı bir sembol girilmiş olabilir."
+                        else -> "Beklenmeyen bir hata oluştu: ${response.message()}"
+                    }
+                    Log.d("asset", "else  ${response.body().toString()}")
+
+                    _errorMessage.value = errorMessage
+                }
+            } catch (e: Exception) {
+                // Ağ veya diğer beklenmeyen hataları ele al
+                Log.d("asset", "catch ${e.message}")
+
+                _errorMessage.value = "Bir hata oluştu: ${e.localizedMessage ?: "Bilinmeyen hata"}"
+            }
+        }
+    }
+
+    fun searchStockSymbol(symbol: String) {
+        viewModelScope.launch {
+            try {
+                val response = stockRepository.searchStockSymbol(symbol)
+                if (response.isSuccessful) {
+                    _stockSearchList.value = response.body()?.result?.map {
+                        it.toAsset()
+                    } ?: listOf()
+                    Log.d("veriler", "geliyor ${response.body().toString()}")
+                    _errorMessage.value = null
+                }
+                else{
+                    _errorMessage.value = response.message() ?: "Unknown error"
+                }
+
+            }
+            catch (e: Exception){
+                e.printStackTrace()
+            }
         }
     }
 }
