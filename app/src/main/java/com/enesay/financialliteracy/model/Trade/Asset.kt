@@ -4,11 +4,12 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.enesay.financialliteracy.model.Crypto.DataCrypto
+import com.enesay.financialliteracy.model.Stock.search.Result
 
 @Entity(tableName = "assets")
-data class Asset (
+data class Asset(
     @PrimaryKey
-    var id: Int,
+    var id: String,
     @ColumnInfo(name = "name")
     var name: String = "",
     @ColumnInfo(name = "symbol")
@@ -20,7 +21,7 @@ data class Asset (
     @ColumnInfo(name = "max_supply")
     val max_supply: Double,
     @ColumnInfo(name = "cmc_rank")
-    val cmc_rank: Int,
+    val cmc_rank: Int?,
     @ColumnInfo(name = "self_reported_market_cap")
     val self_reported_market_cap: Double,
     @ColumnInfo(name = "volume_24h")
@@ -29,7 +30,7 @@ data class Asset (
 
 fun DataCrypto.toAsset(): Asset {
     return Asset(
-        id = this.id,
+        id = this.id.toString(),
         name = this.name,
         symbol = this.symbol,
         price = this.quote.USD.price,
@@ -40,12 +41,15 @@ fun DataCrypto.toAsset(): Asset {
     )
 }
 
-// DataStock benzeri bir sınıf geldiğinde
-//fun DataStock.toAsset(): Asset {
-//    return Asset(
-//        id = this.id,
-//        name = this.name,
-//        symbol = this.symbol,
-//        price = this.currentPrice
-//    )
-//}
+fun Result.toAsset(): Asset {
+    return Asset(
+        id = this.symbol,
+        name = this.displaySymbol,
+        symbol = this.symbol,
+        price = 0.0,
+        max_supply = 0.0,
+        cmc_rank = 0,
+        self_reported_market_cap = 0.0,
+        volume_24h = 0.0,
+    )
+}

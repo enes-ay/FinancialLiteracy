@@ -48,7 +48,7 @@ class WalletRepository @Inject constructor(val firestore: FirebaseFirestore) {
         // Convert the assets map to a list of Asset objects
         return assetsMap.map { (symbol, details) ->
             Asset(
-                id = details["id"].toString().toInt(), // Symbol as the unique identifier
+                id = details["id"].toString(), // Symbol as the unique identifier
                 name = details["name"] as? String ?: "Unknown", // Get the name or default to "Unknown"
                 symbol = symbol,
                 price = (details["purchasePrice"] as? Double) ?: 0.0, // Get the purchase price or default to 0.0

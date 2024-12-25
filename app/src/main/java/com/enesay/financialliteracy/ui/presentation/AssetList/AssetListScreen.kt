@@ -56,9 +56,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.enesay.financialliteracy.model.StockModels.Stock
+import com.enesay.financialliteracy.model.Stock.StockResponse
+import com.enesay.financialliteracy.model.Stock.search.Result
 import com.enesay.financialliteracy.model.Trade.Asset
-import com.enesay.financialliteracy.ui.presentation.Trade.TradeViewmodel
 import com.enesay.financialliteracy.ui.theme.primary_color
 import com.google.gson.Gson
 import java.util.Locale
@@ -72,13 +72,16 @@ fun AssetListScreen(navController: NavHostController) {
     val cryptoList by assetListViewModel.cryptoList.collectAsState()
     val stockList by assetListViewModel.stocks.collectAsState()
 
+    val stockResponse by assetListViewModel.stockResponse.collectAsState()
+    val errorMessage by assetListViewModel.errorMessage.collectAsState()
+
     LaunchedEffect(true) {
         assetListViewModel.getCryptoData()
     }
 
     Scaffold(
         topBar = {
-            TopBarWithSearch()
+            TopBarWithSearch(assetListViewModel = assetListViewModel)
         }
     ) { paddingValues ->
         Column(
@@ -100,7 +103,10 @@ fun AssetListScreen(navController: NavHostController) {
             when (selectedTabIndex) {
                 0 -> CryptosList(cryptoList, navController, assetListViewModel)
                 1 -> FavoriteAssetsList()
-                2 -> StocksList(stockList)
+                2 -> StocksList(
+                    assetListViewModel = assetListViewModel,
+                    navController = navController
+                )
             }
         }
     }
@@ -144,6 +150,24 @@ fun CryptosList(
                     assetListViewModel.getCryptoData()
                 }
             }
+    }
+}
+
+@Composable
+fun StocksList(assetListViewModel: AssetListViewmodel, navController: NavHostController) {
+    val stockSearchList by assetListViewModel.stockSearchList.collectAsState()
+    // Hisse senetlerinin listesi
+    val tf = remember { mutableStateOf("") }
+
+    LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
+        stockSearchList.let {
+            items(stockSearchList) { stock ->
+                StockRow(stock, onClick = {
+                    val stock_json = Gson().toJson(stock)
+                    navController.navigate("assetTrade/$stock_json")
+                })
+            }
+        }
     }
 }
 
@@ -251,7 +275,6 @@ fun AssetRow(asset: Asset, onClick: () -> Unit = {}, isShowQuantity: Boolean = f
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .fillMaxWidth()
                         .padding(5.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
@@ -268,35 +291,79 @@ fun AssetRow(asset: Asset, onClick: () -> Unit = {}, isShowQuantity: Boolean = f
 }
 
 @Composable
-fun StocksList(stockList: List<Stock>) {
-    // Hisse senetlerinin listesi
-    LazyColumn(
+fun StockRow(stock: Asset, onClick: () -> Unit = {}, isShowQuantity: Boolean = false) {
+
+    Card(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 10.dp)
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(vertical = 4.dp)
+            .clickable { onClick() },
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer),
+        elevation = CardDefaults.elevatedCardElevation(4.dp)
     ) {
-        items(stockList) {
-            Log.d("stock", "StocksList: ${it.name}")
-            Text(text = it.name)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(10.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(5.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = stock.symbol,
+                    fontSize = 22.sp,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+            if (isShowQuantity) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(5.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "formattedQuantity",
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        fontWeight = FontWeight.Light
+                    )
+                }
+            }
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBarWithSearch(modifier: Modifier = Modifier) {
+fun TopBarWithSearch(modifier: Modifier = Modifier, assetListViewModel: AssetListViewmodel) {
     val focusManager = LocalFocusManager.current
     var isFocused by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
 
     Column {
         TopAppBar(
-            title = { Text(text = "Markets", color = Color.White, fontWeight = FontWeight.Medium) },
+            title = {
+                Text(
+                    text = "Markets",
+                    color = Color.White,
+                    fontWeight = FontWeight.Medium
+                )
+            },
             colors = TopAppBarDefaults.topAppBarColors(containerColor = primary_color)
         )
         TextField(
             value = searchQuery,
-            onValueChange = { searchQuery = it },
+            onValueChange = {
+                searchQuery = it
+                assetListViewModel.searchStockSymbol(searchQuery)
+            },
             placeholder = {
                 Text(
                     text = "Search asset",
@@ -328,7 +395,8 @@ fun TopBarWithSearch(modifier: Modifier = Modifier) {
                     }) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Clear Search"
+                            contentDescription = "Clear Search",
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 }
