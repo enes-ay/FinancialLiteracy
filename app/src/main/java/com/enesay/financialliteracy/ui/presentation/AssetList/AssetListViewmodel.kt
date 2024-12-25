@@ -7,6 +7,7 @@ import com.enesay.financialliteracy.data.repository.CryptoRepository
 import com.enesay.financialliteracy.data.repository.StockRepository
 import com.enesay.financialliteracy.model.Stock.search.StockResponse
 import com.enesay.financialliteracy.model.Trade.Asset
+import com.enesay.financialliteracy.model.Trade.StockAsset
 import com.enesay.financialliteracy.model.Trade.toAsset
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,8 +33,8 @@ class AssetListViewmodel @Inject constructor(
     private val _stockResponse = MutableStateFlow<StockResponse?>(null)
     val stockResponse: StateFlow<StockResponse?> = _stockResponse
 
-    private val _stockSearchList = MutableStateFlow<List<Asset>>(listOf())
-    val stockSearchList: StateFlow<List<Asset>> = _stockSearchList
+    private val _stockSearchList = MutableStateFlow<List<StockAsset>>(listOf())
+    val stockSearchList: StateFlow<List<StockAsset>> = _stockSearchList
 
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage

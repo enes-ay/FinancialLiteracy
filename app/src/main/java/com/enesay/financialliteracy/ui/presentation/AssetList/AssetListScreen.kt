@@ -56,6 +56,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.enesay.financialliteracy.model.Trade.Asset
+import com.enesay.financialliteracy.model.Trade.StockAsset
+import com.enesay.financialliteracy.ui.components.TopBarWithSearch
 import com.enesay.financialliteracy.ui.theme.primary_color
 import com.google.gson.Gson
 import java.util.Locale
@@ -63,7 +65,7 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AssetListScreen(navController: NavHostController) {
-    val tabs = listOf("Crypto", "Favorites", "Stock", "Bonds")
+    val tabs = listOf("Crypto", "Stock")
     var selectedTabIndex by remember { mutableStateOf(0) }
     val assetListViewModel: AssetListViewmodel = hiltViewModel()
     val cryptoList by assetListViewModel.cryptoList.collectAsState()
@@ -98,8 +100,7 @@ fun AssetListScreen(navController: NavHostController) {
             // Display content based on the selected tab
             when (selectedTabIndex) {
                 0 -> CryptosList(cryptoList, navController, assetListViewModel)
-                1 -> FavoriteAssetsList()
-                2 -> StocksList(
+                1 -> StocksList(
                     assetListViewModel = assetListViewModel,
                     navController = navController
                 )
@@ -207,27 +208,6 @@ fun ModernTabRow(
     }
 }
 
-
-@Composable
-fun FavoriteAssetsList() {
-    // Favori varlıkların listesi
-    LazyColumn(
-        modifier = Modifier.padding(horizontal = 10.dp)
-    ) {
-        items(5) { index ->
-//            val asset = Asset(
-//                1,
-//                "Bitcoin",
-//                23532.235,
-//                1242,
-//                "BTC"
-//            )
-//            AssetRow(asset = asset)
-        }
-    }
-}
-
-
 @Composable
 fun AssetRow(asset: Asset, onClick: () -> Unit = {}, isShowQuantity: Boolean = false) {
     val formattedPrice = String.format(Locale.US, "%,.2f", asset.price)
@@ -287,7 +267,7 @@ fun AssetRow(asset: Asset, onClick: () -> Unit = {}, isShowQuantity: Boolean = f
 }
 
 @Composable
-fun StockRow(stock: Asset, onClick: () -> Unit = {}, isShowQuantity: Boolean = false) {
+fun StockRow(stock: StockAsset, onClick: () -> Unit = {}, isShowQuantity: Boolean = false) {
 
     Card(
         modifier = Modifier
@@ -335,85 +315,3 @@ fun StockRow(stock: Asset, onClick: () -> Unit = {}, isShowQuantity: Boolean = f
         }
     }
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TopBarWithSearch(modifier: Modifier = Modifier, assetListViewModel: AssetListViewmodel) {
-    val focusManager = LocalFocusManager.current
-    var isFocused by remember { mutableStateOf(false) }
-    var searchQuery by remember { mutableStateOf("") }
-
-    Column {
-        TopAppBar(
-            title = {
-                Text(
-                    text = "Markets",
-                    color = Color.White,
-                    fontWeight = FontWeight.Medium
-                )
-            },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = primary_color)
-        )
-        TextField(
-            value = searchQuery,
-            onValueChange = {
-                searchQuery = it
-                assetListViewModel.searchStockSymbol(searchQuery)
-            },
-            placeholder = {
-                Text(
-                    text = "Search asset",
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-            },
-            leadingIcon = {
-                if (isFocused) {
-                    IconButton(onClick = {
-                        searchQuery = ""
-                        focusManager.clearFocus() // Focusu temizleyerek aramadan çık
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack, // Geri oku göster
-                            contentDescription = "Back Icon"
-                        )
-                    }
-                } else {
-                    Icon(
-                        imageVector = Icons.Default.Search, // Arama ikonunu göster
-                        contentDescription = "Search Icon"
-                    )
-                }
-            },
-            trailingIcon = {
-                if (searchQuery.isNotEmpty()) {
-                    IconButton(onClick = {
-                        searchQuery = ""
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Clear Search",
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                }
-            },
-            singleLine = true,
-            shape = RoundedCornerShape(8.dp),
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = MaterialTheme.colorScheme.background,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-                .shadow(4.dp, RoundedCornerShape(8.dp))
-                .onFocusChanged { focusState ->
-                    isFocused = focusState.isFocused // Focus durumunu takip et
-                }
-        )
-
-    }
-}
-
-

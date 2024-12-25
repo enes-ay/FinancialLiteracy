@@ -12,20 +12,36 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -38,6 +54,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.enesay.financialliteracy.ui.presentation.AssetList.AssetListViewmodel
 import com.enesay.financialliteracy.ui.presentation.Screens
 import com.enesay.financialliteracy.ui.theme.primary_color
 
@@ -196,5 +213,85 @@ fun BottomBar(navController: NavController) {
                 )
             )
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopBarWithSearch(modifier: Modifier = Modifier, assetListViewModel: AssetListViewmodel) {
+    val focusManager = LocalFocusManager.current
+    var isFocused by remember { mutableStateOf(false) }
+    var searchQuery by remember { mutableStateOf("") }
+
+    Column {
+        TopAppBar(
+            title = {
+                Text(
+                    text = "Markets",
+                    color = Color.White,
+                    fontWeight = FontWeight.Medium
+                )
+            },
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = primary_color)
+        )
+        TextField(
+            value = searchQuery,
+            onValueChange = {
+                searchQuery = it
+                assetListViewModel.searchStockSymbol(searchQuery)
+            },
+            placeholder = {
+                Text(
+                    text = "Search asset",
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            },
+            leadingIcon = {
+                if (isFocused) {
+                    IconButton(onClick = {
+                        searchQuery = ""
+                        focusManager.clearFocus() // Focusu temizleyerek aramadan çık
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack, // Geri oku göster
+                            contentDescription = "Back Icon"
+                        )
+                    }
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.Search, // Arama ikonunu göster
+                        contentDescription = "Search Icon"
+                    )
+                }
+            },
+            trailingIcon = {
+                if (searchQuery.isNotEmpty()) {
+                    IconButton(onClick = {
+                        searchQuery = ""
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Clear Search",
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                }
+            },
+            singleLine = true,
+            shape = RoundedCornerShape(8.dp),
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = MaterialTheme.colorScheme.background,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+                .shadow(4.dp, RoundedCornerShape(8.dp))
+                .onFocusChanged { focusState ->
+                    isFocused = focusState.isFocused // Focus durumunu takip et
+                }
+        )
+
     }
 }
