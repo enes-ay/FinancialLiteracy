@@ -1,5 +1,8 @@
 package com.enesay.financialliteracy.model.Crypto
 
+import androidx.annotation.Keep
+
+@Keep
 data class DataCrypto(
     val circulating_supply: Double,
     val cmc_rank: Int,

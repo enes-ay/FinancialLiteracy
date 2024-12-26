@@ -1,8 +1,9 @@
 package com.enesay.financialliteracy.model.Trade
 
 
+import androidx.annotation.Keep
 import com.enesay.financialliteracy.model.Stock.search.Result
-
+@Keep
 data class StockAsset(
     var id: String,
     var name: String = "",

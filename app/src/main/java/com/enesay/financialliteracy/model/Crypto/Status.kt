@@ -1,5 +1,8 @@
 package com.enesay.financialliteracy.model.Crypto
 
+import androidx.annotation.Keep
+
+@Keep
 data class Status(
     val credit_count: Int,
     val elapsed: Int,

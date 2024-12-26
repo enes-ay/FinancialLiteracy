@@ -1,7 +1,9 @@
 package com.enesay.financialliteracy.model.Trade
 
+import androidx.annotation.Keep
 import com.google.firebase.Timestamp
 
+@Keep
 data class Transaction(
     val type: String = "", // Buy or Sell
     val symbol: String = "",

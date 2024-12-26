@@ -1,11 +1,13 @@
 package com.enesay.financialliteracy.model.Trade
 
+import androidx.annotation.Keep
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.enesay.financialliteracy.model.Crypto.DataCrypto
 import com.enesay.financialliteracy.model.Stock.search.Result
 
+@Keep
 @Entity(tableName = "assets")
 data class Asset(
     @PrimaryKey

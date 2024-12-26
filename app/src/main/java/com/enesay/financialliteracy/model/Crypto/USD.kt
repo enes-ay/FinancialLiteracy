@@ -1,5 +1,8 @@
 package com.enesay.financialliteracy.model.Crypto
 
+import androidx.annotation.Keep
+
+@Keep
 data class USD(
     val fully_diluted_market_cap: Double,
     val last_updated: String,

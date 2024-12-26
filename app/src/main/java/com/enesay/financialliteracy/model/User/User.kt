@@ -1,5 +1,8 @@
 package com.enesay.financialliteracy.model.User
 
+import androidx.annotation.Keep
+
+@Keep
     data class User(
         val name: String = "",
         val surname: String = "",

@@ -1,9 +1,10 @@
 package com.enesay.financialliteracy.model.Stock.search
 
+import androidx.annotation.Keep
 import com.enesay.financialliteracy.model.Trade.Asset
 import com.enesay.financialliteracy.model.Trade.StockAsset
 import com.enesay.financialliteracy.model.Trade.toAsset
-
+@Keep
 data class StockResponse(
     val c: Double,
     val d: Double,
