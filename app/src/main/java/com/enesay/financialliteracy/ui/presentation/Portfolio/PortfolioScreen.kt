@@ -60,7 +60,8 @@ fun PortfolioScreen(navController: NavHostController) {
     LaunchedEffect(balance){
         currentUserId?.let {
         portfolioViewmodel.calculateBalance(it)
-        portfolioViewmodel.getUserAssets(it)}
+      //  portfolioViewmodel.getUserAssets(it)
+        }
     }
 
     Scaffold(

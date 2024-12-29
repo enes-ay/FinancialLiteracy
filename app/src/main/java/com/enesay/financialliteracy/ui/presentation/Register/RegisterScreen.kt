@@ -1,17 +1,21 @@
 package com.enesay.financialliteracy.ui.presentation.Register
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -32,6 +36,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -39,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.enesay.financialliteracy.R
+import com.enesay.financialliteracy.ui.components.CustomTextField
 import com.enesay.financialliteracy.ui.components.SimpleOutlinedButton
 import com.enesay.financialliteracy.ui.theme.primary_color
 
@@ -64,7 +70,7 @@ fun Register(navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(24.dp),
+                .padding(horizontal = 20.dp),
             contentAlignment = Alignment.Center
         ) {
             Column(
@@ -74,7 +80,7 @@ fun Register(navController: NavController) {
                 Text(
                     modifier = Modifier
                         .wrapContentSize()
-                        .padding(bottom = 10.dp),
+                        .padding(bottom = 30.dp),
                     text = "Sign up",
                     style = MaterialTheme.typography.displaySmall,
                     fontWeight = FontWeight.Medium,
@@ -182,85 +188,35 @@ fun Register(navController: NavController) {
                         )
                     }
                 }
-
-                SimpleOutlinedButton(
-                    text = stringResource(R.string.txt_cancel),
-                    onClick = {
-                        navController.navigate("login") {
-                            popUpTo("register")
-                        }
-                    },
-                    borderColor = MaterialTheme.colorScheme.error,
-                    textColor = MaterialTheme.colorScheme.error
-                )
-
-                TextButton(
-                    onClick = {
-                        navController.navigate("home")
-                    },
-                    shape = RoundedCornerShape(22.dp), // Modern rounded corners
-                    border = BorderStroke(
-                        1.2.dp,
-                        MaterialTheme.colorScheme.primary
-                    ), // Customize border
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = MaterialTheme.colorScheme.onPrimary,
-                        disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(
-                            alpha = 0.4f
-                        )
+                // Google login button
+                Button(
+                    onClick = {  },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Transparent
                     ),
                     modifier = Modifier
-                        .padding(8.dp)
-                        .padding(top = 20.dp)
-                        .wrapContentSize()// Fixed height for consistency
+                        .wrapContentWidth()
+                        .padding(horizontal = 8.dp).padding(top = 20.dp)
+                        .height(50.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.onPrimary)
                 ) {
-                    Text(
-                        modifier = Modifier.padding(5.dp),
-                        text = stringResource(R.string.txt_continue_without_register),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceAround) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_google_logo),
+                            contentDescription = "Google Logo",
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(30.dp))
+                        Text(
+                            text = stringResource(R.string.txt_signUp_with_google),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            fontSize = 17.sp)
+                    }
                 }
 
             }
         }
 
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CustomTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: String,
-    isError: Boolean,
-    errorMessage: String?,
-    modifier: Modifier = Modifier
-) {
-    Column(modifier = modifier) {
-        OutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
-            label = { Text(label) },
-            isError = isError,
-            colors = OutlinedTextFieldDefaults.colors(
-                unfocusedContainerColor = MaterialTheme.colorScheme.background,
-                focusedBorderColor = Color.Gray,
-                unfocusedBorderColor = Color.Gray,
-                errorBorderColor = Color.Red,
-                errorLabelColor = Color.Red,
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        if (isError && errorMessage != null) {
-            Text(
-                text = errorMessage,
-                color = Color.Red,
-                fontSize = 12.sp,
-                modifier = Modifier.padding(start = 8.dp, top = 4.dp)
-            )
-        }
     }
 }

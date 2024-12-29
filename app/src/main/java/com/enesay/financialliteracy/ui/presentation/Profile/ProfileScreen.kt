@@ -95,7 +95,8 @@ fun Profile(navController: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues),
+                .padding(paddingValues)
+                .padding(bottom = 20.dp),
         ) {
 
             Row(
@@ -176,6 +177,7 @@ fun Profile(navController: NavController) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
+                    .padding(bottom = 15.dp)
                     .weight(4f), horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 item {

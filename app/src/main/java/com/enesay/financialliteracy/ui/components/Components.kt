@@ -26,6 +26,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -138,7 +140,6 @@ fun SimpleOutlinedButton(
     textColor: Color = MaterialTheme.colorScheme.primary,
     fontSize: TextUnit = 19.sp,
     fontWeight: FontWeight = FontWeight.Bold,
-    width: Dp = 250.dp,
     height: Dp = 45.dp
 ) {
     OutlinedButton (
@@ -152,7 +153,7 @@ fun SimpleOutlinedButton(
         ),
         modifier = modifier
             .padding(8.dp)
-            .width(width)
+            .fillMaxWidth()
             .height(height)
     ) {
         Text(
@@ -292,6 +293,42 @@ fun TopBarWithSearch(modifier: Modifier = Modifier, assetListViewModel: AssetLis
                     isFocused = focusState.isFocused // Focus durumunu takip et
                 }
         )
+    }
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CustomTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    isError: Boolean,
+    errorMessage: String?,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        OutlinedTextField(
+            value = value,
+            onValueChange = onValueChange,
+            label = { Text(label) },
+            isError = isError,
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedContainerColor = MaterialTheme.colorScheme.background,
+                focusedBorderColor = Color.Gray,
+                unfocusedBorderColor = Color.Gray,
+                errorBorderColor = Color.Red,
+                errorLabelColor = Color.Red,
+            ),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        if (isError && errorMessage != null) {
+            Text(
+                text = errorMessage,
+                color = Color.Red,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(start = 8.dp, top = 4.dp)
+            )
+        }
     }
 }

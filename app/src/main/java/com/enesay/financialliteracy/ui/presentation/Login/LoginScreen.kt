@@ -2,16 +2,20 @@ package com.enesay.financialliteracy.ui.presentation.Login
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -42,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -108,7 +113,7 @@ fun Login(navController: NavController) {
                         modifier = Modifier
                             .wrapContentSize()
                             .padding(vertical = 20.dp),
-                        text = "Sign in",
+                        text = stringResource(R.string.app_name),
                         style = MaterialTheme.typography.displaySmall,
                         fontWeight = FontWeight.Medium,
                         color = primary_color
@@ -292,6 +297,34 @@ fun Login(navController: NavController) {
                             fontWeight = FontWeight.Medium
                         )
 
+                    }
+
+                    TextButton(
+                        onClick = {
+                            navController.navigate("home")
+                        },
+                        shape = RoundedCornerShape(22.dp), // Modern rounded corners
+                        border = BorderStroke(
+                            1.2.dp,
+                            MaterialTheme.colorScheme.primary
+                        ), // Customize border
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
+                            disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(
+                                alpha = 0.4f
+                            )
+                        ),
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .padding(top = 20.dp)
+                            .wrapContentSize()// Fixed height for consistency
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(5.dp),
+                            text = stringResource(R.string.txt_continue_without_register),
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium
+                        )
                     }
                 }
             }

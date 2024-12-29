@@ -4,8 +4,8 @@
     <string name="btn_sell">Sell</string>
     <string name="txt_balance">Balance</string>
     <string name="btn_logout">Log Out</string>
-    <string name="btn_login">Log In</string>
-    <string name="btn_register">Register</string>
+    <string name="btn_login">Sign in</string>
+    <string name="btn_register">Sign Up</string>
     <string name="btn_retry">Retry</string>
     <string name="item_markets">Markets</string>
     <string name="item_profile">Profile</string>
@@ -29,4 +29,5 @@
     <string name="txt_daily_change">Daily Change</string>
     <string name="txt_my_assets">My Assets</string>
     <string name="txt_no_assets_found">No assets found.</string>
+    <string name="txt_signUp_with_google">Sign up with Google</string>
 </resources>
