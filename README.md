@@ -5,13 +5,19 @@ This project is an Investment Simulator App built with Jetpack Compose. It provi
 ## Preview Screenshots
 <p align="center">
   <img src="/Screenshots/homePage.png" alt="Home Page" width="200"/>
+  <img src="/Screenshots/markets_crypto.png" alt="Portfolio Page" width="200"/>
+  <img src="/Screenshots/markets_stock.png" alt="Markets Page" width="200"/>
   <img src="/Screenshots/portfolio.png" alt="Portfolio Page" width="200"/>
-  <img src="/Screenshots/markets.png" alt="Markets Page" width="200"/>
-  <img src="/Screenshots/trade.png" alt="Trade Page" width="200"/>
-  <img src="/Screenshots/profile.png" alt="Trade Page" width="200"/>
-  <img src="/Screenshots/signIn.png" alt="SignIn Page" width="200"/>
-  <img src="/Screenshots/signUp.png" alt="SignUp Page" width="200"/>
-  <img src="/Screenshots/searchPage.png" alt="Search Page" width="200"/>
+  <img src="/Screenshots/profile.png" alt="Profile Page" width="200"/>
+  <img src="/Screenshots/profile_language_change.png" alt="Profile lang Page" width="200"/>
+  <img src="/Screenshots/trade_crypto.png" alt="Trade crypto Page" width="200"/>
+  <img src="/Screenshots/tradeSell.png" alt="Trade sell Page" width="200"/>
+  <img src="/Screenshots/tradeSuccess.png" alt="Trade success dialog" width="200"/>
+  <img src="/Screenshots/logout.png" alt="Log out dialog" width="200"/>
+  <img src="/Screenshots/login_required.png" alt="Login required dialog" width="200"/>
+  <img src="/Screenshots/signIn.png" alt="Sign in page" width="200"/>
+  <img src="/Screenshots/signUp.png" alt="Sign up page" width="200"/>
+  <img src="/Screenshots/tradeStock.png" alt="Search Page" width="200"/>
 </p>
 
 ## Features
