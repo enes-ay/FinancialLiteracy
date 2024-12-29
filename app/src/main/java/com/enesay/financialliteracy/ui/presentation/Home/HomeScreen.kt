@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -51,6 +53,7 @@ import com.enesay.financialliteracy.R
 import com.enesay.financialliteracy.model.Education.EducationalContent
 import com.enesay.financialliteracy.model.Trade.Asset
 import com.enesay.financialliteracy.ui.theme.AssetCardColor
+import com.enesay.financialliteracy.ui.theme.WhiteColor
 import com.enesay.financialliteracy.ui.theme.category_item1_color
 import com.enesay.financialliteracy.ui.theme.category_item2_color
 import com.enesay.financialliteracy.ui.theme.category_item3_color
@@ -79,14 +82,6 @@ fun Home(navController: NavController) {
     }
 
     ) { paddingValues ->
-        val colors = listOf(
-            category_item1_color,
-            category_item2_color,
-            category_item3_color,
-            category_item4_color,
-            category_item5_color,
-            category_item6_color
-        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -95,72 +90,40 @@ fun Home(navController: NavController) {
             val context = LocalContext.current
             Column(
                 modifier = Modifier
-                    .wrapContentSize()
+                    .fillMaxSize()
+                    .weight(1f)
                     .padding(5.dp)
             ) {
-                Text(
-                    modifier = Modifier.padding(4.dp),
-                    text = "Lessons",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                ProfitLossCard(123.34)
+
                 FinancialLessonList(educationalContentList, onLessonClick = {
                     navController.navigate("categoryDetail/$it")
                 })
             }
 
-            ProfitLossCard(123.34)
-            AssetCard(
-                asset = Asset(
-                    "1",
-                    "Bitcoin",
-                    "BTC",
-                    97000.0,
-                    1.2,
-                    234232.2,
-                    1,
-                    124125125215212.32,
-                    124312424124124.21,
-                    1
-                )
-            )
-
-            LazyVerticalGrid(
-                modifier = Modifier.wrapContentSize(),
-                columns = GridCells.Fixed(2),
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f)
             ) {
-                items(educationalContentList.count(), itemContent = {
-                    val content = educationalContentList[it]
-                    val color = colors[it % colors.size]
-                    Card(
-                        modifier = Modifier
-                            .padding(all = 5.dp)
-                            .size(250.dp, 150.dp)
-                            .padding(5.dp),
-                        shape = RoundedCornerShape(7.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(color)
-                                .padding(horizontal = 10.dp)
-                                .clickable {
-                                    navController.navigate("categoryDetail/${content.id}")
-                                },
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-
-                            Text(
-                                text = content.content_name,
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White,
-                                textAlign = TextAlign.Center,
-                            )
-                        }
-                    }
-                })
+                Text(
+                    "Your top assets", fontWeight = FontWeight.Bold, fontSize = 20.sp,
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                )
+                TopAssetsList(
+                    asset = Asset(
+                        "1",
+                        "Bitcoin",
+                        "BTC",
+                        97000.0,
+                        1.2,
+                        234232.2,
+                        1,
+                        124125125215212.32,
+                        124312424124124.21,
+                        1
+                    )
+                )
             }
         }
     }
@@ -170,15 +133,26 @@ fun Home(navController: NavController) {
 fun FinancialLessonList(
     lessons: List<EducationalContent>, onLessonClick: (String) -> Unit
 ) {
-    LazyRow(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(5.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+            .wrapContentHeight()
     ) {
-        items(lessons) { lesson ->
-            LessonCard(lessonTitle = lesson.content_name, onClick = { onLessonClick(lesson.id) })
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            text = "Lessons",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        )
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(lessons) { lesson ->
+                LessonCard(lessonTitle = lesson.content_name,
+                    onClick = { onLessonClick(lesson.id) })
+            }
         }
     }
 }
@@ -244,23 +218,34 @@ fun ProfitLossCard(totalProfitLoss: Double) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 // Icon
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = textColor,
-                    modifier = Modifier.size(36.dp)
-                )
+                Column {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = textColor,
+                        modifier = Modifier.size(36.dp)
+                    )
+                    // Profit/Loss Text
 
-                // Profit/Loss Text
-                Column(
-                    horizontalAlignment = Alignment.End
-                ) {
                     Text(
                         text = if (isProfit) "Profit" else "Loss",
                         fontWeight = FontWeight.Normal,
                         color = textColor,
-                        fontSize = 35.sp
+                        fontSize = 22.sp
                     )
+                }
+
+                Column(
+                    horizontalAlignment = Alignment.End
+                ) {
+
+                    Text(
+                        text = "Balance",
+                        fontWeight = FontWeight.Normal,
+                        color = textColor,
+                        fontSize = 33.sp
+                    )
+
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "$${String.format("%.2f", kotlin.math.abs(totalProfitLoss))}",
@@ -275,56 +260,87 @@ fun ProfitLossCard(totalProfitLoss: Double) {
 }
 
 @Composable
-fun AssetCard(asset: Asset) {
-    Card(
+fun TopAssetsList(asset: Asset) {
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .wrapContentHeight()) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(16.dp)
+                .wrapContentHeight(),
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(6.dp),
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .clickable { }
+                    .background(AssetCardColor),
+                verticalArrangement = Arrangement.spacedBy(5.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                item(1) {
+                    TopAssetsRow(asset)
+                }
+                item(2) {
+                    TopAssetsRow(asset)
+                }
+            }
+        }
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(16.dp)
+                .wrapContentHeight(),
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(6.dp),
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .clickable { }
+                    .background(AssetCardColor),
+                verticalArrangement = Arrangement.spacedBy(5.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                item(1) {
+                    TopAssetsRow(asset)
+                }
+                item(2) {
+                    TopAssetsRow(asset)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TopAssetsRow(asset: Asset) {
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
-            .height(100.dp)
-            .clickable { },
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(6.dp),
+            .padding(vertical = 10.dp),
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(AssetCardColor),
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround
-            ) {
-                Text(
-                    text = asset.symbol,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 27.sp
-                )
-                Text(
-                    text = "$${String.format("%.2f", asset.price * asset.quantity)}",
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 23.sp
-                )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround
-            ) {
-                Text(
-                    text = asset.symbol,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 27.sp
-                )
-                Text(
-                    text = "$${String.format("%.2f", asset.price * asset.quantity)}",
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
-                )
-            }
+        Text(
+            text = asset.symbol,
+            color = WhiteColor,
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp
+        )
+        Text(
+            text = "$${String.format("%.2f", asset.price * asset.quantity)}",
+            color = WhiteColor,
+            fontWeight = FontWeight.Bold,
+            fontSize = 14.sp
+        )
 
-        }
     }
 }
