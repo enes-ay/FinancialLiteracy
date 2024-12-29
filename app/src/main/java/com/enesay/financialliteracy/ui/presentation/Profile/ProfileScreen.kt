@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -64,6 +65,7 @@ import com.enesay.financialliteracy.utils.DataStoreHelper
 import com.enesay.financialliteracy.utils.setAppLocale
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.log
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -158,18 +160,26 @@ fun Profile(navController: NavController) {
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Column {
-                            Text(
-                                text = "${userInfo?.name} ${userInfo?.surname}",
-                                fontSize = 22.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = userInfo?.email ?: "Loading...",
-                                fontSize = 16.sp,
-                                color = Color.Gray
-                            )
+                            if (!userInfo?.email.isNullOrEmpty()) {
+                                Text(
+                                    text = "${userInfo?.name} ${userInfo?.surname}",
+                                    fontSize = 22.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = userInfo?.email ?: stringResource(R.string.txt_visitor),
+                                    fontSize = 16.sp,
+                                    color = Color.Gray
+                                )
+                            } else {
+                                Text(
+                                    text = userInfo?.email ?: stringResource(R.string.txt_visitor),
+                                    fontSize = 19.sp,
+                                    color = Color.Black
+                                )
+                            }
                         }
                     }
                 }
@@ -177,14 +187,13 @@ fun Profile(navController: NavController) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(bottom = 15.dp)
-                    .weight(4f), horizontalAlignment = Alignment.CenterHorizontally
+                    .weight(4f), horizontalAlignment = Alignment.CenterHorizontally,
+                contentPadding = PaddingValues(bottom = 75.dp)
             ) {
-                item {
-                    ProfileItemsRow("Edit Profile", onClick = {})
-                }
-                item {
-                    ProfileItemsRow("FAQ", onClick = {})
+                if (loginViewmodel.currentUser.value != null) {
+                    item {
+                        ProfileItemsRow(stringResource(R.string.txt_editProfile), onClick = {})
+                    }
                 }
                 item {
                     ProfileItemsRow(stringResource(R.string.change_language), onClick = {
@@ -214,9 +223,11 @@ fun Profile(navController: NavController) {
                     }
                 }
                 item {
-                    ProfileItemsRow("Log out", onClick = {
-                        showDialog = true
-                    }, color = Color.Red, showIcon = false)
+                    if (loginViewmodel.currentUser.value != null) {
+                        ProfileItemsRow("Log out", onClick = {
+                            showDialog = true
+                        }, color = Color.Red, showIcon = false)
+                    }
                 }
 
             }

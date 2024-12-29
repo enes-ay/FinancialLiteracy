@@ -235,7 +235,7 @@ fun TradeScreen(
                     Text(
                         text = if (asset.asset_type == 1) stringResource(R.string.txt_market_cap) else stringResource(R.string.txt_daily_change),
                         fontSize = 18.sp,
-                        fontWeight = FontWeight.Light,
+                        fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onPrimary,
                     )
                     Spacer(modifier = Modifier.height(16.dp))

@@ -31,4 +31,6 @@
     <string name="txt_my_assets">Varlıklarım</string>
     <string name="txt_no_assets_found">Herhangi bir varlık bulunamadı.</string>
     <string name="txt_signUp_with_google">Google ile kayıt ol</string>
+    <string name="txt_visitor">Ziyaretçi Modu</string>
+    <string name="txt_editProfile">Profili Düzenle</string>
 </resources>

@@ -30,4 +30,6 @@
     <string name="txt_my_assets">My Assets</string>
     <string name="txt_no_assets_found">No assets found.</string>
     <string name="txt_signUp_with_google">Sign up with Google</string>
+    <string name="txt_visitor">Visitor Mode</string>
+    <string name="txt_editProfile">Edit Profile</string>
 </resources>
