@@ -10,4 +10,5 @@ class EducationalContentRepository @Inject constructor(
 ) {
     fun getEducationalContents(): Flow<List<EducationalContent>> = dataSource.getEducationalContents()
     fun getEducationalContentDetail(categoryId: String): Flow<EducationalContent?> = dataSource.getContentDetail(categoryId)
+    fun getLatestBalance(userId: String): Flow<Double?> = dataSource.getLatestBalance(userId)
 }

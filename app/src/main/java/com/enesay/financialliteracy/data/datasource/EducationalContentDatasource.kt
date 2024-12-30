@@ -1,5 +1,6 @@
 package com.enesay.financialliteracy.data.datasource
 
+import android.util.Log
 import com.enesay.financialliteracy.model.Education.EducationalContent
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
@@ -41,6 +42,25 @@ class EducationalContentDataSource @Inject constructor(
 
             val categoryDetail = snapshot?.toObject(EducationalContent::class.java)
             trySend(categoryDetail).isSuccess
+        }
+
+        awaitClose { subscription.remove() }
+    }.flowOn(Dispatchers.IO)
+
+    fun getLatestBalance(userId: String): Flow<Double?> = callbackFlow {
+        val document = firestore.collection("Users").document(userId)
+        val subscription = document.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                close(error)
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                val balance = snapshot.getDouble("Balance") ?: 0.0
+                Log.d("home", "datasource $balance")
+
+                trySend(balance)
+            }
         }
 
         awaitClose { subscription.remove() }
