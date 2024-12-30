@@ -57,6 +57,7 @@ class PortfolioViewmodel @Inject constructor(
                         cryptoList.find { it.symbol == asset.symbol }?.price ?: 0.0
                     asset.copy(price = currentPrice)
                 }
+                repository.updateUserBalance(userId, balance)
             }
         }
     }

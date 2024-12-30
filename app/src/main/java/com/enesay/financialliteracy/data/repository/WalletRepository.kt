@@ -37,22 +37,19 @@ class WalletRepository @Inject constructor(val firestore: FirebaseFirestore) {
     suspend fun updateUserBalance(userId: String, newBalance: Double) {
         firestore.collection("Users").document(userId).update("Balance", newBalance).await()
     }
+
     suspend fun getUserAssets(userId: String): List<Asset> {
         val userRef = firestore.collection("Users").document(userId)
         val snapshot = userRef.get().await()
 
-        // Fetch the "Assets" field as a map of symbol -> details
-        val assetsMap = snapshot.get("Assets") as? Map<String, Map<String, Any>> ?: emptyMap()
-        Log.d("map", assetsMap.toString())
-
-        // Convert the assets map to a list of Asset objects
-        return assetsMap.map { (symbol, details) ->
+        val assetsList = snapshot.get("Assets") as? List<Map<String, Any>> ?: emptyList()
+        return assetsList.map { asset ->
             Asset(
-                id = details["id"].toString(), // Symbol as the unique identifier
-                name = details["name"] as? String ?: "Unknown", // Get the name or default to "Unknown"
-                symbol = symbol,
-                price = (details["purchasePrice"] as? Double) ?: 0.0, // Get the purchase price or default to 0.0
-                quantity = (details["quantity"] as? Double) ?: 0.0, // Get the quantity or default to 0.0
+                id = asset["id"]?.toString() ?: "Unknown",
+                name = asset["name"] as? String ?: "Unknown",
+                symbol = asset["symbol"]?.toString() ?: "Unknown",
+                price = (asset["purchasePrice"] as? Double) ?: 0.0,
+                quantity = (asset["quantity"] as? Double) ?: 0.0,
                 max_supply = 0.0,
                 cmc_rank = 0,
                 self_reported_market_cap = 0.0,
@@ -66,79 +63,70 @@ class WalletRepository @Inject constructor(val firestore: FirebaseFirestore) {
         val userRef = firestore.collection("Users").document(userId)
         val snapshot = userRef.get().await()
 
-        // Retrieve existing assets
-        val currentAssets = snapshot.get("Assets") as? MutableMap<String, Map<String, Any>> ?: mutableMapOf()
+        val currentAssets = snapshot.get("Assets") as? MutableList<Map<String, Any>> ?: mutableListOf()
 
-        // Check if asset already exists
-        val existingAsset = currentAssets[asset.symbol]
+        val existingAssetIndex = currentAssets.indexOfFirst { it["symbol"] == asset.symbol }
 
-        // Update or add asset data
-        val updatedAsset = if (existingAsset != null) {
-            val currentQuantity = (existingAsset["quantity"] as? Double) ?: 0.0
-            val newQuantity = currentQuantity + asset.quantity
+        if (existingAssetIndex != -1) {
+            val existingAsset = currentAssets[existingAssetIndex]
+            val updatedQuantity = (existingAsset["quantity"] as? Double ?: 0.0) + asset.quantity
 
-            existingAsset.toMutableMap().apply {
+            currentAssets[existingAssetIndex] = existingAsset.toMutableMap().apply {
                 this["id"] = asset.id
-                this["quantity"] = newQuantity
-                this["purchasePrice"] = purchasePrice // Update to reflect the latest price
+                this["quantity"] = updatedQuantity
+                this["purchasePrice"] = purchasePrice
                 this["purchaseAmount"] = purchaseAmount
                 this["purchaseDate"] = purchaseDate
             }
         } else {
-            mapOf(
-                "id" to asset.id,
-                "name" to asset.name,
-                "symbol" to asset.symbol,
-                "quantity" to asset.quantity,
-                "purchasePrice" to purchasePrice,
-                "purchaseAmount" to purchaseAmount,
-                "purchaseDate" to purchaseDate,
+            currentAssets.add(
+                mapOf(
+                    "id" to asset.id,
+                    "name" to asset.name,
+                    "symbol" to asset.symbol,
+                    "quantity" to asset.quantity,
+                    "purchasePrice" to purchasePrice,
+                    "purchaseAmount" to purchaseAmount,
+                    "purchaseDate" to purchaseDate
+                )
             )
         }
 
-        // Update the asset in the database
-        currentAssets[asset.symbol] = updatedAsset
         userRef.update("Assets", currentAssets).await()
     }
 
-
     suspend fun sellUserAsset(userId: String, symbol: String, amount: Double, salePrice: Double) {
+        if (amount <= 0) throw Exception("Quantity must be greater than zero")
+
         val userRef = firestore.collection("Users").document(userId)
         val snapshot = userRef.get().await()
 
-        // Fetch current assets
-        val currentAssets = snapshot.get("Assets") as? MutableMap<String, Map<String, Any>> ?: mutableMapOf()
+        val currentAssets = snapshot.get("Assets") as? MutableList<Map<String, Any>> ?: mutableListOf()
+        val assetIndex = currentAssets.indexOfFirst { it["symbol"] == symbol }
 
-        // Check if the asset exists
-        val assetDetails = currentAssets[symbol] ?: throw Exception("Asset $symbol not found for user $userId")
+        if (assetIndex == -1) throw Exception("Asset $symbol not found for user $userId")
 
-        // Extract the current quantity
+        val assetDetails = currentAssets[assetIndex]
         val currentQuantity = (assetDetails["quantity"] as? Double) ?: throw Exception("Invalid quantity for asset $symbol")
 
-        // Ensure the user has enough quantity to sell
         if (currentQuantity < amount) throw Exception("Insufficient quantity for asset $symbol")
-
         if (amount < 0.001) throw Exception("Quantity amount is under the minimum level")
 
-        // Update the asset's quantity
         val updatedQuantity = currentQuantity - amount
         if (updatedQuantity > 0) {
-            currentAssets[symbol] = assetDetails.toMutableMap().apply {
+            currentAssets[assetIndex] = assetDetails.toMutableMap().apply {
                 this["quantity"] = updatedQuantity
             }
         } else {
-            // If quantity is zero, remove the asset entirely
-            currentAssets.remove(symbol)
+            currentAssets.removeAt(assetIndex)
         }
 
-        // Update user balance by adding sale proceeds
         val currentBalance = snapshot.getDouble("Balance") ?: 0.0
         val updatedBalance = currentBalance + (amount * salePrice)
 
-        // Write updated data to Firestore
         firestore.runBatch { batch ->
             batch.update(userRef, "Assets", currentAssets)
             batch.update(userRef, "Balance", updatedBalance)
-        }
+        }.await()
     }
 }
