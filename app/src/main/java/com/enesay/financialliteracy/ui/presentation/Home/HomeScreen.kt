@@ -1,5 +1,6 @@
 package com.enesay.financialliteracy.ui.presentation.Home
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -52,6 +54,7 @@ import androidx.navigation.NavController
 import com.enesay.financialliteracy.R
 import com.enesay.financialliteracy.model.Education.EducationalContent
 import com.enesay.financialliteracy.model.Trade.Asset
+import com.enesay.financialliteracy.ui.presentation.Login.LoginViewmodel
 import com.enesay.financialliteracy.ui.theme.AssetCardColor
 import com.enesay.financialliteracy.ui.theme.WhiteColor
 import com.enesay.financialliteracy.ui.theme.category_item1_color
@@ -67,7 +70,17 @@ import com.enesay.financialliteracy.ui.theme.primary_color
 fun Home(navController: NavController) {
 
     val homeViewmodel: HomeViewmodel = hiltViewModel()
+    val loginViewmodel: LoginViewmodel = hiltViewModel()
     val educationalContentList by homeViewmodel.educationalContent.collectAsState(initial = emptyList())
+    val currentUser = loginViewmodel.currentUser.value
+    val latestBalance by homeViewmodel.latestBalance.collectAsState(initial = 0.0)
+
+    LaunchedEffect(currentUser) {
+        if (currentUser != null) {
+            Log.d("home", "current user if $currentUser")
+            homeViewmodel.getLatestBalance(currentUser)
+        }
+    }
 
     Scaffold(topBar = {
         TopAppBar(
@@ -87,14 +100,15 @@ fun Home(navController: NavController) {
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            val context = LocalContext.current
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .weight(1f)
                     .padding(5.dp)
             ) {
-                ProfitLossCard(123.34)
+                latestBalance?.let {
+                    ProfitLossCard(it)
+                }
 
                 FinancialLessonList(educationalContentList, onLessonClick = {
                     navController.navigate("categoryDetail/$it")
@@ -150,7 +164,8 @@ fun FinancialLessonList(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(lessons) { lesson ->
-                LessonCard(lessonTitle = lesson.content_name,
+                LessonCard(
+                    lessonTitle = lesson.content_name,
                     onClick = { onLessonClick(lesson.id) })
             }
         }
@@ -202,7 +217,8 @@ fun ProfitLossCard(totalProfitLoss: Double) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .height(120.dp),
+            .height(120.dp)
+          ,
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(6.dp)
     ) {
@@ -210,6 +226,8 @@ fun ProfitLossCard(totalProfitLoss: Double) {
             modifier = Modifier
                 .fillMaxSize()
                 .background(backgroundColor)
+                .clickable {
+                }
                 .padding(16.dp)
         ) {
             Row(
@@ -217,8 +235,9 @@ fun ProfitLossCard(totalProfitLoss: Double) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // Icon
+
                 Column {
+                    // Icon
                     Icon(
                         imageVector = icon,
                         contentDescription = null,
@@ -226,7 +245,6 @@ fun ProfitLossCard(totalProfitLoss: Double) {
                         modifier = Modifier.size(36.dp)
                     )
                     // Profit/Loss Text
-
                     Text(
                         text = if (isProfit) "Profit" else "Loss",
                         fontWeight = FontWeight.Normal,
@@ -243,7 +261,7 @@ fun ProfitLossCard(totalProfitLoss: Double) {
                         text = "Balance",
                         fontWeight = FontWeight.Normal,
                         color = textColor,
-                        fontSize = 33.sp
+                        fontSize = 28.sp
                     )
 
                     Spacer(modifier = Modifier.height(4.dp))
@@ -251,7 +269,7 @@ fun ProfitLossCard(totalProfitLoss: Double) {
                         text = "$${String.format("%.2f", kotlin.math.abs(totalProfitLoss))}",
                         fontWeight = FontWeight.Normal,
                         color = textColor,
-                        fontSize = 26.sp
+                        fontSize = 22.sp
                     )
                 }
             }
@@ -261,9 +279,11 @@ fun ProfitLossCard(totalProfitLoss: Double) {
 
 @Composable
 fun TopAssetsList(asset: Asset) {
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+    ) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -273,15 +293,13 @@ fun TopAssetsList(asset: Asset) {
             shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(6.dp),
         ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .clickable { }
-                    .background(AssetCardColor),
+            LazyColumn(modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .clickable { }
+                .background(AssetCardColor),
                 verticalArrangement = Arrangement.spacedBy(5.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+                horizontalAlignment = Alignment.CenterHorizontally) {
                 item(1) {
                     TopAssetsRow(asset)
                 }
@@ -300,15 +318,13 @@ fun TopAssetsList(asset: Asset) {
             shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(6.dp),
         ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .clickable { }
-                    .background(AssetCardColor),
+            LazyColumn(modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .clickable { }
+                .background(AssetCardColor),
                 verticalArrangement = Arrangement.spacedBy(5.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+                horizontalAlignment = Alignment.CenterHorizontally) {
                 item(1) {
                     TopAssetsRow(asset)
                 }
@@ -324,16 +340,13 @@ fun TopAssetsList(asset: Asset) {
 fun TopAssetsRow(asset: Asset) {
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 10.dp),
-        horizontalArrangement = Arrangement.SpaceAround,
+            .wrapContentSize()
+            .padding(10.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = asset.symbol,
-            color = WhiteColor,
-            fontWeight = FontWeight.Bold,
-            fontSize = 18.sp
+            text = asset.symbol, color = WhiteColor, fontWeight = FontWeight.Bold, fontSize = 18.sp
         )
         Text(
             text = "$${String.format("%.2f", asset.price * asset.quantity)}",
@@ -341,6 +354,5 @@ fun TopAssetsRow(asset: Asset) {
             fontWeight = FontWeight.Bold,
             fontSize = 14.sp
         )
-
     }
 }
