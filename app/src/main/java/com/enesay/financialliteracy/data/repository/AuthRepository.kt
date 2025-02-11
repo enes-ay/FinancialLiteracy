@@ -1,5 +1,6 @@
 package com.enesay.financialliteracy.data.repository
 
+import android.util.Log
 import com.enesay.financialliteracy.common.Resource
 import com.enesay.financialliteracy.model.User.User
 import com.google.firebase.auth.FirebaseAuth
@@ -52,9 +53,11 @@ class AuthRepository @Inject constructor(
         }
     }
 
-    suspend fun signOut(): Resource<String> {
+    fun signOut(): Resource<String> {
         return try {
-            firebaseAuth.signOut()
+            if (isUserLoggedIn()) {
+                firebaseAuth.signOut()
+            }
             Resource.Success("User signed out successfully")
         } catch (e: Exception) {
             Resource.Error(e)
@@ -79,6 +82,16 @@ class AuthRepository @Inject constructor(
         }
     }
 
-    fun isUserLoggedIn(): Boolean = firebaseAuth.currentUser != null
-    fun getCurrentUserId(): String? = firebaseAuth.currentUser?.uid
+    fun isUserLoggedIn(): Boolean = try {
+        firebaseAuth.currentUser != null
+    }catch (e: Exception){
+        Log.e("AuthRepository", "Error checking user login status: ${e.message}")
+        false
+    }
+    fun getCurrentUserId(): String? = try {
+        firebaseAuth.currentUser?.uid
+    }catch (e:Exception){
+        Log.e("AuthRepository", "Error getting current user ID: ${e.message}")
+        null
+    }
 }

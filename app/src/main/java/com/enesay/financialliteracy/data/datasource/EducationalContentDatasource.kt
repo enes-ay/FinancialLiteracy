@@ -14,9 +14,15 @@ class EducationalContentDataSource @Inject constructor(
     private val firestore: FirebaseFirestore
 ) {
 
+    companion object {
+        private const val TAG = "EducationalContentDS"
+        private const val COLLECTION_EDUCATIONAL_CONTENTS = "educational_contents"
+        private const val COLLECTION_USERS = "Users"
+    }
+
     fun getEducationalContents(): Flow<List<EducationalContent>> = callbackFlow {
-        val collection = firestore.collection("educational_contents")
-        val subscription = collection.addSnapshotListener { snapshot, error ->
+        val collectionRef = firestore.collection(COLLECTION_EDUCATIONAL_CONTENTS)
+        val listenerRegistration = collectionRef.addSnapshotListener { snapshot, error ->
             if (error != null) {
                 close(error)
                 return@addSnapshotListener
@@ -26,30 +32,34 @@ class EducationalContentDataSource @Inject constructor(
                 document.toObject(EducationalContent::class.java)?.copy(id = document.id)
             } ?: emptyList()
 
+            // trySend ile gönderim yapıyoruz; başarısız olursa zaten kapatıyoruz.
             trySend(contents).isSuccess
         }
 
-        awaitClose { subscription.remove() }
+        // Flow kapatıldığında listener temizlenecek.
+        awaitClose { listenerRegistration.remove() }
     }.flowOn(Dispatchers.IO)
 
     fun getContentDetail(categoryId: String): Flow<EducationalContent?> = callbackFlow {
-        val document = firestore.collection("educational_contents").document(categoryId)
-        val subscription = document.addSnapshotListener { snapshot, error ->
+        val documentRef = firestore
+            .collection(COLLECTION_EDUCATIONAL_CONTENTS)
+            .document(categoryId)
+        val listenerRegistration = documentRef.addSnapshotListener { snapshot, error ->
             if (error != null) {
                 close(error)
                 return@addSnapshotListener
             }
 
-            val categoryDetail = snapshot?.toObject(EducationalContent::class.java)
-            trySend(categoryDetail).isSuccess
+            val contentDetail = snapshot?.toObject(EducationalContent::class.java)
+            trySend(contentDetail).isSuccess
         }
 
-        awaitClose { subscription.remove() }
+        awaitClose { listenerRegistration.remove() }
     }.flowOn(Dispatchers.IO)
 
     fun getLatestBalance(userId: String): Flow<Double?> = callbackFlow {
-        val document = firestore.collection("Users").document(userId)
-        val subscription = document.addSnapshotListener { snapshot, error ->
+        val documentRef = firestore.collection(COLLECTION_USERS).document(userId)
+        val listenerRegistration = documentRef.addSnapshotListener { snapshot, error ->
             if (error != null) {
                 close(error)
                 return@addSnapshotListener
@@ -57,12 +67,14 @@ class EducationalContentDataSource @Inject constructor(
 
             if (snapshot != null && snapshot.exists()) {
                 val balance = snapshot.getDouble("Balance") ?: 0.0
-                Log.d("home", "datasource $balance")
-
-                trySend(balance)
+                Log.d(TAG, "Latest balance: $balance")
+                trySend(balance).isSuccess
+            } else {
+                // Eğer belge yoksa veya snapshot boşsa null gönderebiliriz.
+                trySend(null).isSuccess
             }
         }
 
-        awaitClose { subscription.remove() }
+        awaitClose { listenerRegistration.remove() }
     }.flowOn(Dispatchers.IO)
 }
